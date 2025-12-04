@@ -5,6 +5,7 @@ export interface ApiResponse {
   answer: string;
   audio_url: string;
   audio_format: string;
+  session_id: string;
 }
 
 export class ApiService {
@@ -29,7 +30,7 @@ export class ApiService {
     this.baseUrl = url;
   }
 
-  async sendAudio(audioUri: string): Promise<ApiResponse> {
+  async sendAudio(audioUri: string, sessionId?: string | null): Promise<ApiResponse> {
     // Crear FormData para enviar
     const formData = new FormData();
 
@@ -45,6 +46,11 @@ export class ApiService {
         type: 'audio/m4a',
         name: 'recording.m4a',
       } as any);
+    }
+
+    // Agregar session_id si existe
+    if (sessionId) {
+      formData.append('session_id', sessionId);
     }
 
     // Enviar a API

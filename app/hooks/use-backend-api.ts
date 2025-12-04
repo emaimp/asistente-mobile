@@ -12,11 +12,11 @@ export function useApi() {
     apiService.setBaseUrl(backendUrl);
   }, [backendUrl]);
 
-  const sendAudio = async (audioUri: string): Promise<{ data: ApiResponse; audioUri: string }> => {
+  const sendAudio = async (audioUri: string, sessionId?: string | null): Promise<{ data: ApiResponse; audioUri: string }> => {
     setIsProcessing(true);
     try {
       console.log('🚀 Enviando audio al servidor...');
-      const data = await apiService.sendAudio(audioUri);
+      const data = await apiService.sendAudio(audioUri, sessionId);
 
       // Validar que la respuesta tenga los campos requeridos
       if (!data || typeof data.audio_url !== 'string' || !data.audio_format) {
