@@ -1,7 +1,7 @@
 import { Audio } from 'expo-av';
 import { useState, useEffect, useCallback, useRef } from 'react';
 
-export function useAudioPlayback(uri: string | null) {
+export function useAudioPlayback(uri: string | null, autoPlay: boolean = true) {
   const soundRef = useRef<Audio.Sound | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -17,7 +17,7 @@ export function useAudioPlayback(uri: string | null) {
     setIsLoading(true);
     setIsLoaded(false);
     currentUriRef.current = uri;
-    pendingAutoPlayRef.current = true; // Marcar para reproducción automática
+    pendingAutoPlayRef.current = autoPlay;
 
     try {
       // Limpiar sonido anterior si existe
@@ -42,11 +42,23 @@ export function useAudioPlayback(uri: string | null) {
             console.log('🔊 Ejecutando reproducción automática...');
             pendingAutoPlayRef.current = false;
             // Usar setTimeout para evitar llamadas recursivas
-            setTimeout(() => {
+            setTimeout(async () => {
               if (newSound && !status.isPlaying) {
-                newSound.playAsync().catch(() => {});
+                try {
+                  await newSound.playAsync();
+                } catch (error) {
+                  console.error('Error en reproducción automática:', error);
+                }
               }
             }, 100);
+          }
+
+          // Cuando termina cualquier reproducción, marcar como no reproduciendo
+          if (status.didJustFinish) {
+            console.log('🔄 Reproducción terminó');
+            setIsPlaying(false);
+            setPosition(status.durationMillis || 0);
+            // No resetear posición automáticamente para evitar bucles
           }
         } else if (status.error) {
           setIsLoading(false);
@@ -57,7 +69,7 @@ export function useAudioPlayback(uri: string | null) {
       setIsLoading(false);
       setIsLoaded(false);
     }
-  }, [uri]);
+  }, [autoPlay, uri]);
 
   useEffect(() => {
     if (uri && uri !== currentUriRef.current) {
@@ -94,11 +106,16 @@ export function useAudioPlayback(uri: string | null) {
       if (isPlaying) {
         await soundRef.current.pauseAsync();
       } else {
+        // Si está al final, resetear al inicio antes de reproducir
+        if (position && duration && position >= duration - 1000) { // 1 segundo de tolerancia
+          await soundRef.current.setPositionAsync(0);
+          setPosition(0);
+        }
         await soundRef.current.playAsync();
       }
     } catch {
     }
-  }, [isPlaying, isLoaded]);
+  }, [isPlaying, isLoaded, position, duration]);
 
   const stop = useCallback(async () => {
     if (!soundRef.current || !isLoaded) return;

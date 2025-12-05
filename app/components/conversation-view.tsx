@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from 'react';
-import { View, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, FlatList, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { IconSymbol } from './ui/icon-symbol';
@@ -15,16 +15,22 @@ interface Message {
 
 interface ConversationViewProps {
   messages: Message[];
+  autoPlay?: boolean;
 }
 
-export default function ConversationView({ messages }: ConversationViewProps) {
+export default function ConversationView({ messages, autoPlay = true }: ConversationViewProps) {
   const flatListRef = useRef<FlatList>(null);
+  const scrollViewRef = useRef<ScrollView>(null);
 
   // Auto-scroll al final cuando llegan nuevos mensajes
   useEffect(() => {
     if (messages.length > 0) {
       setTimeout(() => {
-        flatListRef.current?.scrollToEnd({ animated: true });
+        if (messages.length > 2) {
+          flatListRef.current?.scrollToEnd({ animated: true });
+        } else {
+          scrollViewRef.current?.scrollToEnd({ animated: true });
+        }
       }, 100);
     }
   }, [messages]);
@@ -50,7 +56,7 @@ export default function ConversationView({ messages }: ConversationViewProps) {
           </ThemedText>
 
           {item.type === 'bot' && item.audioUri && (
-            <AudioMessagePlayer audioUri={item.audioUri} />
+            <AudioMessagePlayer audioUri={item.audioUri} autoPlay={autoPlay} />
           )}
 
           <ThemedText style={styles.timestampText}>
@@ -64,6 +70,25 @@ export default function ConversationView({ messages }: ConversationViewProps) {
     );
   };
 
+  // Para pocos mensajes (≤2), usar ScrollView para evitar conflicto con ParallaxScrollView
+  if (messages.length <= 2) {
+    return (
+      <ScrollView
+        ref={scrollViewRef}
+        style={styles.container}
+        contentContainerStyle={styles.contentContainer}
+        showsVerticalScrollIndicator={false}
+      >
+        {messages.map((message) => (
+          <View key={message.id}>
+            {renderMessage({ item: message })}
+          </View>
+        ))}
+      </ScrollView>
+    );
+  }
+
+  // Para muchos mensajes, usar FlatList
   return (
     <FlatList
       ref={flatListRef}
@@ -77,8 +102,8 @@ export default function ConversationView({ messages }: ConversationViewProps) {
   );
 }
 
-function AudioMessagePlayer({ audioUri }: { audioUri: string }) {
-  const { isPlaying, isLoading, playPause, stop } = useAudioPlayback(audioUri);
+function AudioMessagePlayer({ audioUri, autoPlay = true }: { audioUri: string; autoPlay?: boolean }) {
+  const { isPlaying, isLoading, playPause, stop } = useAudioPlayback(audioUri, autoPlay);
 
   const handlePress = () => {
     if (isPlaying) {
@@ -112,8 +137,8 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     paddingHorizontal: 0,
-    paddingVertical: 16,
-    paddingBottom: 100, // Espacio para el botón de grabación
+    paddingVertical: 0,
+    paddingBottom: 100,
   },
   messageWrapper: {
     marginBottom: 12,
@@ -132,11 +157,11 @@ const styles = StyleSheet.create({
     borderColor: '#E5E5E7',
   },
   userMessage: {
-    backgroundColor: 'rgba(0, 122, 255, 0.9)', // Azul para usuario
+    backgroundColor: 'rgba(0, 122, 255, 0.9)',
     borderBottomRightRadius: 4,
   },
   botMessage: {
-    backgroundColor: 'rgba(16, 16, 49, 0.9)', // Azul oscuro para bot
+    backgroundColor: 'rgba(16, 16, 49, 0.9)',
     borderBottomLeftRadius: 4,
   },
   messageText: {
