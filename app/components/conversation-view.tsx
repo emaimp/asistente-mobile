@@ -11,14 +11,20 @@ interface Message {
   content: string;
   audioUri?: string;
   timestamp: Date;
+  inputType?: 'audio' | 'text';
 }
 
 interface ConversationViewProps {
   messages: Message[];
-  autoPlay?: boolean;
+  autoPlayInputType?: 'audio' | 'text' | 'all';
 }
 
-export default function ConversationView({ messages, autoPlay = true }: ConversationViewProps) {
+export default function ConversationView({ messages, autoPlayInputType = 'all' }: ConversationViewProps) {
+  // Encontrar el último mensaje del bot para activar autoPlay solo en ese
+  let lastBotMessageIndex = messages.length - 1;
+  while (lastBotMessageIndex >= 0 && messages[lastBotMessageIndex].type !== 'bot') {
+    lastBotMessageIndex--;
+  }
   const flatListRef = useRef<FlatList>(null);
   const scrollViewRef = useRef<ScrollView>(null);
 
@@ -35,8 +41,9 @@ export default function ConversationView({ messages, autoPlay = true }: Conversa
     }
   }, [messages]);
 
-  const renderMessage = ({ item }: { item: Message }) => {
+  const renderMessage = ({ item, index }: { item: Message; index: number }) => {
     const isUser = item.type === 'user';
+    const isLastBotMessage = item.type === 'bot' && index === lastBotMessageIndex;
 
     return (
       <View style={[
@@ -56,7 +63,12 @@ export default function ConversationView({ messages, autoPlay = true }: Conversa
           </ThemedText>
 
           {item.type === 'bot' && item.audioUri && (
-            <AudioMessagePlayer audioUri={item.audioUri} autoPlay={autoPlay} />
+            <AudioMessagePlayer
+              audioUri={item.audioUri}
+              inputType={item.inputType}
+              autoPlayInputType={autoPlayInputType}
+              isLastBotMessage={isLastBotMessage}
+            />
           )}
 
           <ThemedText style={styles.timestampText}>
@@ -79,9 +91,9 @@ export default function ConversationView({ messages, autoPlay = true }: Conversa
         contentContainerStyle={styles.contentContainer}
         showsVerticalScrollIndicator={false}
       >
-        {messages.map((message) => (
+        {messages.map((message, index) => (
           <View key={message.id}>
-            {renderMessage({ item: message })}
+            {renderMessage({ item: message, index })}
           </View>
         ))}
       </ScrollView>
@@ -102,8 +114,24 @@ export default function ConversationView({ messages, autoPlay = true }: Conversa
   );
 }
 
-function AudioMessagePlayer({ audioUri, autoPlay = true }: { audioUri: string; autoPlay?: boolean }) {
-  const { isPlaying, isLoading, playPause, stop } = useAudioPlayback(audioUri, autoPlay);
+function AudioMessagePlayer({
+  audioUri,
+  inputType,
+  autoPlayInputType = 'all',
+  isLastBotMessage = false
+}: {
+  audioUri: string;
+  inputType?: 'audio' | 'text';
+  autoPlayInputType?: 'audio' | 'text' | 'all';
+  isLastBotMessage?: boolean;
+}) {
+  const shouldAutoPlay = isLastBotMessage && (
+    autoPlayInputType === 'all' ||
+    (autoPlayInputType === 'audio' && inputType === 'audio') ||
+    (autoPlayInputType === 'text' && inputType === 'text')
+  );
+
+  const { isPlaying, isLoading, playPause, stop } = useAudioPlayback(audioUri, shouldAutoPlay);
 
   const handlePress = () => {
     if (isPlaying) {

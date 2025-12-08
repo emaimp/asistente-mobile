@@ -4,13 +4,10 @@ import ParallaxScrollView from '@/components/parallax-scroll-view';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import AudioRecorder from '@/components/audio-recorder';
-import ConversationView from '@/components/conversation-view';
 import { useConversation } from '@/contexts/conversation-context';
 
 export default function HomeScreen() {
-  const { handleRecordingComplete, isProcessing, getLastInteraction, messages, showInstruction } = useConversation();
-
-  const lastInteraction = getLastInteraction();
+  const { handleRecordingComplete, isProcessing, messages, showInstruction } = useConversation();
 
   return (
     <ParallaxScrollView
@@ -23,7 +20,6 @@ export default function HomeScreen() {
           <ThemedText style={styles.instructionText}>💡 Presiona el botón para comenzar a hablar con el BOT.</ThemedText>
         </ThemedView>
       )}
-      <ConversationView messages={lastInteraction} autoPlay={true} />
     </ParallaxScrollView>
   );
 }

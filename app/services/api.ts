@@ -67,6 +67,32 @@ export class ApiService {
     return await response.json() as ApiResponse;
   }
 
+  async sendText(text: string, sessionId?: string | null): Promise<ApiResponse> {
+    // Crear el body JSON
+    const body: any = { text };
+
+    // Agregar session_id si existe
+    if (sessionId) {
+      body.session_id = sessionId;
+    }
+
+    // Enviar a API
+    const response = await fetch(`${this.baseUrl}/api/tts/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Error en la API: ${response.status}`);
+    }
+
+    // La API devuelve JSON con audio
+    return await response.json() as ApiResponse;
+  }
+
   // Método para configurar headers si es necesario (ej. autenticación)
   setAuthToken(token: string) {
     // Implementar si la API requiere autenticación

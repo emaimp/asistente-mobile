@@ -8,6 +8,7 @@ export interface Message {
   content: string;
   audioUri?: string;
   timestamp: Date;
+  inputType?: 'audio' | 'text';
 }
 
 interface ConversationContextType {
@@ -17,6 +18,7 @@ interface ConversationContextType {
   showInstruction: boolean;
   addMessage: (message: Message) => void;
   handleRecordingComplete: (audioUri: string) => Promise<void>;
+  handleTextSubmit: (text: string) => Promise<void>;
   getLastInteraction: () => Message[];
   setShowInstruction: (show: boolean) => void;
 }
@@ -39,7 +41,7 @@ export const ConversationProvider: React.FC<ConversationProviderProps> = ({ chil
   const [messages, setMessages] = useState<Message[]>([]);
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
   const [showInstruction, setShowInstruction] = useState(true);
-  const { sendAudio, isProcessing } = useApi();
+  const { sendAudio, sendText, isProcessing } = useApi();
 
   const generateId = () => Math.random().toString(36).substr(2, 9);
 
@@ -63,6 +65,7 @@ export const ConversationProvider: React.FC<ConversationProviderProps> = ({ chil
         type: 'user',
         content: result.data.question, // Mostrar la pregunta transcrita
         timestamp: new Date(),
+        inputType: 'audio',
       };
       addMessage(userMessage);
       setShowInstruction(false); // Ocultar instrucción después del primer mensaje
@@ -74,12 +77,51 @@ export const ConversationProvider: React.FC<ConversationProviderProps> = ({ chil
         content: result.data.answer,
         audioUri: result.audioUri,
         timestamp: new Date(),
+        inputType: 'audio',
       };
       addMessage(botMessage);
 
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Error desconocido';
       Alert.alert('Error', `No se pudo procesar el audio: ${message}`);
+    }
+  };
+
+  const handleTextSubmit = async (text: string) => {
+    try {
+      // Agregar mensaje del usuario inmediatamente
+      const userMessage: Message = {
+        id: generateId(),
+        type: 'user',
+        content: text,
+        timestamp: new Date(),
+        inputType: 'text',
+      };
+      addMessage(userMessage);
+      setShowInstruction(false); // Ocultar instrucción después del primer mensaje
+
+      // Enviar al backend
+      const result = await sendText(text, currentSessionId);
+
+      // Guardar session_id si es la primera respuesta
+      if (!currentSessionId && result.data.session_id) {
+        setCurrentSessionId(result.data.session_id);
+      }
+
+      // Agregar respuesta del bot
+      const botMessage: Message = {
+        id: generateId(),
+        type: 'bot',
+        content: result.data.answer,
+        audioUri: result.audioUri,
+        timestamp: new Date(),
+        inputType: 'text',
+      };
+      addMessage(botMessage);
+
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Error desconocido';
+      Alert.alert('Error', `No se pudo enviar el mensaje: ${message}`);
     }
   };
 
@@ -101,6 +143,7 @@ export const ConversationProvider: React.FC<ConversationProviderProps> = ({ chil
     showInstruction,
     addMessage,
     handleRecordingComplete,
+    handleTextSubmit,
     getLastInteraction,
     setShowInstruction,
   };
