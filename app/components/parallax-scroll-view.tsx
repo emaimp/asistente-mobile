@@ -44,7 +44,7 @@ export default function ParallaxScrollView({
   return (
     <View style={{ flex: 1 }}>
       <LinearGradient
-        colors={['#0a0a5c', '#004480']}
+        colors={['#004480', '#0a0a5c']}
         style={StyleSheet.absoluteFillObject}
       />
       <Animated.ScrollView

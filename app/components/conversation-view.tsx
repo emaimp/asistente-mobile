@@ -179,17 +179,18 @@ const styles = StyleSheet.create({
   },
   messageContainer: {
     maxWidth: '90%',
+    minWidth: '30%',
     padding: 12,
     borderRadius: 16,
     borderWidth: 1,
     borderColor: '#E5E5E7',
   },
   userMessage: {
-    backgroundColor: 'rgba(0, 122, 255, 0.9)',
+    backgroundColor: 'rgba(0, 28, 65, 0.9)',
     borderBottomRightRadius: 4,
   },
   botMessage: {
-    backgroundColor: 'rgba(16, 16, 49, 0.9)',
+    backgroundColor: 'rgba(32, 178, 170, 0.9)',
     borderBottomLeftRadius: 4,
   },
   messageText: {

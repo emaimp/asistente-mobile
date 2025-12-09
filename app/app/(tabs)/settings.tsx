@@ -6,14 +6,20 @@ import { ThemedView } from '@/components/themed-view';
 import { useBackendConfig } from '@/hooks/use-backend-config';
 
 export default function SettingsScreen() {
-  const { backendUrl, saveBackendUrl, testConnection, isLoading } = useBackendConfig();
+  const { backendUrl, model, saveBackendUrl, saveModel, updateModel, testConnection, isLoading } = useBackendConfig();
   const [inputUrl, setInputUrl] = useState(backendUrl);
+  const [inputModel, setInputModel] = useState(model);
   const [isTestingConnection, setIsTestingConnection] = useState(false);
+  const [isUpdatingModel, setIsUpdatingModel] = useState(false);
 
-  // Actualizar el input cuando cambie la URL guardada
+  // Actualizar los inputs cuando cambien las configuraciones
   React.useEffect(() => {
     setInputUrl(backendUrl);
   }, [backendUrl]);
+
+  React.useEffect(() => {
+    setInputModel(model);
+  }, [model]);
 
   const handleSave = async () => {
     if (!inputUrl.trim()) {
@@ -31,9 +37,44 @@ export default function SettingsScreen() {
 
     const success = await saveBackendUrl(inputUrl.trim());
     if (success) {
-      Alert.alert('Éxito', 'URL del backend guardada correctamente');
+      Alert.alert('Éxito', 'URL guardada correctamente');
     } else {
       Alert.alert('Error', 'No se pudo guardar la URL');
+    }
+  };
+
+  const handleSaveModelLocally = async () => {
+    if (!inputModel.trim()) {
+      Alert.alert('Error', 'Por favor ingresa un nombre de modelo válido');
+      return;
+    }
+
+    const result = await saveModel(inputModel.trim());
+    if (result.success) {
+      Alert.alert('Éxito', 'Modelo guardado localmente');
+    } else {
+      Alert.alert('Error', 'No se pudo guardar el modelo');
+    }
+  };
+
+  const handleUpdateModel = async () => {
+    if (!inputModel.trim()) {
+      Alert.alert('Error', 'Por favor ingresa un nombre de modelo válido');
+      return;
+    }
+
+    setIsUpdatingModel(true);
+    try {
+      const result = await updateModel(inputModel.trim());
+      if (result.success) {
+        Alert.alert('Éxito', 'Modelo actualizado en el servidor');
+      } else {
+        Alert.alert('Error', result.message || 'No se pudo actualizar el modelo en el servidor');
+      }
+    } catch {
+      Alert.alert('Error', 'No se pudo actualizar el modelo');
+    } finally {
+      setIsUpdatingModel(false);
     }
   };
 
@@ -86,7 +127,7 @@ export default function SettingsScreen() {
               style={styles.textInput}
               value={inputUrl}
               onChangeText={setInputUrl}
-              placeholder="Ej: http://192.168.1.100:8000"
+              placeholder="Ej: http://192.168.100.1:8000"
               placeholderTextColor="#999"
               autoCapitalize="none"
               autoCorrect={false}
@@ -116,14 +157,48 @@ export default function SettingsScreen() {
 
         <ThemedView style={styles.section}>
           <ThemedText type="subtitle" style={styles.sectionTitle}>
-            Instrucciones:
+            Modelo de IA
           </ThemedText>
-          <ThemedText style={styles.instructionText}>
-            • Para desarrollo local, usa la IP de tu máquina.
-            {'\n'}• Asegúrate que el servidor tenga el puerto 8000.
-            {'\n'}• Prueba la conexión antes de usar la app.
-            {'\n'}• La configuración se guarda automáticamente.
+          <ThemedText style={styles.description}>
+            Configura el modelo de Inteligencia Artificial.
           </ThemedText>
+
+          <View style={styles.inputContainer}>
+            <ThemedText style={styles.label}>Modelo Actual:</ThemedText>
+            <ThemedText style={styles.currentUrl}>{model}</ThemedText>
+          </View>
+
+          <View style={styles.inputContainer}>
+            <ThemedText style={styles.label}>Modelo Nuevo:</ThemedText>
+            <TextInput
+              style={styles.textInput}
+              value={inputModel}
+              onChangeText={setInputModel}
+              placeholder="Ej: gemma3:4b"
+              placeholderTextColor="#999"
+              autoCapitalize="none"
+              autoCorrect={false}
+            />
+          </View>
+
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity
+              style={[styles.button, styles.updateButton]}
+              onPress={handleUpdateModel}
+              disabled={isUpdatingModel}
+            >
+              <ThemedText style={styles.updateButtonText}>
+                {isUpdatingModel ? 'Actualizando...' : 'Actualizar'}
+              </ThemedText>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.button, styles.saveButton]}
+              onPress={handleSaveModelLocally}
+            >
+              <ThemedText style={styles.saveButtonText}>Guardar</ThemedText>
+            </TouchableOpacity>
+          </View>
         </ThemedView>
       </ScrollView>
     </ParallaxScrollView>
@@ -195,7 +270,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   testButton: {
-    backgroundColor: '#34C759',
+    backgroundColor: '#FF9500',
   },
   testButtonText: {
     color: 'white',
@@ -204,6 +279,14 @@ const styles = StyleSheet.create({
   },
   saveButton: {
     backgroundColor: '#007AFF',
+  },
+  updateButton: {
+    backgroundColor: '#34C759',
+  },
+  updateButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: '600',
   },
   saveButtonText: {
     color: 'white',

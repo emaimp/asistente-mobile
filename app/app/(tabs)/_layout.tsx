@@ -22,6 +22,7 @@ export default function TabLayout() {
         options={{
           title: 'Chat',
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="message.fill" color={color} />,
+          tabBarLabel: () => null,
         }}
       />
       <Tabs.Screen
@@ -29,6 +30,7 @@ export default function TabLayout() {
         options={{
           title: 'Bot',
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="bot" color={color} />,
+          tabBarLabel: () => null,
         }}
       />
       <Tabs.Screen
@@ -36,6 +38,7 @@ export default function TabLayout() {
         options={{
           title: 'Ajustes',
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="settings" color={color} />,
+          tabBarLabel: () => null,
         }}
       />
     </Tabs>

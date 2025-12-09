@@ -25,7 +25,7 @@ export default function ChatScreen() {
       keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
     >
       <LinearGradient
-        colors={['#0a0a5c', '#004480']}
+        colors={['#004480', '#0a0a5c']}
         style={{ flex: 1 }}
       >
         <View style={styles.container}>

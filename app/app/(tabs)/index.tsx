@@ -7,7 +7,7 @@ import AudioRecorder from '@/components/audio-recorder';
 import { useConversation } from '@/contexts/conversation-context';
 
 export default function HomeScreen() {
-  const { handleRecordingComplete, isProcessing, messages, showInstruction } = useConversation();
+  const { handleRecordingComplete, isProcessing } = useConversation();
 
   return (
     <ParallaxScrollView
@@ -15,24 +15,19 @@ export default function HomeScreen() {
       <ThemedView style={styles.stepContainer} lightColor="transparent" darkColor="transparent">
         <AudioRecorder onRecordingComplete={handleRecordingComplete} isProcessing={isProcessing} />
       </ThemedView>
-      {showInstruction && messages.length === 0 && (
-        <ThemedView style={styles.instructionContainer} lightColor="transparent" darkColor="transparent">
-          <ThemedText style={styles.instructionText}>💡 Presiona el botón para comenzar a hablar con el BOT.</ThemedText>
-        </ThemedView>
-      )}
+      <ThemedView style={styles.instructionContainer} lightColor="transparent" darkColor="transparent">
+        <ThemedText style={styles.instructionText}>💡 Presiona el botón para comenzar a hablar con el BOT.</ThemedText>
+      </ThemedView>
     </ParallaxScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   stepContainer: {
-    gap: 8,
-    marginTop: 16,
-    marginBottom: 16,
+    marginTop: 70,
+    marginBottom: 0,
   },
   instructionContainer: {
-    gap: 8,
-    marginBottom: 8,
     padding: 16,
     borderWidth: 1,
     borderColor: '#E5E5E7',

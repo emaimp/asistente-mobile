@@ -89,7 +89,7 @@ export default function AudioRecorder({ onRecordingComplete, isProcessing = fals
     <View style={styles.container}>
       <View style={styles.buttonContainer}>
         <Animated.View style={[styles.borderRing, borderAnimatedStyle]} />
-        <View style={[styles.button, getButtonStyle()]}>
+        <View style={[styles.button, getButtonStyle()]} >
           <TouchableOpacity
             style={styles.buttonTouchable}
             onPress={isProcessing || isPlaying ? undefined : handlePress}
@@ -99,7 +99,9 @@ export default function AudioRecorder({ onRecordingComplete, isProcessing = fals
           </TouchableOpacity>
         </View>
       </View>
-      {statusMessage && <Text style={statusMessage.style}>{statusMessage.text}</Text>}
+      <View style={styles.statusTextContainer}>
+        {statusMessage && <Text style={statusMessage.style}>{statusMessage.text}</Text>}
+      </View>
     </View>
   );
 }
@@ -151,17 +153,17 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   recordingText: {
-    marginTop: 20,
+    marginTop: 16,
     color: '#FF3B30',
     fontSize: 14,
   },
   processingText: {
-    marginTop: 20,
+    marginTop: 16,
     color: '#007AFF',
     fontSize: 14,
   },
   playingText: {
-    marginTop: 20,
+    marginTop: 16,
     color: '#34C759',
     fontSize: 14,
   },
@@ -170,5 +172,10 @@ const styles = StyleSheet.create({
     height: '100%',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  statusTextContainer: {
+    height: 60,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

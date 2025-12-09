@@ -5,7 +5,7 @@ import { useBackendConfig } from './use-backend-config';
 
 export function useApi() {
   const [isProcessing, setIsProcessing] = useState(false);
-  const { backendUrl } = useBackendConfig();
+  const { backendUrl, model } = useBackendConfig();
 
   // Actualizar la URL del servicio cuando cambie la configuración
   useEffect(() => {
@@ -16,7 +16,7 @@ export function useApi() {
     setIsProcessing(true);
     try {
       console.log('🚀 Enviando audio al servidor...');
-      const data = await apiService.sendAudio(audioUri, sessionId);
+      const data = await apiService.sendAudio(audioUri, sessionId, model);
 
       // Validar que la respuesta tenga los campos requeridos
       if (!data || typeof data.audio_url !== 'string' || !data.audio_format) {
@@ -80,7 +80,7 @@ export function useApi() {
     setIsProcessing(true);
     try {
       console.log('🚀 Enviando texto al servidor...');
-      const data = await apiService.sendText(text, sessionId);
+      const data = await apiService.sendText(text, sessionId, model);
 
       // Validar que la respuesta tenga los campos requeridos
       if (!data || typeof data.audio_url !== 'string' || !data.audio_format) {
