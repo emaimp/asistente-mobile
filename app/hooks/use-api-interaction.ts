@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Platform } from 'react-native';
 import { apiService, ApiResponse } from '@/services/api';
-import { useBackendConfig } from './use-backend-config';
+import { useBackendConfig } from './use-api-settings';
 
 export function useApi() {
   const [isProcessing, setIsProcessing] = useState(false);

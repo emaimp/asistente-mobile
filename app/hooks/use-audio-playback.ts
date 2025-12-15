@@ -1,7 +1,9 @@
 import { Audio } from 'expo-av';
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { useAudioPlaybackContext } from '@/contexts/audio-playback-context';
 
 export function useAudioPlayback(uri: string | null, autoPlay: boolean = true) {
+  const { incrementPlayback, decrementPlayback } = useAudioPlaybackContext();
   const soundRef = useRef<Audio.Sound | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -10,6 +12,7 @@ export function useAudioPlayback(uri: string | null, autoPlay: boolean = true) {
   const [position, setPosition] = useState<number | null>(null);
   const currentUriRef = useRef<string | null>(null);
   const pendingAutoPlayRef = useRef(false);
+  const prevIsPlayingRef = useRef(false);
 
   const loadSound = useCallback(async () => {
     if (!uri || uri === currentUriRef.current) return;
@@ -37,9 +40,19 @@ export function useAudioPlayback(uri: string | null, autoPlay: boolean = true) {
           setPosition(status.positionMillis || null);
           setIsPlaying(status.isPlaying);
 
+          // Actualizar contador global de reproducción
+          if (status.isPlaying !== prevIsPlayingRef.current) {
+            if (status.isPlaying) {
+              incrementPlayback();
+            } else {
+              decrementPlayback();
+            }
+            prevIsPlayingRef.current = status.isPlaying;
+          }
+
           // Reproducción automática si está pendiente
           if (pendingAutoPlayRef.current) {
-            console.log('🔊 Ejecutando reproducción automática...');
+            console.log('🔄 Reproducción automática...');
             pendingAutoPlayRef.current = false;
             // Usar setTimeout para evitar llamadas recursivas
             setTimeout(async () => {
@@ -55,7 +68,7 @@ export function useAudioPlayback(uri: string | null, autoPlay: boolean = true) {
 
           // Cuando termina cualquier reproducción, marcar como no reproduciendo
           if (status.didJustFinish) {
-            console.log('🔄 Reproducción terminó');
+            console.log('🔊 Reproducción finalizada.');
             setIsPlaying(false);
             setPosition(status.durationMillis || 0);
             // No resetear posición automáticamente para evitar bucles
@@ -69,6 +82,7 @@ export function useAudioPlayback(uri: string | null, autoPlay: boolean = true) {
       setIsLoading(false);
       setIsLoaded(false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoPlay, uri]);
 
   useEffect(() => {

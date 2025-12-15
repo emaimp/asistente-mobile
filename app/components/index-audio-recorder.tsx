@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import Animated, { useSharedValue, useAnimatedStyle, withRepeat, withTiming, Easing } from 'react-native-reanimated';
 import { useAudioRecording } from '@/hooks/use-audio-recording';
-import { useAudioPlayback } from '@/hooks/use-audio-playback';
+import { useAudioPlaybackContext } from '@/contexts/audio-playback-context';
 import { IconSymbol } from './ui/icon-symbol';
 
 interface AudioRecorderProps {
@@ -14,21 +14,19 @@ interface AudioRecorderProps {
 
 export default function AudioRecorder({ onRecordingComplete, isProcessing = false, audioUri, onRecordingStart }: AudioRecorderProps) {
   const { isRecording, startRecording, stopRecording } = useAudioRecording(onRecordingComplete);
-  const { isPlaying, isLoading } = useAudioPlayback(audioUri || null);
+  const { isAnyAudioPlaying } = useAudioPlaybackContext();
   const rotation = useSharedValue(0);
   const lastAutoPlayedUri = useRef<string | null>(null);
   const wasRotatingRef = useRef(false);
 
   // Giro continuo sin reinicios
   useEffect(() => {
-    const isRotating = isProcessing || isLoading || isPlaying;
+    const isRotating = isProcessing || isAnyAudioPlaying;
 
     if (isRotating && !wasRotatingRef.current) {
       // Iniciar giro continuo
       rotation.value = withRepeat(
-        withTiming(360, { duration: 1000, easing: Easing.linear }),
-        -1,
-        false
+        withTiming(360, { duration: 1000, easing: Easing.linear }), -1, false
       );
       wasRotatingRef.current = true;
     } else if (!isRotating && wasRotatingRef.current) {
@@ -36,7 +34,7 @@ export default function AudioRecorder({ onRecordingComplete, isProcessing = fals
       rotation.value = 0;
       wasRotatingRef.current = false;
     }
-  }, [isProcessing, isLoading, isPlaying, rotation]);
+  }, [isProcessing, isAnyAudioPlaying, rotation]);
 
   // Resetear el flag de última reproducción automática cuando cambia la URI
   useEffect(() => {
@@ -47,7 +45,7 @@ export default function AudioRecorder({ onRecordingComplete, isProcessing = fals
 
   // Animación de borde pulsante para estados activos
   const borderAnimatedStyle = useAnimatedStyle(() => {
-    const isActive = isProcessing || isLoading || isPlaying;
+    const isActive = isProcessing || isAnyAudioPlaying;
     return {
       opacity: isActive ? 1 : 0,
       transform: [{ rotate: `${rotation.value}deg` }],
@@ -56,21 +54,21 @@ export default function AudioRecorder({ onRecordingComplete, isProcessing = fals
 
   const getIconName = () => {
     if (isProcessing) return 'mic.fill'; // Azul - procesando
-    if (isPlaying) return 'volume.up.fill'; // Verde - reproduciendo
-    return 'mic.fill'; // Azul - default (carga)
+    if (isAnyAudioPlaying) return 'volume.up.fill'; // Verde - reproduciendo
+    return 'mic.fill'; // Azul - default
   };
 
   const getButtonStyle = () => {
     if (isRecording) return styles.recordingButton;
     if (isProcessing) return styles.processingButton;
-    if (isPlaying) return styles.playingButton; // Verde durante reproducción
+    if (isAnyAudioPlaying) return styles.playingButton; // Verde durante reproducción global
     return {}; // Azul por defecto
   };
 
   const getStatusMessage = () => {
     if (isRecording) return { text: 'Grabando...', style: styles.recordingText };
     if (isProcessing) return { text: 'Procesando...', style: styles.processingText };
-    if (isPlaying) return { text: 'Reproduciendo...', style: styles.playingText };
+    if (isAnyAudioPlaying) return { text: 'Reproduciendo...', style: styles.playingText };
     return null;
   };
 
@@ -92,8 +90,8 @@ export default function AudioRecorder({ onRecordingComplete, isProcessing = fals
         <View style={[styles.button, getButtonStyle()]} >
           <TouchableOpacity
             style={styles.buttonTouchable}
-            onPress={isProcessing || isPlaying ? undefined : handlePress}
-            disabled={isProcessing || isPlaying}
+            onPress={isProcessing ? undefined : handlePress}
+            disabled={isProcessing}
           >
             <IconSymbol name={getIconName()} size={80} color="white" />
           </TouchableOpacity>

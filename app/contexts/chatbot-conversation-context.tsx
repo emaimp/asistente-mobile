@@ -1,7 +1,8 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { Alert } from 'react-native';
-import { useApi } from '@/hooks/use-backend-api';
+import { useApi } from '@/hooks/use-api-interaction';
 
+// Estructura de un mensaje en la conversación
 export interface Message {
   id: string;
   type: 'user' | 'bot';
@@ -11,16 +12,12 @@ export interface Message {
   inputType?: 'audio' | 'text';
 }
 
+// API que provee el contexto de conversación
 interface ConversationContextType {
-  messages: Message[];
-  currentSessionId: string | null;
-  isProcessing: boolean;
-  showInstruction: boolean;
-  addMessage: (message: Message) => void;
-  handleRecordingComplete: (audioUri: string) => Promise<void>;
-  handleTextSubmit: (text: string) => Promise<void>;
-  getLastInteraction: () => Message[];
-  setShowInstruction: (show: boolean) => void;
+  messages: Message[]; // Lista de todos los mensajes
+  isProcessing: boolean; // Si hay una request al backend en curso
+  handleRecordingComplete: (audioUri: string) => Promise<void>; // Procesa grabación de audio
+  handleTextSubmit: (text: string) => Promise<void>; // Procesa texto enviado
 }
 
 const ConversationContext = createContext<ConversationContextType | undefined>(undefined);
@@ -37,18 +34,29 @@ interface ConversationProviderProps {
   children: ReactNode;
 }
 
+/*
+ * Provider que gestiona el estado de conversaciones con el chatbot.
+ * Centraliza la lógica de procesamiento de audio y texto, y gestión de mensajes.
+*/
 export const ConversationProvider: React.FC<ConversationProviderProps> = ({ children }) => {
+  // Lista de mensajes de la conversación
   const [messages, setMessages] = useState<Message[]>([]);
+
+  // ID de sesión del backend (mantiene conversaciones conectadas)
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
-  const [showInstruction, setShowInstruction] = useState(true);
+
+  // Hook de API para comunicación con el backend
   const { sendAudio, sendText, isProcessing } = useApi();
 
+  // Genera IDs únicos para mensajes
   const generateId = () => Math.random().toString(36).substr(2, 9);
 
+  // Agrega mensaje a la lista
   const addMessage = (message: Message) => {
     setMessages(prev => [...prev, message]);
   };
 
+  // Procesa grabación de audio: envía al backend, agrega mensajes de user/bot
   const handleRecordingComplete = async (audioUri: string) => {
     try {
       // Enviar al backend primero para obtener la transcripción
@@ -68,7 +76,6 @@ export const ConversationProvider: React.FC<ConversationProviderProps> = ({ chil
         inputType: 'audio',
       };
       addMessage(userMessage);
-      setShowInstruction(false); // Ocultar instrucción después del primer mensaje
 
       // Agregar respuesta del bot
       const botMessage: Message = {
@@ -98,7 +105,6 @@ export const ConversationProvider: React.FC<ConversationProviderProps> = ({ chil
         inputType: 'text',
       };
       addMessage(userMessage);
-      setShowInstruction(false); // Ocultar instrucción después del primer mensaje
 
       // Enviar al backend
       const result = await sendText(text, currentSessionId);
@@ -125,27 +131,11 @@ export const ConversationProvider: React.FC<ConversationProviderProps> = ({ chil
     }
   };
 
-  const getLastInteraction = (): Message[] => {
-    // Retornar los últimos 2 mensajes (usuario + bot) si existen
-    const lastTwo = messages.slice(-2);
-    // Asegurarse de que sea una interacción completa (usuario seguido de bot)
-    if (lastTwo.length === 2 && lastTwo[0].type === 'user' && lastTwo[1].type === 'bot') {
-      return lastTwo;
-    }
-    // Si no hay interacción completa, retornar los últimos mensajes disponibles
-    return lastTwo;
-  };
-
   const value: ConversationContextType = {
     messages,
-    currentSessionId,
     isProcessing,
-    showInstruction,
-    addMessage,
     handleRecordingComplete,
     handleTextSubmit,
-    getLastInteraction,
-    setShowInstruction,
   };
 
   return (

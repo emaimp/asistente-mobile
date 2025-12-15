@@ -4,46 +4,60 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { IconSymbol } from './ui/icon-symbol';
 import { useAudioPlayback } from '@/hooks/use-audio-playback';
+import { useAudioPlaybackContext } from '@/contexts/audio-playback-context';
 
+// Estructura de datos para representar un mensaje en la conversación
 interface Message {
   id: string;
   type: 'user' | 'bot';
   content: string;
-  audioUri?: string;
+  audioUri?: string; // URL del audio generado por el bot
   timestamp: Date;
-  inputType?: 'audio' | 'text';
+  inputType?: 'audio' | 'text'; // Cómo se generó el mensaje del usuario
 }
 
+// Props que recibe el componente ConversationView
 interface ConversationViewProps {
-  messages: Message[];
-  autoPlayInputType?: 'audio' | 'text' | 'all';
+  messages: Message[]; // Array de mensajes a mostrar
+  autoPlayInputType?: 'audio' | 'text' | 'all'; // Tipo de entrada que activa auto-play
 }
 
-export default function ConversationView({ messages, autoPlayInputType = 'all' }: ConversationViewProps) {
+/*
+ * Componente principal para mostrar la vista de la conversación/chat.
+ * Renderiza mensajes entre usuario y bot con controles de audio.
+*/
+export default function ConversationView({ messages, autoPlayInputType }: ConversationViewProps) {
   // Encontrar el último mensaje del bot para activar autoPlay solo en ese
   let lastBotMessageIndex = messages.length - 1;
   while (lastBotMessageIndex >= 0 && messages[lastBotMessageIndex].type !== 'bot') {
     lastBotMessageIndex--;
   }
+
+  // Refs para controlar scroll al final de la conversación
   const flatListRef = useRef<FlatList>(null);
   const scrollViewRef = useRef<ScrollView>(null);
+
+  // Estado global de audio (para bloquear controles cuando hay audio reproduciendo)
+  const { isAnyAudioPlaying } = useAudioPlaybackContext();
 
   // Auto-scroll al final cuando llegan nuevos mensajes
   useEffect(() => {
     if (messages.length > 0) {
       setTimeout(() => {
+        // Usar el scroll apropiado según cantidad de mensajes
         if (messages.length > 2) {
           flatListRef.current?.scrollToEnd({ animated: true });
         } else {
           scrollViewRef.current?.scrollToEnd({ animated: true });
         }
-      }, 100);
+      }, 100); // Delay para que se complete el render
     }
   }, [messages]);
 
+  // Función que renderiza cada mensaje individual
   const renderMessage = ({ item, index }: { item: Message; index: number }) => {
-    const isUser = item.type === 'user';
-    const isLastBotMessage = item.type === 'bot' && index === lastBotMessageIndex;
+    const isUser = item.type === 'user'; // Determinar si es mensaje del usuario
+    const isLastBotMessage = item.type === 'bot' && index === lastBotMessageIndex; // Último mensaje del bot para auto-play
 
     return (
       <View style={[
@@ -68,6 +82,7 @@ export default function ConversationView({ messages, autoPlayInputType = 'all' }
               inputType={item.inputType}
               autoPlayInputType={autoPlayInputType}
               isLastBotMessage={isLastBotMessage}
+              isAnyAudioPlaying={isAnyAudioPlaying}
             />
           )}
 
@@ -114,24 +129,35 @@ export default function ConversationView({ messages, autoPlayInputType = 'all' }
   );
 }
 
+/*
+ * Renderiza controles de reproducción de audio para mensajes del bot.
+ * Maneja estado de reproducción y prevención de ecos.
+*/
 function AudioMessagePlayer({
   audioUri,
   inputType,
-  autoPlayInputType = 'all',
-  isLastBotMessage = false
+  autoPlayInputType,
+  isLastBotMessage = false,
+  isAnyAudioPlaying = false
 }: {
   audioUri: string;
   inputType?: 'audio' | 'text';
   autoPlayInputType?: 'audio' | 'text' | 'all';
   isLastBotMessage?: boolean;
+  isAnyAudioPlaying?: boolean;
 }) {
+  // Determinar si este audio debe reproducirse automáticamente
   const shouldAutoPlay = isLastBotMessage && (
     autoPlayInputType === 'all' ||
     (autoPlayInputType === 'audio' && inputType === 'audio') ||
     (autoPlayInputType === 'text' && inputType === 'text')
   );
 
+  // Hook personalizado para controlar reproducción específica de este audio
   const { isPlaying, isLoading, playPause, stop } = useAudioPlayback(audioUri, shouldAutoPlay);
+
+  // Bloquear todos los controles cuando hay audio reproduciendo para evitar eco
+  const isBlocked = isAnyAudioPlaying;
 
   const handlePress = () => {
     if (isPlaying) {
@@ -143,17 +169,17 @@ function AudioMessagePlayer({
 
   return (
     <TouchableOpacity
-      style={styles.audioButton}
+      style={[styles.audioButton, isBlocked && styles.audioButtonBlocked]}
       onPress={handlePress}
-      disabled={isLoading}
+      disabled={isLoading || isBlocked}
     >
       <IconSymbol
-        name={isPlaying ? 'stop.fill' : 'play.fill'}
+        name={isBlocked ? 'speaker.slash.fill' : (isPlaying ? 'stop.fill' : 'play.fill')}
         size={20}
         color="white"
       />
       <ThemedText style={styles.audioButtonText}>
-        {isLoading ? 'Cargando...' : (isPlaying ? 'Detener' : 'Reproducir')}
+        {isBlocked ? 'Reproduciendo audio...' : (isLoading ? 'Cargando...' : (isPlaying ? 'Detener' : 'Reproducir'))}
       </ThemedText>
     </TouchableOpacity>
   );
@@ -211,6 +237,9 @@ const styles = StyleSheet.create({
     padding: 8,
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
     borderRadius: 8,
+  },
+  audioButtonBlocked: {
+    opacity: 0.5,
   },
   audioButtonText: {
     color: 'white',

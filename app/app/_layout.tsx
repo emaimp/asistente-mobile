@@ -4,7 +4,8 @@ import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
 
 import { useColorScheme } from '@/hooks/use-color-scheme';
-import { ConversationProvider } from '@/contexts/conversation-context';
+import { ConversationProvider } from '@/contexts/chatbot-conversation-context';
+import { AudioPlaybackProvider } from '@/contexts/audio-playback-context';
 
 export const unstable_settings = {
   anchor: '(tabs)',
@@ -14,13 +15,15 @@ export default function RootLayout() {
   const colorScheme = useColorScheme();
 
   return (
-    <ConversationProvider>
-      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        </Stack>
-        <StatusBar style="auto" />
-      </ThemeProvider>
-    </ConversationProvider>
+    <AudioPlaybackProvider>
+      <ConversationProvider>
+        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+          <Stack>
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          </Stack>
+          <StatusBar style="auto" />
+        </ThemeProvider>
+      </ConversationProvider>
+    </AudioPlaybackProvider>
   );
 }

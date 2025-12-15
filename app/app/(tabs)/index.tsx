@@ -1,13 +1,34 @@
 import { StyleSheet } from 'react-native';
+import { useMemo } from 'react';
 
 import ParallaxScrollView from '@/components/parallax-scroll-view';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import AudioRecorder from '@/components/audio-recorder';
-import { useConversation } from '@/contexts/conversation-context';
+import AudioRecorder from '@/components/index-audio-recorder';
+import { useConversation } from '@/contexts/chatbot-conversation-context';
+import { useAudioPlayback } from '@/hooks/use-audio-playback';
+
+// Componente que reproduce automáticamente el audio de la última respuesta del bot
+function AutoResponsePlayer({ messages }: { messages: any[] }) {
+  // Encontrar el último mensaje del bot con audio
+  const lastBotAudioUri = useMemo(() => {
+    for (let i = messages.length - 1; i >= 0; i--) {
+      if (messages[i].type === 'bot' && messages[i].audioUri) {
+        return messages[i].audioUri;
+      }
+    }
+    return null;
+  }, [messages]);
+
+  // Reproducción automática del último audio del bot
+  useAudioPlayback(lastBotAudioUri, true);
+
+  // Este componente no renderiza nada visible
+  return null;
+}
 
 export default function HomeScreen() {
-  const { handleRecordingComplete, isProcessing } = useConversation();
+  const { messages, handleRecordingComplete, isProcessing } = useConversation();
 
   return (
     <ParallaxScrollView
@@ -18,6 +39,7 @@ export default function HomeScreen() {
       <ThemedView style={styles.instructionContainer} lightColor="transparent" darkColor="transparent">
         <ThemedText style={styles.instructionText}>💡 Presiona el botón para comenzar a hablar con el BOT.</ThemedText>
       </ThemedView>
+      <AutoResponsePlayer messages={messages} />
     </ParallaxScrollView>
   );
 }

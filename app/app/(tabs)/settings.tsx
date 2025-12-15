@@ -3,7 +3,7 @@ import { StyleSheet, TextInput, Alert, TouchableOpacity, ScrollView, View } from
 import ParallaxScrollView from '@/components/parallax-scroll-view';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { useBackendConfig } from '@/hooks/use-backend-config';
+import { useBackendConfig } from '@/hooks/use-api-settings';
 
 export default function SettingsScreen() {
   const { backendUrl, model, saveBackendUrl, saveModel, updateModel, testConnection, isLoading } = useBackendConfig();

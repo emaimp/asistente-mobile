@@ -65,7 +65,7 @@ export function useBackendConfig() {
     try {
       await AsyncStorage.setItem(MODEL_KEY, newModel);
       setModel(newModel);
-      console.log(`Modelo guardado localmente: ${newModel}`);
+      console.log(`Modelo guardado: ${newModel}`);
       return { success: true };
     } catch (error) {
       console.error('Error saving model locally:', error);
@@ -79,7 +79,6 @@ export function useBackendConfig() {
       const backendSuccess = await apiService.setModel(newModel);
       
       if (backendSuccess) {
-        console.log(`Modelo actualizado en el backend: ${newModel}`);
         return { success: true, message: 'Modelo actualizado correctamente en el servidor' };
       } else {
         console.warn(`No se pudo actualizar el modelo en el backend: ${newModel}`);

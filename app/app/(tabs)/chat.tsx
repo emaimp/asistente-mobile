@@ -3,8 +3,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useState } from 'react';
 
 import { ThemedText } from '@/components/themed-text';
-import ConversationView from '@/components/conversation-view';
-import { useConversation } from '@/contexts/conversation-context';
+import ConversationView from '@/components/chat-conversation-view';
+import { useConversation } from '@/contexts/chatbot-conversation-context';
 
 export default function ChatScreen() {
   const { messages, handleTextSubmit, isProcessing } = useConversation();
@@ -33,7 +33,7 @@ export default function ChatScreen() {
             {messages.length === 0 ? (
               <ThemedText style={styles.emptyText}>Sin historial de Chat</ThemedText>
             ) : (
-              <ConversationView messages={messages} autoPlayInputType="all" />
+              <ConversationView messages={messages} />
             )}
           </View>
 
