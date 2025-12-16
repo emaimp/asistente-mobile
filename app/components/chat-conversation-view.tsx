@@ -5,6 +5,7 @@ import { ThemedView } from '@/components/themed-view';
 import { IconSymbol } from './ui/icon-symbol';
 import { useAudioPlayback } from '@/hooks/use-audio-playback';
 import { useAudioPlaybackContext } from '@/contexts/audio-playback-context';
+import { useColorScheme } from '@/hooks/use-color-scheme';
 
 // Estructura de datos para representar un mensaje en la conversación
 interface Message {
@@ -27,6 +28,9 @@ interface ConversationViewProps {
  * Renderiza mensajes entre usuario y bot con controles de audio.
 */
 export default function ConversationView({ messages, autoPlayInputType }: ConversationViewProps) {
+  const colorScheme = useColorScheme();
+  const userBorderColor = colorScheme === 'dark' ? '#FFFFFF' : '#000000';
+
   // Encontrar el último mensaje del bot para activar autoPlay solo en ese
   let lastBotMessageIndex = messages.length - 1;
   while (lastBotMessageIndex >= 0 && messages[lastBotMessageIndex].type !== 'bot') {
@@ -67,12 +71,17 @@ export default function ConversationView({ messages, autoPlayInputType }: Conver
         <ThemedView
           style={[
             styles.messageContainer,
-            isUser ? styles.userMessage : styles.botMessage
+            isUser ? styles.userMessage : styles.botMessage,
+            { borderColor: isUser ? userBorderColor : '#50c8fa' }
           ]}
-          lightColor="transparent"
-          darkColor="transparent"
+          lightColor={isUser ? 'rgba(205, 205, 205, 0.5)' : 'rgba(80, 200, 250, 0.5)'}
+          darkColor={isUser ? 'rgba(24, 24, 24, 0.5)' : 'rgba(80, 200, 250, 0.5)'}
         >
-          <ThemedText style={styles.messageText}>
+          <ThemedText
+            style={styles.messageText}
+            lightColor="#000000"
+            darkColor="#FFFFFF"
+          >
             {item.content}
           </ThemedText>
 
@@ -86,7 +95,11 @@ export default function ConversationView({ messages, autoPlayInputType }: Conver
             />
           )}
 
-          <ThemedText style={styles.timestampText}>
+          <ThemedText
+            style={styles.timestampText}
+            lightColor="rgba(0, 0, 0, 0.7)"
+            darkColor="rgba(255, 255, 255, 0.7)"
+          >
             {item.timestamp.toLocaleTimeString([], {
               hour: '2-digit',
               minute: '2-digit'
@@ -178,7 +191,11 @@ function AudioMessagePlayer({
         size={20}
         color="white"
       />
-      <ThemedText style={styles.audioButtonText}>
+      <ThemedText
+        style={styles.audioButtonText}
+        lightColor="#000000"
+        darkColor="#FFFFFF"
+      >
         {isBlocked ? 'Reproduciendo audio...' : (isLoading ? 'Cargando...' : (isPlaying ? 'Detener' : 'Reproducir'))}
       </ThemedText>
     </TouchableOpacity>
@@ -209,23 +226,18 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: '#E5E5E7',
   },
   userMessage: {
-    backgroundColor: 'rgba(0, 28, 65, 0.9)',
     borderBottomRightRadius: 4,
   },
   botMessage: {
-    backgroundColor: 'rgba(32, 178, 170, 0.9)',
     borderBottomLeftRadius: 4,
   },
   messageText: {
-    color: 'white',
     fontSize: 15,
     lineHeight: 18,
   },
   timestampText: {
-    color: 'rgba(255, 255, 255, 0.7)',
     fontSize: 12,
     marginTop: 4,
     textAlign: 'right',
@@ -235,14 +247,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 8,
     padding: 8,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    backgroundColor: 'rgba(255, 255, 255, 0.3)',
     borderRadius: 8,
   },
   audioButtonBlocked: {
     opacity: 0.5,
   },
   audioButtonText: {
-    color: 'white',
     fontSize: 14,
     marginLeft: 6,
   },

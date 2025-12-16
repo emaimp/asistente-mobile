@@ -1,14 +1,19 @@
 import { StyleSheet, View, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
 import { useState } from 'react';
 
 import { ThemedText } from '@/components/themed-text';
+import { ThemedView } from '@/components/themed-view';
 import ConversationView from '@/components/chat-conversation-view';
 import { useConversation } from '@/contexts/chatbot-conversation-context';
+import { useColorScheme } from '@/hooks/use-color-scheme';
+import { Colors } from '@/constants/theme';
 
 export default function ChatScreen() {
   const { messages, handleTextSubmit, isProcessing } = useConversation();
   const [inputText, setInputText] = useState('');
+  const colorScheme = useColorScheme();
+  const textInputColor = colorScheme === 'dark' ? 'white' : 'black';
+  const placeholderColor = colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)';
 
   const handleSubmit = async () => {
     if (inputText.trim() && !isProcessing) {
@@ -24,14 +29,17 @@ export default function ChatScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
     >
-      <LinearGradient
-        colors={['#004480', '#0a0a5c']}
-        style={{ flex: 1 }}
-      >
+      <ThemedView style={{flex: 1}} lightColor={Colors.light.tabBackground} darkColor={Colors.dark.tabBackground}>
         <View style={styles.container}>
           <View style={[styles.content, messages.length === 0 && styles.emptyState]}>
             {messages.length === 0 ? (
-              <ThemedText style={styles.emptyText}>Sin historial de Chat</ThemedText>
+              <ThemedText
+                style={styles.emptyText}
+                lightColor="#000000"
+                darkColor="#FFFFFF"
+              >
+                Sin historial de Chat
+              </ThemedText>
             ) : (
               <ConversationView messages={messages} />
             )}
@@ -39,11 +47,11 @@ export default function ChatScreen() {
 
           <View style={styles.inputContainer}>
             <TextInput
-              style={styles.textInput}
+              style={[styles.textInput, { color: textInputColor }]}
               value={inputText}
               onChangeText={setInputText}
               placeholder="Escribe tu mensaje..."
-              placeholderTextColor="rgba(255, 255, 255, 0.5)"
+              placeholderTextColor={placeholderColor}
               multiline
               maxLength={500}
               onSubmitEditing={handleSubmit}
@@ -54,13 +62,17 @@ export default function ChatScreen() {
               onPress={handleSubmit}
               disabled={!inputText.trim() || isProcessing}
             >
-              <ThemedText style={styles.sendButtonText}>
+              <ThemedText
+                style={styles.sendButtonText}
+                lightColor="#FFFFFF"
+                darkColor="#FFFFFF"
+              >
                 {isProcessing ? '...' : 'Enviar'}
               </ThemedText>
             </TouchableOpacity>
           </View>
         </View>
-      </LinearGradient>
+      </ThemedView>
     </KeyboardAvoidingView>
   );
 }
@@ -85,7 +97,6 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: 18,
     textAlign: 'center',
-    color: 'rgba(255, 255, 255, 0.7)',
   },
   inputContainer: {
     flexDirection: 'row',
@@ -96,17 +107,16 @@ const styles = StyleSheet.create({
   },
   textInput: {
     flex: 1,
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    backgroundColor: 'rgba(255, 255, 255, 0.5)',
     borderRadius: 20,
     paddingHorizontal: 16,
     paddingVertical: 12,
-    color: 'white',
     fontSize: 16,
     maxHeight: 100,
     minHeight: 44,
   },
   sendButton: {
-    backgroundColor: '#007AFF',
+    backgroundColor: '#50c8fa',
     borderRadius: 20,
     paddingHorizontal: 20,
     paddingVertical: 12,
@@ -115,10 +125,9 @@ const styles = StyleSheet.create({
     minWidth: 70,
   },
   sendButtonDisabled: {
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    backgroundColor: 'rgba(159, 159, 159, 0.5)',
   },
   sendButtonText: {
-    color: 'white',
     fontSize: 16,
     fontWeight: '600',
   },

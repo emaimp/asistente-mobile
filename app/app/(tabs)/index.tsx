@@ -1,12 +1,11 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Image, View } from 'react-native';
 import { useMemo } from 'react';
-
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
+import { ThemedText } from '@/components/themed-text';
 import AudioRecorder from '@/components/index-audio-recorder';
 import { useConversation } from '@/contexts/chatbot-conversation-context';
 import { useAudioPlayback } from '@/hooks/use-audio-playback';
+import { Colors } from '@/constants/theme';
 
 // Componente que reproduce automáticamente el audio de la última respuesta del bot
 function AutoResponsePlayer({ messages }: { messages: any[] }) {
@@ -31,33 +30,59 @@ export default function HomeScreen() {
   const { messages, handleRecordingComplete, isProcessing } = useConversation();
 
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}>
-      <ThemedView style={styles.stepContainer} lightColor="transparent" darkColor="transparent">
-        <AudioRecorder onRecordingComplete={handleRecordingComplete} isProcessing={isProcessing} />
-      </ThemedView>
-      <ThemedView style={styles.instructionContainer} lightColor="transparent" darkColor="transparent">
-        <ThemedText style={styles.instructionText}>💡 Presiona el botón para comenzar a hablar con el BOT.</ThemedText>
-      </ThemedView>
+    <ThemedView style={{flex: 1}} lightColor={Colors.light.tabBackground} darkColor={Colors.dark.tabBackground}>
+      <View style={styles.mainContainer}>
+        <View style={styles.topHalf}>
+          <Image source={require('@/assets/images/cat-bot.webp')} style={styles.botImage} resizeMode="contain" />
+        </View>
+        <View style={styles.middle}>
+          <ThemedText
+            style={styles.instructionText}
+            lightColor="#000000"
+            darkColor="#FFFFFF"
+          >
+            Presiona para hablar
+          </ThemedText>
+        </View>
+        <View style={styles.bottomHalf}>
+          <AudioRecorder onRecordingComplete={handleRecordingComplete} isProcessing={isProcessing} />
+        </View>
+      </View>
       <AutoResponsePlayer messages={messages} />
-    </ParallaxScrollView>
+    </ThemedView>
   );
 }
 
 const styles = StyleSheet.create({
   stepContainer: {
-    marginTop: 70,
+    marginTop: 0,
     marginBottom: 0,
   },
-  instructionContainer: {
-    padding: 16,
-    borderWidth: 1,
-    borderColor: '#E5E5E7',
-    borderRadius: 12,
-    backgroundColor: 'rgba(16, 16, 49, 0.80)',
+  mainContainer: {
+    flex: 1,
+  },
+  topHalf: {
+    flex: 1,
+    marginTop: 170,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  middle: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  bottomHalf: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  botImage: {
+    width: 400,
+    height: 400,
   },
   instructionText: {
-    color: 'white',
+    fontSize: 18,
     textAlign: 'center',
+    marginTop: 80,
+    marginBottom: 50,
   },
 });
