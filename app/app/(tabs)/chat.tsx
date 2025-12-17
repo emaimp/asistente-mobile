@@ -1,4 +1,4 @@
-import { StyleSheet, View, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native';
+import { StyleSheet, View, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, Image } from 'react-native';
 import { useState } from 'react';
 
 import { ThemedText } from '@/components/themed-text';
@@ -32,14 +32,19 @@ export default function ChatScreen() {
       <ThemedView style={{flex: 1}} lightColor={Colors.light.tabBackground} darkColor={Colors.dark.tabBackground}>
         <View style={styles.container}>
           <View style={[styles.content, messages.length === 0 && styles.emptyState]}>
+            <View style={styles.backgroundImageContainer}>
+              <Image source={colorScheme === 'dark' ? require('@/assets/images/head-white.webp') : require('@/assets/images/head-black.webp')} style={styles.backgroundImage} />
+            </View>
             {messages.length === 0 ? (
-              <ThemedText
-                style={styles.emptyText}
-                lightColor="#000000"
-                darkColor="#FFFFFF"
-              >
-                Sin historial de Chat
-              </ThemedText>
+              <View style={styles.emptyContent}>
+                <ThemedText
+                  style={styles.emptyText}
+                  lightColor="#000000"
+                  darkColor="#FFFFFF"
+                >
+                  Sin historial de Chat
+                </ThemedText>
+              </View>
             ) : (
               <ConversationView messages={messages} />
             )}
@@ -97,6 +102,27 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: 18,
     textAlign: 'center',
+  },
+  emptyContent: {
+    position: 'absolute',
+    bottom: 200,
+    left: 0,
+    right: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+    opacity: 0.3,
+  },
+  backgroundImageContainer: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 0,
+    opacity: 0.1,
+  },
+  backgroundImage: {
+    width: 250,
+    height: 250,
+    resizeMode: 'contain',
   },
   inputContainer: {
     flexDirection: 'row',
