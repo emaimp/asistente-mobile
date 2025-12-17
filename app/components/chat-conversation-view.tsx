@@ -30,6 +30,7 @@ interface ConversationViewProps {
 export default function ConversationView({ messages, autoPlayInputType }: ConversationViewProps) {
   const colorScheme = useColorScheme();
   const userBorderColor = colorScheme === 'dark' ? '#FFFFFF' : '#000000';
+  const botBorderColor = colorScheme === 'dark' ? '#FFFFFF' : '#000000';
 
   // Encontrar el último mensaje del bot para activar autoPlay solo en ese
   let lastBotMessageIndex = messages.length - 1;
@@ -72,10 +73,10 @@ export default function ConversationView({ messages, autoPlayInputType }: Conver
           style={[
             styles.messageContainer,
             isUser ? styles.userMessage : styles.botMessage,
-            { borderColor: isUser ? userBorderColor : '#50c8fa' }
+            { borderColor: isUser ? userBorderColor : botBorderColor }
           ]}
-          lightColor={isUser ? 'rgba(205, 205, 205, 0.5)' : 'rgba(80, 200, 250, 0.5)'}
-          darkColor={isUser ? 'rgba(24, 24, 24, 0.5)' : 'rgba(80, 200, 250, 0.5)'}
+          lightColor={isUser ? 'rgba(230, 230, 230, 1)' : 'rgba(43, 176, 225, 1)'}
+          darkColor={isUser ? 'rgba(143, 143, 143, 1)' : 'rgba(43, 176, 225, 1)'}
         >
           <ThemedText
             style={styles.messageText}

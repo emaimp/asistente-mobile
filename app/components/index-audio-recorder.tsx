@@ -95,7 +95,7 @@ export default function AudioRecorder({ onRecordingComplete, isProcessing = fals
               <AudioWave
                 key={i}
                 delay={i * 300}
-                color={isRecording ? '#FF3B30' : isAnyAudioPlaying ? '#00ff7f' : '#50c8fa'}
+                color={isRecording ? '#ff4638' : isAnyAudioPlaying ? '#00f071' : '#2ab0e1'}
               />
             ))}
           </>
@@ -155,7 +155,7 @@ const styles = StyleSheet.create({
   },
 
   button: {
-    backgroundColor: '#50c8fa',
+    backgroundColor: '#2ab0e1',
     width: 150,
     height: 150,
     borderRadius: 75,
@@ -165,16 +165,16 @@ const styles = StyleSheet.create({
     elevation: 12,
   },
   recordingButton: {
-    backgroundColor: '#FF3B30',
+    backgroundColor: '#ff4638',
   },
   processingButton: {
-    backgroundColor: '#50c8fa',
+    backgroundColor: '#2ab0e1',
   },
   loadingButton: {
-    backgroundColor: '#00ff7f',
+    backgroundColor: '#00f071',
   },
   playingButton: {
-    backgroundColor: '#00ff7f',
+    backgroundColor: '#00f071',
   },
   buttonText: {
     color: 'white',
@@ -183,17 +183,17 @@ const styles = StyleSheet.create({
   },
   recordingText: {
     marginTop: 16,
-    color: '#FF3B30',
+    color: '#ff4638',
     fontSize: 14,
   },
   processingText: {
     marginTop: 16,
-    color: '#50c8fa',
+    color: '#2ab0e1',
     fontSize: 14,
   },
   playingText: {
     marginTop: 16,
-    color: '#00ff7f',
+    color: '#00f071',
     fontSize: 14,
   },
   buttonTouchable: {
@@ -208,7 +208,7 @@ const styles = StyleSheet.create({
     height: 150,
     borderRadius: 75,
     backgroundColor: 'rgba(80, 200, 250, 0.6)',
-    shadowColor: '#50c8fa',
+    shadowColor: '#2ab0e1',
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 1,
     shadowRadius: 20,
@@ -219,7 +219,7 @@ const styles = StyleSheet.create({
     height: 150,
     borderRadius: 75,
     borderWidth: 2,
-    borderColor: '#FF3B30',
+    borderColor: '#ff4638',
     backgroundColor: 'transparent',
   },
   statusTextContainer: {

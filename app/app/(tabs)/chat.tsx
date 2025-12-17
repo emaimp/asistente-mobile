@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
     minHeight: 44,
   },
   sendButton: {
-    backgroundColor: '#50c8fa',
+    backgroundColor: '#2ab0e1',
     borderRadius: 20,
     paddingHorizontal: 20,
     paddingVertical: 12,
