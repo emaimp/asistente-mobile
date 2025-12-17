@@ -15,7 +15,7 @@ interface AudioRecorderProps {
 
 export default function AudioRecorder({ onRecordingComplete, isProcessing = false, audioUri, onRecordingStart }: AudioRecorderProps) {
   const { isRecording, startRecording, stopRecording } = useAudioRecording(onRecordingComplete);
-  const { isAnyAudioPlaying } = useAudioPlaybackContext();
+  const { isAnyAudioPlaying, stopAllPlayback } = useAudioPlaybackContext();
   const glowScale = useSharedValue(1);
   const glowOpacity = useSharedValue(0.5);
   const lastAutoPlayedUri = useRef<string | null>(null);
@@ -75,8 +75,10 @@ export default function AudioRecorder({ onRecordingComplete, isProcessing = fals
   const statusMessage = getStatusMessage();
   const iconColor = useThemeColor({}, 'tabBackground');
 
-  const handlePress = () => {
-    if (isRecording) {
+  const handlePress = async () => {
+    if (isAnyAudioPlaying) {
+      await stopAllPlayback(); // Detener todas las reproducciones activas
+    } else if (isRecording) {
       stopRecording();
     } else {
       onRecordingStart?.();

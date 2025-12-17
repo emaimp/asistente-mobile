@@ -12,6 +12,12 @@ interface AudioPlaybackContextType {
   incrementPlayback: () => void;
   /** Decrementa el contador cuando termina un audio. Llamado por hooks de audio. */
   decrementPlayback: () => void;
+  /** Registra una función stop para poder detener todas las reproducciones activas */
+  registerStopFunction: (stopFn: () => Promise<void>) => void;
+  /** Desregistra una función stop */
+  unregisterStopFunction: (stopFn: () => Promise<void>) => void;
+  /** Detiene todas las reproducciones de audio activas llamando sus funciones stop */
+  stopAllPlayback: () => Promise<void>;
 }
 
 const AudioPlaybackContext = createContext<AudioPlaybackContextType | undefined>(undefined);
@@ -37,6 +43,9 @@ export const AudioPlaybackProvider: React.FC<{children: React.ReactNode}> = ({ c
   // Contador interno, cuenta cuántos audios se están reproduciendo (no se exporta, solo se usa para calcular isAnyAudioPlaying)
   const [playbackCount, setPlaybackCount] = useState(0);
 
+  // Conjunto de funciones stop para registrar todas las reproducciones activas y detenerlas globalmente
+  const [stopFunctions, setStopFunctions] = useState<Set<() => Promise<void>>>(new Set());
+
   // Flag derivado, 'true' cuando hay al menos un audio reproduciendo
   const isAnyAudioPlaying = playbackCount > 0;
 
@@ -46,9 +55,36 @@ export const AudioPlaybackProvider: React.FC<{children: React.ReactNode}> = ({ c
   // Decrementa contador cuando termina reproducción de audio (usado por useAudioPlayback hook)
   const decrementPlayback = () => setPlaybackCount(prev => Math.max(0, prev - 1));
 
+  // Registra una función stop para poder detenerla globalmente
+  const registerStopFunction = (stopFn: () => Promise<void>) => {
+    setStopFunctions(prev => new Set(prev).add(stopFn));
+  };
+
+  // Desregistra una función stop
+  const unregisterStopFunction = (stopFn: () => Promise<void>) => {
+    setStopFunctions(prev => {
+      const newSet = new Set(prev);
+      newSet.delete(stopFn);
+      return newSet;
+    });
+  };
+
+  // Detiene todas las reproducciones activas llamando sus funciones stop registradas
+  const stopAllPlayback = async () => {
+    const promises = Array.from(stopFunctions).map(stopFn => stopFn().catch(() => {})); // Ignorar errores individuales
+    await Promise.all(promises);
+  };
+
   return (
     // Provee el contexto a todos los componentes hijos
-    <AudioPlaybackContext.Provider value={{ isAnyAudioPlaying, incrementPlayback, decrementPlayback }}>
+    <AudioPlaybackContext.Provider value={{
+      isAnyAudioPlaying,
+      incrementPlayback,
+      decrementPlayback,
+      registerStopFunction,
+      unregisterStopFunction,
+      stopAllPlayback
+    }}>
       {children}
     </AudioPlaybackContext.Provider>
   );

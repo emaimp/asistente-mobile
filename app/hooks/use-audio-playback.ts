@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { useAudioPlaybackContext } from '@/contexts/audio-playback-context';
 
 export function useAudioPlayback(uri: string | null, autoPlay: boolean = true) {
-  const { incrementPlayback, decrementPlayback } = useAudioPlaybackContext();
+  const { incrementPlayback, decrementPlayback, registerStopFunction, unregisterStopFunction } = useAudioPlaybackContext();
   const soundRef = useRef<Audio.Sound | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -13,6 +13,21 @@ export function useAudioPlayback(uri: string | null, autoPlay: boolean = true) {
   const currentUriRef = useRef<string | null>(null);
   const pendingAutoPlayRef = useRef(false);
   const prevIsPlayingRef = useRef(false);
+
+  // Detiene la reproducción actual y actualiza el estado global
+  const stop = useCallback(async () => {
+    if (!soundRef.current) return;
+
+    try {
+      await soundRef.current.stopAsync();
+      setPosition(0);
+      // Decrementar contador global y desregistrar función stop
+      decrementPlayback();
+      unregisterStopFunction(stop);
+    } catch {
+      // Ignorar errores al detener
+    }
+  }, [decrementPlayback, unregisterStopFunction]);
 
   const loadSound = useCallback(async () => {
     if (!uri || uri === currentUriRef.current) return;
@@ -40,12 +55,14 @@ export function useAudioPlayback(uri: string | null, autoPlay: boolean = true) {
           setPosition(status.positionMillis || null);
           setIsPlaying(status.isPlaying);
 
-          // Actualizar contador global de reproducción
+          // Actualizar contador global de reproducción y registrar/desregistrar función stop
           if (status.isPlaying !== prevIsPlayingRef.current) {
             if (status.isPlaying) {
               incrementPlayback();
+              registerStopFunction(stop); // Registrar función stop para detención global
             } else {
               decrementPlayback();
+              unregisterStopFunction(stop); // Desregistrar función stop
             }
             prevIsPlayingRef.current = status.isPlaying;
           }
@@ -130,16 +147,6 @@ export function useAudioPlayback(uri: string | null, autoPlay: boolean = true) {
     } catch {
     }
   }, [isPlaying, isLoaded, position, duration]);
-
-  const stop = useCallback(async () => {
-    if (!soundRef.current || !isLoaded) return;
-
-    try {
-      await soundRef.current.stopAsync();
-      setPosition(0);
-    } catch {
-    }
-  }, [isLoaded]);
 
   const formatTime = (millis: number | null) => {
     if (!millis) return '0:00';
