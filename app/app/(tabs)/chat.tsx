@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
   },
   emptyContent: {
     position: 'absolute',
-    bottom: 200,
+    bottom: 215,
     left: 0,
     right: 0,
     alignItems: 'center',

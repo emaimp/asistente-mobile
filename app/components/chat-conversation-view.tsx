@@ -43,7 +43,7 @@ export default function ConversationView({ messages, autoPlayInputType }: Conver
   const scrollViewRef = useRef<ScrollView>(null);
 
   // Estado global de audio (para bloquear controles cuando hay audio reproduciendo)
-  const { isAnyAudioPlaying } = useAudioPlaybackContext();
+  const { isAnyAudioPlaying, currentPlayingUri } = useAudioPlaybackContext();
 
   // Auto-scroll al final cuando llegan nuevos mensajes
   useEffect(() => {
@@ -93,6 +93,7 @@ export default function ConversationView({ messages, autoPlayInputType }: Conver
               autoPlayInputType={autoPlayInputType}
               isLastBotMessage={isLastBotMessage}
               isAnyAudioPlaying={isAnyAudioPlaying}
+              currentPlayingUri={currentPlayingUri}
             />
           )}
 
@@ -152,13 +153,15 @@ function AudioMessagePlayer({
   inputType,
   autoPlayInputType,
   isLastBotMessage = false,
-  isAnyAudioPlaying = false
+  isAnyAudioPlaying = false,
+  currentPlayingUri
 }: {
   audioUri: string;
   inputType?: 'audio' | 'text';
   autoPlayInputType?: 'audio' | 'text' | 'all';
   isLastBotMessage?: boolean;
   isAnyAudioPlaying?: boolean;
+  currentPlayingUri?: string | null;
 }) {
   // Determinar si este audio debe reproducirse automáticamente
   const shouldAutoPlay = isLastBotMessage && (
@@ -168,7 +171,10 @@ function AudioMessagePlayer({
   );
 
   // Hook personalizado para controlar reproducción específica de este audio
-  const { isPlaying, isLoading, playPause, stop } = useAudioPlayback(audioUri, shouldAutoPlay);
+  const { isPlaying, isLoading, play, stop } = useAudioPlayback(audioUri, shouldAutoPlay);
+
+  // Función para detener todas las reproducciones
+  const { stopAllPlayback } = useAudioPlaybackContext();
 
   // Bloquear todos los controles cuando hay audio reproduciendo para evitar eco
   const isBlocked = isAnyAudioPlaying;
@@ -177,29 +183,51 @@ function AudioMessagePlayer({
     if (isPlaying) {
       stop();
     } else {
-      playPause();
+      play();
     }
   };
 
   return (
-    <TouchableOpacity
-      style={[styles.audioButton, isBlocked && styles.audioButtonBlocked]}
-      onPress={handlePress}
-      disabled={isLoading || isBlocked}
-    >
-      <IconSymbol
-        name={isBlocked ? 'speaker.slash.fill' : (isPlaying ? 'stop.fill' : 'play.fill')}
-        size={20}
-        color="white"
-      />
-      <ThemedText
-        style={styles.audioButtonText}
-        lightColor="#000000"
-        darkColor="#FFFFFF"
-      >
-        {isBlocked ? 'Reproduciendo audio...' : (isLoading ? 'Cargando...' : (isPlaying ? 'Detener' : 'Reproducir'))}
-      </ThemedText>
-    </TouchableOpacity>
+    <View style={styles.audioContainer}>
+      <View style={styles.audioControls}>
+        <TouchableOpacity
+          style={[styles.audioButton, isBlocked && styles.audioButtonBlocked]}
+          onPress={handlePress}
+          disabled={isLoading || (isAnyAudioPlaying && !isPlaying && !isLastBotMessage)}
+        >
+          <IconSymbol
+            name={(isPlaying || (isLastBotMessage && isAnyAudioPlaying)) ? 'stop.fill' : (isAnyAudioPlaying ? 'speaker.slash.fill' : 'play.fill')}
+            size={20}
+            color="white"
+          />
+          <ThemedText
+            style={styles.audioButtonText}
+            lightColor="#000000"
+            darkColor="#FFFFFF"
+          >
+            {(isPlaying || (isLastBotMessage && isAnyAudioPlaying)) ? 'Detener' : (isAnyAudioPlaying ? 'Reproducir' : (isLoading ? 'Cargando...' : 'Reproducir'))}
+          </ThemedText>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.stopButton, (currentPlayingUri !== audioUri) && styles.audioButtonBlocked]}
+          onPress={async () => await stopAllPlayback()}
+          disabled={isLoading || currentPlayingUri !== audioUri}
+        >
+          <IconSymbol
+            name="stop.fill"
+            size={20}
+            color="white"
+          />
+          <ThemedText
+            style={styles.audioButtonText}
+            lightColor="#000000"
+            darkColor="#FFFFFF"
+          >
+            Detener
+          </ThemedText>
+        </TouchableOpacity>
+      </View>
+    </View>
   );
 }
 
@@ -243,16 +271,32 @@ const styles = StyleSheet.create({
     marginTop: 4,
     textAlign: 'right',
   },
+  audioContainer: {
+    padding: 4,
+    borderRadius: 12,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+  },
+  audioControls: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
   audioButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 8,
     padding: 8,
     backgroundColor: 'rgba(255, 255, 255, 0.3)',
     borderRadius: 8,
   },
   audioButtonBlocked: {
     opacity: 0.5,
+  },
+  stopButton: {
+    padding: 8,
+    backgroundColor: 'rgba(255, 255, 255, 0.3)',
+    borderRadius: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   audioButtonText: {
     fontSize: 14,

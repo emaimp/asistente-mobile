@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { useAudioPlaybackContext } from '@/contexts/audio-playback-context';
 
 export function useAudioPlayback(uri: string | null, autoPlay: boolean = true) {
-  const { incrementPlayback, decrementPlayback, registerStopFunction, unregisterStopFunction } = useAudioPlaybackContext();
+  const { incrementPlayback, decrementPlayback, registerStopFunction, unregisterStopFunction, setCurrentPlayingUri } = useAudioPlaybackContext();
   const soundRef = useRef<Audio.Sound | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -60,9 +60,11 @@ export function useAudioPlayback(uri: string | null, autoPlay: boolean = true) {
             if (status.isPlaying) {
               incrementPlayback();
               registerStopFunction(stop); // Registrar función stop para detención global
+              setCurrentPlayingUri(uri); // Establecer URI actual reproduciendo
             } else {
               decrementPlayback();
               unregisterStopFunction(stop); // Desregistrar función stop
+              setCurrentPlayingUri(null); // Limpiar URI actual
             }
             prevIsPlayingRef.current = status.isPlaying;
           }
@@ -128,25 +130,32 @@ export function useAudioPlayback(uri: string | null, autoPlay: boolean = true) {
     };
   }, [uri, loadSound]);
 
-  const playPause = useCallback(async () => {
+  const play = useCallback(async () => {
     if (!soundRef.current || !isLoaded) {
       return;
     }
 
     try {
-      if (isPlaying) {
-        await soundRef.current.pauseAsync();
-      } else {
-        // Si está al final, resetear al inicio antes de reproducir
-        if (position && duration && position >= duration - 1000) { // 1 segundo de tolerancia
-          await soundRef.current.setPositionAsync(0);
-          setPosition(0);
-        }
-        await soundRef.current.playAsync();
+      // Si está al final, resetear al inicio antes de reproducir
+      if (position && duration && position >= duration - 1000) { // 1 segundo de tolerancia
+        await soundRef.current.setPositionAsync(0);
+        setPosition(0);
       }
+      await soundRef.current.playAsync();
     } catch {
     }
-  }, [isPlaying, isLoaded, position, duration]);
+  }, [isLoaded, position, duration]);
+
+  const pause = useCallback(async () => {
+    if (!soundRef.current || !isLoaded) {
+      return;
+    }
+
+    try {
+      await soundRef.current.pauseAsync();
+    } catch {
+    }
+  }, [isLoaded]);
 
   const formatTime = (millis: number | null) => {
     if (!millis) return '0:00';
@@ -161,7 +170,8 @@ export function useAudioPlayback(uri: string | null, autoPlay: boolean = true) {
     isLoaded,
     duration,
     position,
-    playPause,
+    play,
+    pause,
     stop,
     formatTime,
   };

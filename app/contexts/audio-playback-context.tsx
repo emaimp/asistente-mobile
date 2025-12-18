@@ -8,11 +8,15 @@ import React, { createContext, useContext, useState } from 'react';
 interface AudioPlaybackContextType {
   /** Indica si hay algún audio reproduciendo actualmente en cualquier parte de la app */
   isAnyAudioPlaying: boolean;
+  /** URI del audio que está reproduciendo actualmente */
+  currentPlayingUri: string | null;
   /** Incrementa el contador cuando inicia un nuevo audio. Llamado por hooks de audio. */
   incrementPlayback: () => void;
   /** Decrementa el contador cuando termina un audio. Llamado por hooks de audio. */
   decrementPlayback: () => void;
-  /** Registra una función stop para poder detener todas las reproducciones activas */
+  /** Establece la URI del audio actualmente reproduciendo */
+  setCurrentPlayingUri: (uri: string | null) => void;
+  /** Registra una función stop para poder detenerla globalmente */
   registerStopFunction: (stopFn: () => Promise<void>) => void;
   /** Desregistra una función stop */
   unregisterStopFunction: (stopFn: () => Promise<void>) => void;
@@ -42,6 +46,9 @@ export const useAudioPlaybackContext = () => {
 export const AudioPlaybackProvider: React.FC<{children: React.ReactNode}> = ({ children }) => {
   // Contador interno, cuenta cuántos audios se están reproduciendo (no se exporta, solo se usa para calcular isAnyAudioPlaying)
   const [playbackCount, setPlaybackCount] = useState(0);
+
+  // URI del audio actualmente reproduciendo
+  const [currentPlayingUri, setCurrentPlayingUri] = useState<string | null>(null);
 
   // Conjunto de funciones stop para registrar todas las reproducciones activas y detenerlas globalmente
   const [stopFunctions, setStopFunctions] = useState<Set<() => Promise<void>>>(new Set());
@@ -79,8 +86,10 @@ export const AudioPlaybackProvider: React.FC<{children: React.ReactNode}> = ({ c
     // Provee el contexto a todos los componentes hijos
     <AudioPlaybackContext.Provider value={{
       isAnyAudioPlaying,
+      currentPlayingUri,
       incrementPlayback,
       decrementPlayback,
+      setCurrentPlayingUri,
       registerStopFunction,
       unregisterStopFunction,
       stopAllPlayback
