@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from 'react';
-import { View, FlatList, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { View, FlatList, StyleSheet, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { IconSymbol } from './ui/icon-symbol';
@@ -16,6 +16,7 @@ interface Message {
   audioUri?: string; // URL del audio generado por el bot
   timestamp: Date;
   inputType?: 'audio' | 'text'; // Cómo se generó el mensaje del usuario
+  isLoading?: boolean; // Indica si es un mensaje de carga
 }
 
 // Props que recibe el componente ConversationView
@@ -122,19 +123,34 @@ export default function ConversationView({ messages, autoPlayInputType }: Conver
           lightColor={isUser ? 'rgba(230, 230, 230, 1)' : 'rgba(43, 176, 225, 1)'}
           darkColor={isUser ? 'rgba(143, 143, 143, 1)' : 'rgba(43, 176, 225, 1)'}
         >
-          <Markdown style={markdownStyles}>
-            {item.content}
-          </Markdown>
+          {item.isLoading ? (
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator size="small" color={colorScheme === 'dark' ? '#FFFFFF' : '#000000'} />
+              <ThemedText
+                style={styles.loadingText}
+                lightColor="#000000"
+                darkColor="#FFFFFF"
+              >
+                Pensando...
+              </ThemedText>
+            </View>
+          ) : (
+            <>
+              <Markdown style={markdownStyles}>
+                {item.content}
+              </Markdown>
 
-          {item.type === 'bot' && item.audioUri && (
-            <AudioMessagePlayer
-              audioUri={item.audioUri}
-              inputType={item.inputType}
-              autoPlayInputType={autoPlayInputType}
-              isLastBotMessage={isLastBotMessage}
-              isAnyAudioPlaying={isAnyAudioPlaying}
-              currentPlayingUri={currentPlayingUri}
-            />
+              {item.type === 'bot' && item.audioUri && (
+                <AudioMessagePlayer
+                  audioUri={item.audioUri}
+                  inputType={item.inputType}
+                  autoPlayInputType={autoPlayInputType}
+                  isLastBotMessage={isLastBotMessage}
+                  isAnyAudioPlaying={isAnyAudioPlaying}
+                  currentPlayingUri={currentPlayingUri}
+                />
+              )}
+            </>
           )}
 
           <ThemedText
@@ -341,5 +357,15 @@ const styles = StyleSheet.create({
   audioButtonText: {
     fontSize: 14,
     marginLeft: 6,
+  },
+  loadingContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 8,
+  },
+  loadingText: {
+    fontSize: 14,
+    marginLeft: 8,
   },
 });

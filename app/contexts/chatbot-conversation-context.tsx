@@ -10,6 +10,7 @@ export interface Message {
   audioUri?: string;
   timestamp: Date;
   inputType?: 'audio' | 'text';
+  isLoading?: boolean; // Indica si es un mensaje de carga
 }
 
 // API que provee el contexto de conversación
@@ -44,6 +45,9 @@ export const ConversationProvider: React.FC<ConversationProviderProps> = ({ chil
 
   // ID de sesión del backend (mantiene conversaciones conectadas)
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
+
+  // ID del mensaje de carga actual
+  const [loadingMessageId, setLoadingMessageId] = useState<string | null>(null);
 
   // Hook de API para comunicación con el backend
   const { sendAudio, sendText, isProcessing } = useApi();
@@ -106,6 +110,18 @@ export const ConversationProvider: React.FC<ConversationProviderProps> = ({ chil
       };
       addMessage(userMessage);
 
+      // Agregar mensaje de carga del bot
+      const loadingId = generateId();
+      const loadingMessage: Message = {
+        id: loadingId,
+        type: 'bot',
+        content: '',
+        timestamp: new Date(),
+        isLoading: true,
+      };
+      addMessage(loadingMessage);
+      setLoadingMessageId(loadingId);
+
       // Enviar al backend
       const result = await sendText(text, currentSessionId);
 
@@ -114,18 +130,27 @@ export const ConversationProvider: React.FC<ConversationProviderProps> = ({ chil
         setCurrentSessionId(result.data.session_id);
       }
 
-      // Agregar respuesta del bot
-      const botMessage: Message = {
-        id: generateId(),
-        type: 'bot',
-        content: result.data.raw_answer,
-        audioUri: result.audioUri,
-        timestamp: new Date(),
-        inputType: 'text',
-      };
-      addMessage(botMessage);
+      // Reemplazar mensaje de carga con respuesta real del bot
+      setMessages(prev =>
+        prev.map(msg =>
+          msg.id === loadingId
+            ? {
+                ...msg,
+                content: result.data.raw_answer,
+                audioUri: result.audioUri,
+                isLoading: false,
+              }
+            : msg
+        )
+      );
+      setLoadingMessageId(null);
 
     } catch (error) {
+      // En caso de error, remover mensaje de carga
+      if (loadingMessageId) {
+        setMessages(prev => prev.filter(msg => msg.id !== loadingMessageId));
+        setLoadingMessageId(null);
+      }
       const message = error instanceof Error ? error.message : 'Error desconocido';
       Alert.alert('Error', `No se pudo enviar el mensaje: ${message}`);
     }
