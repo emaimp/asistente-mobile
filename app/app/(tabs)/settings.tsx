@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import { StyleSheet, Alert, ScrollView } from 'react-native';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { useBackendConfig, useVoiceConfig } from '@/hooks/use-api-settings';
+import { useBackendConfig, useVoiceConfig, useLanguageConfig } from '@/hooks/use-api-settings';
 import ServerConfigSection from '@/components/settings/sever-config';
 import AIModelConfigSection from '@/components/settings/model-config';
 import VoiceConfigSection from '@/components/settings/voice-config';
+import LanguageConfigSection from '@/components/settings/language-config';
 import { Colors } from '@/constants/theme';
 
 export default function SettingsScreen() {
@@ -13,6 +14,8 @@ export default function SettingsScreen() {
   const { backendUrl, model, saveBackendUrl, saveModel, updateModel, testConnection, isLoading } = useBackendConfig();
   // Hook para configuración de voz
   const { voice: currentVoice, saveVoiceLocally, updateVoice } = useVoiceConfig();
+  // Hook para configuración de idioma
+  const { language: currentLanguage, saveLanguageLocally, updateLanguage } = useLanguageConfig();
   // Estado para el campo de entrada de URL del servidor
   const [inputUrl, setInputUrl] = useState(backendUrl);
   // Estado para el campo de entrada del modelo
@@ -25,6 +28,10 @@ export default function SettingsScreen() {
   const [inputVoice, setInputVoice] = useState(currentVoice);
   // Estado de carga para actualizar voz
   const [isUpdatingVoice, setIsUpdatingVoice] = useState(false);
+  // Estado para el campo de entrada de idioma
+  const [inputLanguage, setInputLanguage] = useState(currentLanguage);
+  // Estado de carga para actualizar idioma
+  const [isUpdatingLanguage, setIsUpdatingLanguage] = useState(false);
 
   // Actualizar los inputs cuando cambien las configuraciones
   React.useEffect(() => {
@@ -38,6 +45,10 @@ export default function SettingsScreen() {
   React.useEffect(() => {
     setInputVoice(currentVoice);
   }, [currentVoice]);
+
+  React.useEffect(() => {
+    setInputLanguage(currentLanguage);
+  }, [currentLanguage]);
 
   // Función para guardar la URL del servidor
   const handleSave = async () => {
@@ -152,6 +163,43 @@ export default function SettingsScreen() {
     }
   };
 
+  // Función para guardar el idioma localmente
+  const handleSaveLanguageLocally = async () => {
+    if (!inputLanguage.trim()) {
+      Alert.alert('Error', 'Por favor selecciona un idioma válido');
+      return;
+    }
+
+    const result = await saveLanguageLocally(inputLanguage.trim());
+    if (result.success) {
+      Alert.alert('Éxito', 'Idioma guardado localmente');
+    } else {
+      Alert.alert('Error', 'No se pudo guardar el idioma localmente');
+    }
+  };
+
+  // Función para actualizar el idioma en el servidor
+  const handleUpdateLanguage = async () => {
+    if (!inputLanguage.trim()) {
+      Alert.alert('Error', 'Por favor selecciona un idioma válido');
+      return;
+    }
+
+    setIsUpdatingLanguage(true);
+    try {
+      const result = await updateLanguage(inputLanguage.trim());
+      if (result.success) {
+        Alert.alert('Éxito', 'Idioma actualizado en el servidor');
+      } else {
+        Alert.alert('Error', result.message || 'No se pudo actualizar el idioma en el servidor');
+      }
+    } catch {
+      Alert.alert('Error', 'No se pudo actualizar el idioma');
+    } finally {
+      setIsUpdatingLanguage(false);
+    }
+  };
+
   if (isLoading) {
     return (
       <ThemedView style={{flex: 1}} lightColor={Colors.light.tabBackground} darkColor={Colors.dark.tabBackground}>
@@ -165,6 +213,15 @@ export default function SettingsScreen() {
   return (
     <ThemedView style={{flex: 1}} lightColor={Colors.light.tabBackground} darkColor={Colors.dark.tabBackground}>
       <ScrollView style={styles.scrollContainer} contentContainerStyle={styles.contentContainer}>
+        <LanguageConfigSection
+          inputLanguage={inputLanguage}
+          setInputLanguage={setInputLanguage}
+          currentLanguage={currentLanguage}
+          handleUpdateLanguage={handleUpdateLanguage}
+          handleSaveLanguageLocally={handleSaveLanguageLocally}
+          isUpdatingLanguage={isUpdatingLanguage}
+        />
+
         <AIModelConfigSection
           inputModel={inputModel}
           setInputModel={setInputModel}

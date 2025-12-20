@@ -6,6 +6,7 @@ import { apiService } from '@/services/api';
 const BACKEND_URL_KEY = 'backend_url';
 const MODEL_KEY = 'model';
 const VOICE_KEY = 'voice';
+const LANGUAGE_KEY = 'language';
 
 export function useBackendConfig() {
   const [backendUrl, setBackendUrl] = useState<string>('');
@@ -161,5 +162,61 @@ export function useVoiceConfig() {
     voice,
     saveVoiceLocally,
     updateVoice,
+  };
+}
+
+export function useLanguageConfig() {
+  const [language, setLanguage] = useState<string>('a');
+
+  // Cargar configuración de idioma al iniciar
+  useEffect(() => {
+    const loadLanguageConfig = async () => {
+      try {
+        const savedLanguage = await AsyncStorage.getItem(LANGUAGE_KEY);
+        if (savedLanguage) {
+          setLanguage(savedLanguage);
+        }
+      } catch (error) {
+        console.error('Error loading language config:', error);
+      }
+    };
+
+    loadLanguageConfig();
+  }, []);
+
+  // Guardar nuevo idioma localmente
+  const saveLanguageLocally = async (newLanguage: string): Promise<{ success: boolean }> => {
+    try {
+      await AsyncStorage.setItem(LANGUAGE_KEY, newLanguage);
+      setLanguage(newLanguage);
+      console.log(`Idioma guardado: ${newLanguage}`);
+      return { success: true };
+    } catch (error) {
+      console.error('Error saving language locally:', error);
+      return { success: false };
+    }
+  };
+
+  // Actualizar idioma en el backend
+  const updateLanguage = async (newLanguage: string): Promise<{ success: boolean; message?: string }> => {
+    try {
+      const backendSuccess = await apiService.setLanguage(newLanguage);
+
+      if (backendSuccess) {
+        return { success: true, message: 'Idioma actualizado correctamente en el servidor' };
+      } else {
+        console.warn(`No se pudo actualizar el idioma en el backend: ${newLanguage}`);
+        return { success: false, message: 'No se pudo actualizar el idioma en el servidor' };
+      }
+    } catch (error) {
+      console.error('Error updating language in backend:', error);
+      return { success: false, message: 'Error de conexión al actualizar el idioma' };
+    }
+  };
+
+  return {
+    language,
+    saveLanguageLocally,
+    updateLanguage,
   };
 }
