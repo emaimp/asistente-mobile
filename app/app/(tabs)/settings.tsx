@@ -2,17 +2,29 @@ import React, { useState } from 'react';
 import { StyleSheet, Alert, ScrollView } from 'react-native';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { useBackendConfig } from '@/hooks/use-api-settings';
+import { useBackendConfig, useVoiceConfig } from '@/hooks/use-api-settings';
 import ServerConfigSection from '@/components/settings/sever-config';
 import AIModelConfigSection from '@/components/settings/model-config';
+import VoiceConfigSection from '@/components/settings/voice-config';
 import { Colors } from '@/constants/theme';
 
 export default function SettingsScreen() {
+  // Hook para configuración de servidor y modelo
   const { backendUrl, model, saveBackendUrl, saveModel, updateModel, testConnection, isLoading } = useBackendConfig();
+  // Hook para configuración de voz
+  const { voice: currentVoice, saveVoiceLocally, updateVoice } = useVoiceConfig();
+  // Estado para el campo de entrada de URL del servidor
   const [inputUrl, setInputUrl] = useState(backendUrl);
+  // Estado para el campo de entrada del modelo
   const [inputModel, setInputModel] = useState(model);
+  // Estado de carga para probar conexión
   const [isTestingConnection, setIsTestingConnection] = useState(false);
+  // Estado de carga para actualizar modelo
   const [isUpdatingModel, setIsUpdatingModel] = useState(false);
+  // Estado para el campo de entrada de voz
+  const [inputVoice, setInputVoice] = useState(currentVoice);
+  // Estado de carga para actualizar voz
+  const [isUpdatingVoice, setIsUpdatingVoice] = useState(false);
 
   // Actualizar los inputs cuando cambien las configuraciones
   React.useEffect(() => {
@@ -23,6 +35,11 @@ export default function SettingsScreen() {
     setInputModel(model);
   }, [model]);
 
+  React.useEffect(() => {
+    setInputVoice(currentVoice);
+  }, [currentVoice]);
+
+  // Función para guardar la URL del servidor
   const handleSave = async () => {
     if (!inputUrl.trim()) {
       Alert.alert('Error', 'Por favor ingresa una URL válida');
@@ -45,6 +62,7 @@ export default function SettingsScreen() {
     }
   };
 
+  // Función para guardar el modelo localmente
   const handleSaveModelLocally = async () => {
     if (!inputModel.trim()) {
       Alert.alert('Error', 'Por favor ingresa un nombre de modelo válido');
@@ -59,6 +77,7 @@ export default function SettingsScreen() {
     }
   };
 
+  // Función para actualizar el modelo en el servidor
   const handleUpdateModel = async () => {
     if (!inputModel.trim()) {
       Alert.alert('Error', 'Por favor ingresa un nombre de modelo válido');
@@ -80,6 +99,7 @@ export default function SettingsScreen() {
     }
   };
 
+  // Función para probar la conexión al servidor
   const handleTestConnection = async () => {
     setIsTestingConnection(true);
     try {
@@ -92,6 +112,43 @@ export default function SettingsScreen() {
       Alert.alert('Error', 'No se pudo probar la conexión');
     } finally {
       setIsTestingConnection(false);
+    }
+  };
+
+  // Función para guardar la voz localmente
+  const handleSaveVoiceLocally = async () => {
+    if (!inputVoice.trim()) {
+      Alert.alert('Error', 'Por favor ingresa un nombre de voz válido');
+      return;
+    }
+
+    const result = await saveVoiceLocally(inputVoice.trim());
+    if (result.success) {
+      Alert.alert('Éxito', 'Voz guardada localmente');
+    } else {
+      Alert.alert('Error', 'No se pudo guardar la voz localmente');
+    }
+  };
+
+  // Función para actualizar la voz en el servidor
+  const handleUpdateVoice = async () => {
+    if (!inputVoice.trim()) {
+      Alert.alert('Error', 'Por favor ingresa un nombre de voz válido');
+      return;
+    }
+
+    setIsUpdatingVoice(true);
+    try {
+      const result = await updateVoice(inputVoice.trim());
+      if (result.success) {
+        Alert.alert('Éxito', 'Voz actualizada en el servidor');
+      } else {
+        Alert.alert('Error', result.message || 'No se pudo actualizar la voz en el servidor');
+      }
+    } catch {
+      Alert.alert('Error', 'No se pudo actualizar la voz');
+    } finally {
+      setIsUpdatingVoice(false);
     }
   };
 
@@ -108,15 +165,6 @@ export default function SettingsScreen() {
   return (
     <ThemedView style={{flex: 1}} lightColor={Colors.light.tabBackground} darkColor={Colors.dark.tabBackground}>
       <ScrollView style={styles.scrollContainer} contentContainerStyle={styles.contentContainer}>
-        <ServerConfigSection
-          inputUrl={inputUrl}
-          setInputUrl={setInputUrl}
-          backendUrl={backendUrl}
-          handleSave={handleSave}
-          handleTestConnection={handleTestConnection}
-          isTestingConnection={isTestingConnection}
-        />
-
         <AIModelConfigSection
           inputModel={inputModel}
           setInputModel={setInputModel}
@@ -124,6 +172,24 @@ export default function SettingsScreen() {
           handleUpdateModel={handleUpdateModel}
           handleSaveModelLocally={handleSaveModelLocally}
           isUpdatingModel={isUpdatingModel}
+        />
+
+        <VoiceConfigSection
+          inputVoice={inputVoice}
+          setInputVoice={setInputVoice}
+          currentVoice={currentVoice}
+          handleUpdateVoice={handleUpdateVoice}
+          handleSaveVoiceLocally={handleSaveVoiceLocally}
+          isUpdatingVoice={isUpdatingVoice}
+        />
+
+        <ServerConfigSection
+          inputUrl={inputUrl}
+          setInputUrl={setInputUrl}
+          backendUrl={backendUrl}
+          handleSave={handleSave}
+          handleTestConnection={handleTestConnection}
+          isTestingConnection={isTestingConnection}
         />
       </ScrollView>
     </ThemedView>

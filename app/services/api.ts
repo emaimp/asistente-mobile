@@ -55,6 +55,31 @@ export class ApiService {
     }
   }
 
+  // Método para enviar la voz al backend
+  async setVoice(voiceName: string): Promise<boolean> {
+    try {
+      const response = await fetch(`${this.baseUrl}/api/voice/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ voice: voiceName }), // JSON con la clave 'voice'
+      });
+
+      if (!response.ok) {
+        console.error(`Error al establecer la voz: ${response.status} ${response.statusText}`);
+        return false;
+      }
+
+      const data = await response.json();
+      console.log('Voz establecida:', data);
+      return true; // Indica éxito
+    } catch (error) {
+      console.error('Error de red al establecer la voz:', error);
+      return false; // Indica fallo
+    }
+  }
+
   async sendAudio(audioUri: string, sessionId?: string | null, model?: string): Promise<ApiResponse> {
     // Crear FormData para enviar
     const formData = new FormData();
