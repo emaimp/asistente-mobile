@@ -1,19 +1,17 @@
 // Fallback for using MaterialIcons on Android and web.
 
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import Entypo from '@expo/vector-icons/Entypo';
+import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import { SymbolWeight } from 'expo-symbols';
-import { ComponentProps } from 'react';
 import { OpaqueColorValue, type StyleProp, type TextStyle } from 'react-native';
 
-type IconMapping = Record<string, ComponentProps<typeof MaterialIcons>['name']>;
-type IconSymbolName = keyof typeof MAPPING;
+type IconSymbolName = keyof typeof MATERIAL_ICONS_MAPPING | keyof typeof ENTYPO_MAPPING | keyof typeof FONTAWESOME5_MAPPING;
 
 /**
- * Add your SF Symbols to Material Icons mappings here.
- * - see Material Icons in the [Icons Directory](https://icons.expo.fyi).
- * - see SF Symbols in the [SF Symbols](https://developer.apple.com/sf-symbols/) app.
+ * Mappings for different icon libraries.
  */
-const MAPPING = {
+const MATERIAL_ICONS_MAPPING = {
   'house.fill': 'home',
   'paperplane.fill': 'send',
   'chevron.left.forwardslash.chevron.right': 'code',
@@ -25,9 +23,15 @@ const MAPPING = {
   'stop.fill': 'stop',
   'speaker.slash.fill': 'volume-off',
   'settings': 'settings',
+};
+
+const ENTYPO_MAPPING = {
   'message.fill': 'chat',
-  'bot': 'smart-toy',
-} as unknown as IconMapping;
+};
+
+const FONTAWESOME5_MAPPING = {
+  'bot': 'robot',
+};
 
 /**
  * An icon component that uses native SF Symbols on iOS, and Material Icons on Android and web.
@@ -46,5 +50,11 @@ export function IconSymbol({
   style?: StyleProp<TextStyle>;
   weight?: SymbolWeight;
 }) {
-  return <MaterialIcons color={color} size={size} name={MAPPING[name]} style={style} />;
+  if (name in ENTYPO_MAPPING) {
+    return <Entypo color={color} size={size} name={ENTYPO_MAPPING[name as keyof typeof ENTYPO_MAPPING] as any} style={style} />;
+  } else if (name in FONTAWESOME5_MAPPING) {
+    return <FontAwesome5 color={color} size={24} name={FONTAWESOME5_MAPPING[name as keyof typeof FONTAWESOME5_MAPPING] as any} style={style} />;
+  } else {
+    return <MaterialIcons color={color} size={size} name={MATERIAL_ICONS_MAPPING[name as keyof typeof MATERIAL_ICONS_MAPPING] as any} style={style} />;
+  }
 }

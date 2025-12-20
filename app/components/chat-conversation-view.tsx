@@ -6,6 +6,7 @@ import { IconSymbol } from './ui/icon-symbol';
 import { useAudioPlayback } from '@/hooks/use-audio-playback';
 import { useAudioPlaybackContext } from '@/contexts/audio-playback-context';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import Markdown from 'react-native-markdown-display';
 
 // Estructura de datos para representar un mensaje en la conversación
 interface Message {
@@ -31,6 +32,49 @@ export default function ConversationView({ messages, autoPlayInputType }: Conver
   const colorScheme = useColorScheme();
   const userBorderColor = colorScheme === 'dark' ? '#FFFFFF' : '#000000';
   const botBorderColor = colorScheme === 'dark' ? '#FFFFFF' : '#000000';
+
+  // Estilos para Markdown según el tema
+  const markdownStyles = {
+    body: {
+      color: colorScheme === 'dark' ? '#FFFFFF' : '#000000',
+      fontSize: 14,
+      lineHeight: 16,
+    },
+    strong: {
+      fontWeight: 'bold' as const,
+    },
+    em: {
+      fontStyle: 'italic' as const,
+    },
+    paragraph: {
+      marginTop: 0,
+      marginBottom: 0,
+    },
+    code_inline: {
+      backgroundColor: colorScheme === 'dark' ? '#rgba(255, 255, 255, 0.3)' : '#rgba(255, 255, 255, 0.3)',
+      color: colorScheme === 'dark' ? '#000000' : '#FFFFFF',
+      paddingHorizontal: 4,
+      paddingVertical: 2,
+      borderRadius: 4,
+      fontFamily: 'monospace',
+    },
+    code_block: {
+      backgroundColor: colorScheme === 'dark' ? '#rgba(255, 255, 255, 0.3)' : '#rgba(255, 255, 255, 0.3)',
+      color: colorScheme === 'dark' ? '#000000' : '#FFFFFF',
+      padding: 8,
+      borderRadius: 4,
+      fontFamily: 'monospace',
+      marginVertical: 4,
+    },
+    fence: {
+      backgroundColor: colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.3)' : 'rgba(255, 255, 255, 0.3)',
+      color: colorScheme === 'dark' ? '#000000' : '#FFFFFF',
+      padding: 8,
+      borderRadius: 4,
+      fontFamily: 'monospace',
+      marginVertical: 4,
+    },
+  };
 
   // Encontrar el último mensaje del bot para activar autoPlay solo en ese
   let lastBotMessageIndex = messages.length - 1;
@@ -78,13 +122,9 @@ export default function ConversationView({ messages, autoPlayInputType }: Conver
           lightColor={isUser ? 'rgba(230, 230, 230, 1)' : 'rgba(43, 176, 225, 1)'}
           darkColor={isUser ? 'rgba(143, 143, 143, 1)' : 'rgba(43, 176, 225, 1)'}
         >
-          <ThemedText
-            style={styles.messageText}
-            lightColor="#000000"
-            darkColor="#FFFFFF"
-          >
+          <Markdown style={markdownStyles}>
             {item.content}
-          </ThemedText>
+          </Markdown>
 
           {item.type === 'bot' && item.audioUri && (
             <AudioMessagePlayer
@@ -171,7 +211,7 @@ function AudioMessagePlayer({
   );
 
   // Hook personalizado para controlar reproducción específica de este audio
-  const { isPlaying, isLoading, play, stop } = useAudioPlayback(audioUri, shouldAutoPlay);
+  const { isPlaying, isLoading, play } = useAudioPlayback(audioUri, shouldAutoPlay);
 
   // Función para detener todas las reproducciones
   const { stopAllPlayback } = useAudioPlaybackContext();
@@ -180,9 +220,7 @@ function AudioMessagePlayer({
   const isBlocked = isAnyAudioPlaying;
 
   const handlePress = () => {
-    if (isPlaying) {
-      stop();
-    } else {
+    if (!isPlaying) {
       play();
     }
   };
@@ -193,10 +231,10 @@ function AudioMessagePlayer({
         <TouchableOpacity
           style={[styles.audioButton, isBlocked && styles.audioButtonBlocked]}
           onPress={handlePress}
-          disabled={isLoading || (isAnyAudioPlaying && !isPlaying && !isLastBotMessage)}
+          disabled={isLoading || (isAnyAudioPlaying && !isPlaying)}
         >
           <IconSymbol
-            name={(isPlaying || (isLastBotMessage && isAnyAudioPlaying)) ? 'stop.fill' : (isAnyAudioPlaying ? 'speaker.slash.fill' : 'play.fill')}
+            name={(isPlaying || (isLastBotMessage && isAnyAudioPlaying && currentPlayingUri === audioUri)) ? 'volume.up.fill' : (isAnyAudioPlaying ? 'speaker.slash.fill' : 'play.fill')}
             size={20}
             color="white"
           />
@@ -205,7 +243,7 @@ function AudioMessagePlayer({
             lightColor="#000000"
             darkColor="#FFFFFF"
           >
-            {(isPlaying || (isLastBotMessage && isAnyAudioPlaying)) ? 'Detener' : (isAnyAudioPlaying ? 'Reproducir' : (isLoading ? 'Cargando...' : 'Reproducir'))}
+            {(isPlaying || (isLastBotMessage && isAnyAudioPlaying)) ? 'Reproduciendo' : (isAnyAudioPlaying ? 'Reproducir' : (isLoading ? 'Cargando...' : 'Reproducir'))}
           </ThemedText>
         </TouchableOpacity>
         <TouchableOpacity
@@ -273,10 +311,12 @@ const styles = StyleSheet.create({
   },
   audioContainer: {
     padding: 4,
+    marginTop: 8,
     borderRadius: 12,
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
   },
   audioControls: {
+    gap: 8,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',

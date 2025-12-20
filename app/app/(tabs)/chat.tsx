@@ -1,4 +1,4 @@
-import { StyleSheet, View, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, Image } from 'react-native';
+import { StyleSheet, View, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, Image, Dimensions } from 'react-native';
 import { useState } from 'react';
 
 import { ThemedText } from '@/components/themed-text';
@@ -14,6 +14,8 @@ export default function ChatScreen() {
   const colorScheme = useColorScheme();
   const textInputColor = colorScheme === 'dark' ? 'white' : 'black';
   const placeholderColor = colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)';
+  const { width } = Dimensions.get('window');
+  const backgroundImageSize = Math.min(width * 0.55, 300); // 55% del ancho, máximo 300px
 
   const handleSubmit = async () => {
     if (inputText.trim() && !isProcessing) {
@@ -31,23 +33,14 @@ export default function ChatScreen() {
     >
       <ThemedView style={{flex: 1}} lightColor={Colors.light.tabBackground} darkColor={Colors.dark.tabBackground}>
         <View style={styles.container}>
-          <View style={[styles.content, messages.length === 0 && styles.emptyState]}>
+          <View style={styles.content}>
             <View style={styles.backgroundImageContainer}>
-              <Image source={colorScheme === 'dark' ? require('@/assets/images/head-white.webp') : require('@/assets/images/head-black.webp')} style={styles.backgroundImage} />
+              <Image
+                source={colorScheme === 'dark' ? require('@/assets/images/head-white.webp') : require('@/assets/images/head-black.webp')}
+                style={[styles.backgroundImage, { width: backgroundImageSize, height: backgroundImageSize }]}
+              />
             </View>
-            {messages.length === 0 ? (
-              <View style={styles.emptyContent}>
-                <ThemedText
-                  style={styles.emptyText}
-                  lightColor="#000000"
-                  darkColor="#FFFFFF"
-                >
-                  Sin historial de Chat
-                </ThemedText>
-              </View>
-            ) : (
-              <ConversationView messages={messages} />
-            )}
+            <ConversationView messages={messages} />
           </View>
 
           <View style={styles.inputContainer}>
@@ -93,25 +86,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingBottom: 10,
   },
-  emptyState: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    flex: 1,
-    minHeight: 300,
-  },
-  emptyText: {
-    fontSize: 18,
-    textAlign: 'center',
-  },
-  emptyContent: {
-    position: 'absolute',
-    bottom: 215,
-    left: 0,
-    right: 0,
-    alignItems: 'center',
-    justifyContent: 'center',
-    opacity: 0.3,
-  },
   backgroundImageContainer: {
     ...StyleSheet.absoluteFillObject,
     justifyContent: 'center',
@@ -120,8 +94,7 @@ const styles = StyleSheet.create({
     opacity: 0.1,
   },
   backgroundImage: {
-    width: 250,
-    height: 250,
+    // width y height se establecen dinámicamente
     resizeMode: 'contain',
   },
   inputContainer: {

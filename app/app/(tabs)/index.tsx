@@ -1,4 +1,4 @@
-import { StyleSheet, Image, View } from 'react-native';
+import { StyleSheet, Image, View, Dimensions } from 'react-native';
 import { useMemo } from 'react';
 import { ThemedView } from '@/components/themed-view';
 import { ThemedText } from '@/components/themed-text';
@@ -28,20 +28,29 @@ function AutoResponsePlayer({ messages }: { messages: any[] }) {
 
 export default function HomeScreen() {
   const { messages, handleRecordingComplete, isProcessing } = useConversation();
+  const { width, height } = Dimensions.get('window');
+  const imageSize = Math.min(width * 0.85, 380); // Máximo 380px, 85% del ancho
+  const topMargin = height * 0.1; // 10% de la altura para el margen superior
+  const textMarginTop = height * 0.05; // Margen superior del texto basado en altura
+  const textMarginBottom = height * 0.03; // Margen inferior del texto
 
   return (
     <ThemedView style={{flex: 1}} lightColor={Colors.light.tabBackground} darkColor={Colors.dark.tabBackground}>
       <View style={styles.mainContainer}>
-        <View style={styles.topHalf}>
-          <Image source={require('@/assets/images/cat-bot.webp')} style={styles.botImage} resizeMode="contain" />
+        <View style={[styles.topHalf, { marginTop: topMargin }]}>
+          <Image
+            source={require('@/assets/images/cat-bot.webp')}
+            style={[styles.botImage, { width: imageSize, height: imageSize }]}
+            resizeMode="contain"
+          />
         </View>
         <View style={styles.middle}>
           <ThemedText
-            style={styles.instructionText}
+            style={[styles.instructionText, { marginTop: textMarginTop, marginBottom: textMarginBottom }]}
             lightColor="#000000"
             darkColor="#FFFFFF"
           >
-            Presiona para hablar
+            Presiona el botón para hablar
           </ThemedText>
         </View>
         <View style={styles.bottomHalf}>
@@ -63,7 +72,6 @@ const styles = StyleSheet.create({
   },
   topHalf: {
     flex: 1,
-    marginTop: 170,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -76,13 +84,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   botImage: {
-    width: 400,
-    height: 400,
+    // width y height se establecen dinámicamente
   },
   instructionText: {
     fontSize: 18,
     textAlign: 'center',
-    marginTop: 80,
-    marginBottom: 50,
+    // marginTop y marginBottom se establecen dinámicamente
   },
 });

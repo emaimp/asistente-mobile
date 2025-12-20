@@ -81,7 +81,7 @@ export const ConversationProvider: React.FC<ConversationProviderProps> = ({ chil
       const botMessage: Message = {
         id: generateId(),
         type: 'bot',
-        content: result.data.answer,
+        content: result.data.raw_answer,
         audioUri: result.audioUri,
         timestamp: new Date(),
         inputType: 'audio',
@@ -118,7 +118,7 @@ export const ConversationProvider: React.FC<ConversationProviderProps> = ({ chil
       const botMessage: Message = {
         id: generateId(),
         type: 'bot',
-        content: result.data.answer,
+        content: result.data.raw_answer,
         audioUri: result.audioUri,
         timestamp: new Date(),
         inputType: 'text',

@@ -2,7 +2,7 @@ import { Platform } from 'react-native';
 
 export interface ApiResponse {
   question: string;
-  answer: string;
+  raw_answer: string;
   audio_url: string;
   audio_format: string;
   session_id: string;
