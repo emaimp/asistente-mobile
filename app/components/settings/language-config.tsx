@@ -3,6 +3,7 @@ import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useLanguage } from '@/contexts/language-context';
 
 interface LanguageConfigSectionProps {
   inputLanguage: string;
@@ -16,7 +17,6 @@ interface LanguageConfigSectionProps {
 const LANGUAGES = {
   'a': '🇺🇸 American English',
   'e': '🇪🇸 Spanish',
-  'i': '🇮🇹 Italian',
   'j': '🇯🇵 Japanese',
   'z': '🇨🇳 Chinese',
 };
@@ -31,6 +31,7 @@ export default function LanguageConfigSection({
 }: LanguageConfigSectionProps) {
   const colorScheme = useColorScheme();
   const borderColor = colorScheme === 'dark' ? '#FFFFFF' : '#000000';
+  const { t } = useLanguage();
 
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
 
@@ -42,14 +43,14 @@ export default function LanguageConfigSection({
         lightColor="#000000"
         darkColor="#FFFFFF"
       >
-        Idioma de la App
+        {t('settings.language.title')}
       </ThemedText>
       <ThemedText
         style={styles.description}
         lightColor="#000000"
         darkColor="#FFFFFF"
       >
-        Configura el idioma de la aplicación.
+        {t('settings.language.description')}
       </ThemedText>
 
       <View style={styles.inputContainer}>
@@ -58,10 +59,10 @@ export default function LanguageConfigSection({
           lightColor="#000000"
           darkColor="#FFFFFF"
         >
-          Idioma Actual:
+          {t('settings.language.current')}
         </ThemedText>
         <ThemedText style={styles.currentLanguage}>
-          {LANGUAGES[currentLanguage as keyof typeof LANGUAGES] || currentLanguage}
+          {t(`languages.${currentLanguage}`, currentLanguage)}
         </ThemedText>
       </View>
 
@@ -71,7 +72,7 @@ export default function LanguageConfigSection({
           lightColor="#000000"
           darkColor="#FFFFFF"
         >
-          Nuevo Idioma:
+          {t('settings.language.new')}
         </ThemedText>
         <View style={styles.dropdownWrapper}>
           <TouchableOpacity
@@ -79,7 +80,7 @@ export default function LanguageConfigSection({
             onPress={() => setIsDropdownOpen(!isDropdownOpen)}
           >
             <ThemedText style={[styles.dropdownButtonText, { color: 'black' }]}>
-              {LANGUAGES[inputLanguage as keyof typeof LANGUAGES] || 'Seleccionar idioma'}
+              {t(`languages.${inputLanguage}`, t('settings.language.select'))}
             </ThemedText>
             <ThemedText style={[styles.dropdownArrow, { color: 'black' }]}>
               {isDropdownOpen ? '▲' : '▼'}
@@ -87,7 +88,7 @@ export default function LanguageConfigSection({
           </TouchableOpacity>
           {isDropdownOpen && (
             <View style={[styles.dropdownList, { borderColor: '#2ab0e1' }]}>
-              {Object.entries(LANGUAGES).map(([key, label]) => (
+              {Object.keys(LANGUAGES).map((key) => (
                 <TouchableOpacity
                   key={key}
                   style={styles.dropdownItem}
@@ -97,7 +98,7 @@ export default function LanguageConfigSection({
                   }}
                 >
                   <ThemedText style={[styles.dropdownItemText, { color: 'black' }]}>
-                    {label}
+                    {t(`languages.${key}`)}
                   </ThemedText>
                 </TouchableOpacity>
               ))}
@@ -117,7 +118,7 @@ export default function LanguageConfigSection({
             lightColor="#FFFFFF"
             darkColor="#FFFFFF"
           >
-            {isUpdatingLanguage ? 'Actualizando...' : 'Actualizar'}
+            {isUpdatingLanguage ? t('settings.language.updating') : t('settings.language.update')}
           </ThemedText>
         </TouchableOpacity>
 
@@ -130,7 +131,7 @@ export default function LanguageConfigSection({
             lightColor="#FFFFFF"
             darkColor="#FFFFFF"
           >
-            Guardar
+            {t('settings.language.save')}
           </ThemedText>
         </TouchableOpacity>
       </View>

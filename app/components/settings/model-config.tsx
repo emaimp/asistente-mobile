@@ -3,6 +3,7 @@ import { StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useLanguage } from '@/contexts/language-context';
 
 interface AIModelConfigSectionProps {
   inputModel: string;
@@ -23,6 +24,7 @@ export default function AIModelConfigSection({
 }: AIModelConfigSectionProps) {
   const colorScheme = useColorScheme();
   const borderColor = colorScheme === 'dark' ? '#FFFFFF' : '#000000';
+  const { t } = useLanguage();
 
   return (
     <ThemedView style={[styles.section, { borderColor }]}>
@@ -32,14 +34,14 @@ export default function AIModelConfigSection({
         lightColor="#000000"
         darkColor="#FFFFFF"
       >
-        Modelo de IA
+        {t('settings.model.title')}
       </ThemedText>
       <ThemedText
         style={styles.description}
         lightColor="#000000"
         darkColor="#FFFFFF"
       >
-        Configura el modelo de Inteligencia Artificial.
+        {t('settings.model.description')}
       </ThemedText>
 
       <View style={styles.inputContainer}>
@@ -48,7 +50,7 @@ export default function AIModelConfigSection({
           lightColor="#000000"
           darkColor="#FFFFFF"
         >
-          Modelo Actual:
+          {t('settings.model.current')}
         </ThemedText>
         <ThemedText style={styles.currentUrl}>{model}</ThemedText>
       </View>
@@ -59,13 +61,13 @@ export default function AIModelConfigSection({
           lightColor="#000000"
           darkColor="#FFFFFF"
         >
-          Modelo Nuevo:
+          {t('settings.model.new')}
         </ThemedText>
         <TextInput
           style={[styles.textInput, { color: 'black' }]}
           value={inputModel}
           onChangeText={setInputModel}
-          placeholder="Ej: gemma3:4b"
+          placeholder={t('settings.model.placeholder')}
           placeholderTextColor="#999"
           autoCapitalize="none"
           autoCorrect={false}
@@ -83,7 +85,7 @@ export default function AIModelConfigSection({
             lightColor="#FFFFFF"
             darkColor="#FFFFFF"
           >
-            {isUpdatingModel ? 'Actualizando...' : 'Actualizar'}
+            {isUpdatingModel ? t('settings.model.updating') : t('settings.model.update')}
           </ThemedText>
         </TouchableOpacity>
 
@@ -96,7 +98,7 @@ export default function AIModelConfigSection({
             lightColor="#FFFFFF"
             darkColor="#FFFFFF"
           >
-            Guardar
+            {t('settings.model.save')}
           </ThemedText>
         </TouchableOpacity>
       </View>

@@ -2,11 +2,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useState, useEffect } from 'react';
 import { Platform } from 'react-native';
 import { apiService } from '@/services/api';
+import { useLanguage } from '@/contexts/language-context';
 
 const BACKEND_URL_KEY = 'backend_url';
 const MODEL_KEY = 'model';
 const VOICE_KEY = 'voice';
-const LANGUAGE_KEY = 'language';
 
 export function useBackendConfig() {
   const [backendUrl, setBackendUrl] = useState<string>('');
@@ -166,29 +166,12 @@ export function useVoiceConfig() {
 }
 
 export function useLanguageConfig() {
-  const [language, setLanguage] = useState<string>('a');
-
-  // Cargar configuración de idioma al iniciar
-  useEffect(() => {
-    const loadLanguageConfig = async () => {
-      try {
-        const savedLanguage = await AsyncStorage.getItem(LANGUAGE_KEY);
-        if (savedLanguage) {
-          setLanguage(savedLanguage);
-        }
-      } catch (error) {
-        console.error('Error loading language config:', error);
-      }
-    };
-
-    loadLanguageConfig();
-  }, []);
+  const { currentLanguage, setLanguage } = useLanguage();
 
   // Guardar nuevo idioma localmente
   const saveLanguageLocally = async (newLanguage: string): Promise<{ success: boolean }> => {
     try {
-      await AsyncStorage.setItem(LANGUAGE_KEY, newLanguage);
-      setLanguage(newLanguage);
+      await setLanguage(newLanguage);
       console.log(`Idioma guardado: ${newLanguage}`);
       return { success: true };
     } catch (error) {
@@ -203,6 +186,8 @@ export function useLanguageConfig() {
       const backendSuccess = await apiService.setLanguage(newLanguage);
 
       if (backendSuccess) {
+        // También actualizar localmente después de actualizar en el servidor
+        await setLanguage(newLanguage);
         return { success: true, message: 'Idioma actualizado correctamente en el servidor' };
       } else {
         console.warn(`No se pudo actualizar el idioma en el backend: ${newLanguage}`);
@@ -215,7 +200,7 @@ export function useLanguageConfig() {
   };
 
   return {
-    language,
+    language: currentLanguage,
     saveLanguageLocally,
     updateLanguage,
   };

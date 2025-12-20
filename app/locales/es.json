@@ -1,0 +1,70 @@
+{
+  "home": {
+    "pressButton": "Presiona el botón para hablar"
+  },
+  "chat": {
+    "placeholder": "Escribe un mensaje...",
+    "sendButton": "Enviar",
+    "sending": "..."
+  },
+  "settings": {
+    "title": "Configuración",
+    "language": {
+      "title": "Idioma de la App",
+      "description": "Configura el idioma de la aplicación.",
+      "current": "Idioma Actual:",
+      "new": "Nuevo Idioma:",
+      "select": "Seleccionar idioma",
+      "updating": "Actualizando...",
+      "update": "Actualizar",
+      "save": "Guardar"
+    },
+    "model": {
+      "title": "Modelo de IA",
+      "description": "Configura el modelo de Inteligencia Artificial.",
+      "current": "Modelo Actual:",
+      "new": "Modelo Nuevo:",
+      "placeholder": "Ej: gemma3:4b",
+      "updating": "Actualizando...",
+      "update": "Actualizar",
+      "save": "Guardar"
+    },
+    "voice": {
+      "title": "Voz del Bot",
+      "description": "Configura la voz del bot por idioma y género.",
+      "current": "Voz Actual:",
+      "new": "Nueva Voz:",
+      "select": "Seleccionar voz",
+      "language": "Idioma:",
+      "gender": "Género:",
+      "man": "Hombre",
+      "woman": "Mujer",
+      "updating": "Actualizando...",
+      "update": "Actualizar",
+      "save": "Guardar"
+    },
+    "server": {
+      "title": "Servidor",
+      "description": "Configura la dirección del servidor.",
+      "current": "URL Actual:",
+      "new": "URL Nueva:",
+      "placeholder": "Ej: http://192.168.100.1:8000",
+      "testing": "Probando...",
+      "test": "Probar",
+      "save": "Guardar"
+    }
+  },
+  "common": {
+    "loading": "Cargando...",
+    "error": "Error",
+    "success": "Éxito",
+    "cancel": "Cancelar",
+    "ok": "OK"
+  },
+  "languages": {
+    "a": "🇺🇸 Inglés Americano",
+    "e": "🇪🇸 Español",
+    "j": "🇯🇵 Japonés",
+    "z": "🇨🇳 Chino"
+  }
+}

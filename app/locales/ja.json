@@ -1,0 +1,70 @@
+{
+  "home": {
+    "pressButton": "ボタンを押して話す"
+  },
+  "chat": {
+    "placeholder": "メッセージを書く...",
+    "sendButton": "送信",
+    "sending": "..."
+  },
+  "settings": {
+    "title": "設定",
+    "language": {
+      "title": "アプリ言語",
+      "description": "アプリの言語を設定します。",
+      "current": "現在の言語:",
+      "new": "新しい言語:",
+      "select": "言語を選択",
+      "updating": "更新中...",
+      "update": "更新",
+      "save": "保存"
+    },
+    "model": {
+      "title": "AIモデル",
+      "description": "AIモデルを設定します。",
+      "current": "現在のモデル:",
+      "new": "新しいモデル:",
+      "placeholder": "例: gemma3:4b",
+      "updating": "更新中...",
+      "update": "更新",
+      "save": "保存"
+    },
+    "voice": {
+      "title": "ボット音声",
+      "description": "言語と性別でボットの音声を設定します。",
+      "current": "現在の音声:",
+      "new": "新しい音声:",
+      "select": "音声を選択",
+      "language": "言語:",
+      "gender": "性別:",
+      "man": "男性",
+      "woman": "女性",
+      "updating": "更新中...",
+      "update": "更新",
+      "save": "保存"
+    },
+    "server": {
+      "title": "サーバー",
+      "description": "サーバーアドレスを設定します。",
+      "current": "現在のURL:",
+      "new": "新しいURL:",
+      "placeholder": "例: http://192.168.100.1:8000",
+      "testing": "テスト中...",
+      "test": "テスト",
+      "save": "保存"
+    }
+  },
+  "common": {
+    "loading": "読み込み中...",
+    "error": "エラー",
+    "success": "成功",
+    "cancel": "キャンセル",
+    "ok": "OK"
+  },
+  "languages": {
+    "a": "🇺🇸 アメリカ英語",
+    "e": "🇪🇸 スペイン語",
+    "j": "🇯🇵 日本語",
+    "z": "🇨🇳 中国語"
+  }
+}

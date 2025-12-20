@@ -3,6 +3,7 @@ import { StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useLanguage } from '@/contexts/language-context';
 
 interface ServerConfigSectionProps {
   inputUrl: string;
@@ -23,6 +24,7 @@ export default function ServerConfigSection({
 }: ServerConfigSectionProps) {
   const colorScheme = useColorScheme();
   const borderColor = colorScheme === 'dark' ? '#FFFFFF' : '#000000';
+  const { t } = useLanguage();
 
   return (
     <ThemedView style={[styles.section, { borderColor }]}>
@@ -32,14 +34,14 @@ export default function ServerConfigSection({
         lightColor="#000000"
         darkColor="#FFFFFF"
       >
-        Servidor
+        {t('settings.server.title')}
       </ThemedText>
       <ThemedText
         style={styles.description}
         lightColor="#000000"
         darkColor="#FFFFFF"
       >
-        Configura la dirección del servidor.
+        {t('settings.server.description')}
       </ThemedText>
 
       <View style={styles.inputContainer}>
@@ -48,7 +50,7 @@ export default function ServerConfigSection({
           lightColor="#000000"
           darkColor="#FFFFFF"
         >
-          URL Actual:
+          {t('settings.server.current')}
         </ThemedText>
         <ThemedText style={styles.currentUrl}>{backendUrl}</ThemedText>
       </View>
@@ -59,13 +61,13 @@ export default function ServerConfigSection({
           lightColor="#000000"
           darkColor="#FFFFFF"
         >
-          URL Nueva:
+          {t('settings.server.new')}
         </ThemedText>
         <TextInput
           style={[styles.textInput, { color: 'black' }]}
           value={inputUrl}
           onChangeText={setInputUrl}
-          placeholder="Ej: http://192.168.100.1:8000"
+          placeholder={t('settings.server.placeholder')}
           placeholderTextColor="#999"
           autoCapitalize="none"
           autoCorrect={false}
@@ -84,7 +86,7 @@ export default function ServerConfigSection({
             lightColor="#FFFFFF"
             darkColor="#FFFFFF"
           >
-            {isTestingConnection ? 'Probando...' : 'Probar'}
+            {isTestingConnection ? t('settings.server.testing') : t('settings.server.test')}
           </ThemedText>
         </TouchableOpacity>
 
@@ -97,7 +99,7 @@ export default function ServerConfigSection({
             lightColor="#FFFFFF"
             darkColor="#FFFFFF"
           >
-            Guardar
+            {t('settings.server.save')}
           </ThemedText>
         </TouchableOpacity>
       </View>

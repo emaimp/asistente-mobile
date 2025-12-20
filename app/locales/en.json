@@ -1,0 +1,70 @@
+{
+  "home": {
+    "pressButton": "Press the button to speak"
+  },
+  "chat": {
+    "placeholder": "Write a message...",
+    "sendButton": "Send",
+    "sending": "..."
+  },
+  "settings": {
+    "title": "Settings",
+    "language": {
+      "title": "App Language",
+      "description": "Configure the app language.",
+      "current": "Current Language:",
+      "new": "New Language:",
+      "select": "Select language",
+      "updating": "Updating...",
+      "update": "Update",
+      "save": "Save"
+    },
+    "model": {
+      "title": "AI Model",
+      "description": "Configure the AI model.",
+      "current": "Current Model:",
+      "new": "New Model:",
+      "placeholder": "Ex: gemma3:4b",
+      "updating": "Updating...",
+      "update": "Update",
+      "save": "Save"
+    },
+    "voice": {
+      "title": "Bot Voice",
+      "description": "Configure bot voice by language and gender.",
+      "current": "Current Voice:",
+      "new": "New Voice:",
+      "select": "Select voice",
+      "language": "Language:",
+      "gender": "Gender:",
+      "man": "Man",
+      "woman": "Woman",
+      "updating": "Updating...",
+      "update": "Update",
+      "save": "Save"
+    },
+    "server": {
+      "title": "Server",
+      "description": "Configure the server address.",
+      "current": "Current URL:",
+      "new": "New URL:",
+      "placeholder": "Ex: http://192.168.100.1:8000",
+      "testing": "Testing...",
+      "test": "Test",
+      "save": "Save"
+    }
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "ok": "OK"
+  },
+  "languages": {
+    "a": "🇺🇸 American English",
+    "e": "🇪🇸 Spanish",
+    "j": "🇯🇵 Japanese",
+    "z": "🇨🇳 Chinese"
+  }
+}

@@ -6,6 +6,7 @@ import 'react-native-reanimated';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { ConversationProvider } from '@/contexts/chatbot-conversation-context';
 import { AudioPlaybackProvider } from '@/contexts/audio-playback-context';
+import { LanguageProvider } from '@/contexts/language-context';
 
 export const unstable_settings = {
   anchor: '(tabs)',
@@ -15,15 +16,17 @@ export default function RootLayout() {
   const colorScheme = useColorScheme();
 
   return (
-    <AudioPlaybackProvider>
-      <ConversationProvider>
-        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-          <Stack>
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          </Stack>
-          <StatusBar style="auto" />
-        </ThemeProvider>
-      </ConversationProvider>
-    </AudioPlaybackProvider>
+    <LanguageProvider>
+      <AudioPlaybackProvider>
+        <ConversationProvider>
+          <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+            <Stack>
+              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            </Stack>
+            <StatusBar style="auto" />
+          </ThemeProvider>
+        </ConversationProvider>
+      </AudioPlaybackProvider>
+    </LanguageProvider>
   );
 }

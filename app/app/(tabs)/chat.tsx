@@ -6,10 +6,12 @@ import { ThemedView } from '@/components/themed-view';
 import ConversationView from '@/components/chat-conversation-view';
 import { useConversation } from '@/contexts/chatbot-conversation-context';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useLanguage } from '@/contexts/language-context';
 import { Colors } from '@/constants/theme';
 
 export default function ChatScreen() {
   const { messages, handleTextSubmit, isProcessing } = useConversation();
+  const { t } = useLanguage();
   const [inputText, setInputText] = useState('');
   const colorScheme = useColorScheme();
   const textInputColor = colorScheme === 'dark' ? 'white' : 'black';
@@ -48,7 +50,7 @@ export default function ChatScreen() {
               style={[styles.textInput, { color: textInputColor }]}
               value={inputText}
               onChangeText={setInputText}
-              placeholder="Escribe tu mensaje..."
+              placeholder={t('chat.placeholder')}
               placeholderTextColor={placeholderColor}
               multiline
               maxLength={500}
@@ -65,7 +67,7 @@ export default function ChatScreen() {
                 lightColor="#FFFFFF"
                 darkColor="#FFFFFF"
               >
-                {isProcessing ? '...' : 'Enviar'}
+                {isProcessing ? t('chat.sending') : t('chat.sendButton')}
               </ThemedText>
             </TouchableOpacity>
           </View>

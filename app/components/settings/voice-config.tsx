@@ -3,6 +3,7 @@ import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useLanguage } from '@/contexts/language-context';
 
 interface VoiceConfigSectionProps {
   inputVoice: string;
@@ -42,6 +43,7 @@ export default function VoiceConfigSection({
 }: VoiceConfigSectionProps) {
   const colorScheme = useColorScheme();
   const borderColor = colorScheme === 'dark' ? '#FFFFFF' : '#000000';
+  const { t } = useLanguage();
 
   const [selectedLanguage, setSelectedLanguage] = useState<string>('English');
   const [selectedGender, setSelectedGender] = useState<string>('Woman');
@@ -62,14 +64,14 @@ export default function VoiceConfigSection({
         lightColor="#000000"
         darkColor="#FFFFFF"
       >
-        Voz del Bot
+        {t('settings.voice.title')}
       </ThemedText>
       <ThemedText
         style={styles.description}
         lightColor="#000000"
         darkColor="#FFFFFF"
       >
-        Configura la voz del bot por idioma y género.
+        {t('settings.voice.description')}
       </ThemedText>
 
       <View style={styles.inputContainer}>
@@ -78,7 +80,7 @@ export default function VoiceConfigSection({
           lightColor="#000000"
           darkColor="#FFFFFF"
         >
-          Voz Actual:
+          {t('settings.voice.current')}
         </ThemedText>
         <ThemedText style={styles.currentVoice}>{currentVoice}</ThemedText>
       </View>
@@ -90,7 +92,7 @@ export default function VoiceConfigSection({
             lightColor="#000000"
             darkColor="#FFFFFF"
           >
-            Idioma:
+            {t('settings.voice.language')}
           </ThemedText>
           <View style={styles.selectionButtons}>
             {Object.keys(VOICES).map((lang) => (
@@ -117,7 +119,7 @@ export default function VoiceConfigSection({
             lightColor="#000000"
             darkColor="#FFFFFF"
           >
-            Género:
+            {t('settings.voice.gender')}
           </ThemedText>
           <View style={styles.selectionButtons}>
             <TouchableOpacity
@@ -129,7 +131,7 @@ export default function VoiceConfigSection({
                 lightColor="#000000"
                 darkColor="#FFFFFF"
               >
-                Hombre
+                {t('settings.voice.man')}
               </ThemedText>
             </TouchableOpacity>
             <TouchableOpacity
@@ -141,7 +143,7 @@ export default function VoiceConfigSection({
                 lightColor="#000000"
                 darkColor="#FFFFFF"
               >
-                Mujer
+                {t('settings.voice.woman')}
               </ThemedText>
             </TouchableOpacity>
           </View>
@@ -154,7 +156,7 @@ export default function VoiceConfigSection({
           lightColor="#000000"
           darkColor="#FFFFFF"
         >
-          Nueva Voz:
+          {t('settings.voice.new')}
         </ThemedText>
         <View style={styles.dropdownWrapper}>
           <TouchableOpacity
@@ -162,7 +164,7 @@ export default function VoiceConfigSection({
             onPress={() => setIsDropdownOpen(!isDropdownOpen)}
           >
             <ThemedText style={[styles.dropdownButtonText, { color: 'black' }]}>
-              {inputVoice || 'Seleccionar voz'}
+              {inputVoice || t('settings.voice.select')}
             </ThemedText>
             <ThemedText style={[styles.dropdownArrow, { color: 'black' }]}>
               {isDropdownOpen ? '▲' : '▼'}
@@ -200,7 +202,7 @@ export default function VoiceConfigSection({
             lightColor="#FFFFFF"
             darkColor="#FFFFFF"
           >
-            {isUpdatingVoice ? 'Actualizando...' : 'Actualizar'}
+            {isUpdatingVoice ? t('settings.voice.updating') : t('settings.voice.update')}
           </ThemedText>
         </TouchableOpacity>
 
@@ -213,7 +215,7 @@ export default function VoiceConfigSection({
             lightColor="#FFFFFF"
             darkColor="#FFFFFF"
           >
-            Guardar
+            {t('settings.voice.save')}
           </ThemedText>
         </TouchableOpacity>
       </View>

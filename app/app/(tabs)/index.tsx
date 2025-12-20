@@ -5,6 +5,7 @@ import { ThemedText } from '@/components/themed-text';
 import AudioRecorder from '@/components/index-audio-recorder';
 import { useConversation } from '@/contexts/chatbot-conversation-context';
 import { useAudioPlayback } from '@/hooks/use-audio-playback';
+import { useLanguage } from '@/contexts/language-context';
 import { Colors } from '@/constants/theme';
 
 // Componente que reproduce automáticamente el audio de la última respuesta del bot
@@ -28,6 +29,7 @@ function AutoResponsePlayer({ messages }: { messages: any[] }) {
 
 export default function HomeScreen() {
   const { messages, handleRecordingComplete, isProcessing } = useConversation();
+  const { t } = useLanguage();
   const { width, height } = Dimensions.get('window');
   const imageSize = Math.min(width * 0.85, 380); // Máximo 380px, 85% del ancho
   const topMargin = height * 0.1; // 10% de la altura para el margen superior
@@ -50,7 +52,7 @@ export default function HomeScreen() {
             lightColor="#000000"
             darkColor="#FFFFFF"
           >
-            Presiona el botón para hablar
+            {t('home.pressButton')}
           </ThemedText>
         </View>
         <View style={styles.bottomHalf}>
