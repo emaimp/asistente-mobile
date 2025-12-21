@@ -2,7 +2,10 @@ import React, { useState } from 'react';
 import { StyleSheet, Alert, ScrollView } from 'react-native';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { useBackendConfig, useVoiceConfig, useLanguageConfig } from '@/hooks/use-api-settings';
+import { useBackendUrlConfig } from '@/hooks/api-settings/use-backend-url-config';
+import { useModelConfig } from '@/hooks/api-settings/use-model-config';
+import { useVoiceConfig } from '@/hooks/api-settings/use-voice-config';
+import { useLanguageConfig } from '@/hooks/api-settings/use-language-config';
 import ServerConfigSection from '@/components/settings/sever-config';
 import AIModelConfigSection from '@/components/settings/model-config';
 import VoiceConfigSection from '@/components/settings/voice-config';
@@ -10,8 +13,10 @@ import LanguageConfigSection from '@/components/settings/language-config';
 import { Colors } from '@/constants/theme';
 
 export default function SettingsScreen() {
-  // Hook para configuración de servidor y modelo
-  const { backendUrl, model, saveBackendUrl, saveModel, updateModel, testConnection, isLoading } = useBackendConfig();
+  // Hooks para configuración de servidor
+  const { backendUrl, saveBackendUrl, testConnection, isLoading } = useBackendUrlConfig();
+  // Hook para configuración de modelo
+  const { model, saveModel, updateModel } = useModelConfig();
   // Hook para configuración de voz
   const { voice: currentVoice, saveVoiceLocally, updateVoice } = useVoiceConfig();
   // Hook para configuración de idioma
