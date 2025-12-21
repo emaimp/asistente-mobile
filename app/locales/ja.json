@@ -15,9 +15,8 @@
       "current": "現在の言語:",
       "new": "新しい言語:",
       "select": "言語を選択",
-      "updating": "更新中...",
-      "update": "更新",
-      "save": "保存"
+      "applying": "適用中...",
+      "apply": "適用"
     },
     "model": {
       "title": "AIモデル",
@@ -25,9 +24,8 @@
       "current": "現在のモデル:",
       "new": "新しいモデル:",
       "placeholder": "例: gemma3:4b",
-      "updating": "更新中...",
-      "update": "更新",
-      "save": "保存"
+      "applying": "適用中...",
+      "apply": "適用"
     },
     "voice": {
       "title": "ボット音声",
@@ -39,9 +37,8 @@
       "gender": "性別:",
       "man": "男性",
       "woman": "女性",
-      "updating": "更新中...",
-      "update": "更新",
-      "save": "保存"
+      "applying": "適用中...",
+      "apply": "適用"
     },
     "server": {
       "title": "サーバー",
@@ -49,9 +46,8 @@
       "current": "現在のURL:",
       "new": "新しいURL:",
       "placeholder": "例: http://192.168.100.1:8000",
-      "testing": "テスト中...",
-      "test": "テスト",
-      "save": "保存"
+      "applying": "適用中...",
+      "apply": "適用"
     }
   },
   "common": {

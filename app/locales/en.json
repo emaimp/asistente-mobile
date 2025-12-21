@@ -15,9 +15,8 @@
       "current": "Current Language:",
       "new": "New Language:",
       "select": "Select language",
-      "updating": "Updating...",
-      "update": "Update",
-      "save": "Save"
+      "applying": "Applying...",
+      "apply": "Apply"
     },
     "model": {
       "title": "AI Model",
@@ -25,9 +24,8 @@
       "current": "Current Model:",
       "new": "New Model:",
       "placeholder": "Ex: gemma3:4b",
-      "updating": "Updating...",
-      "update": "Update",
-      "save": "Save"
+      "applying": "Applying...",
+      "apply": "Apply"
     },
     "voice": {
       "title": "Bot Voice",
@@ -39,9 +37,8 @@
       "gender": "Gender:",
       "man": "Man",
       "woman": "Woman",
-      "updating": "Updating...",
-      "update": "Update",
-      "save": "Save"
+      "applying": "Applying...",
+      "apply": "Apply"
     },
     "server": {
       "title": "Server",
@@ -49,9 +46,8 @@
       "current": "Current URL:",
       "new": "New URL:",
       "placeholder": "Ex: http://192.168.100.1:8000",
-      "testing": "Testing...",
-      "test": "Test",
-      "save": "Save"
+      "applying": "Applying...",
+      "apply": "Apply"
     }
   },
   "common": {

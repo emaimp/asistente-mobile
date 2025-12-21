@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { StyleSheet, Alert, ScrollView } from 'react-native';
+import { StyleSheet, ScrollView } from 'react-native';
+import { Snackbar } from 'react-native-paper';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { useBackendUrlConfig } from '@/hooks/api-settings/use-backend-url-config';
@@ -12,20 +13,23 @@ import VoiceConfigSection from '@/components/settings/voice-config';
 import LanguageConfigSection from '@/components/settings/language-config';
 import { Colors } from '@/constants/theme';
 
+const SNACKBAR_SUCCESS_COLOR = '#2eb733';
+const SNACKBAR_ERROR_COLOR = '#e00023';
+
 export default function SettingsScreen() {
-  // Hooks para configuración de servidor
+  // Hooks para configuraciรณn de servidor
   const { backendUrl, saveBackendUrl, testConnection, isLoading } = useBackendUrlConfig();
-  // Hook para configuración de modelo
+  // Hook para configuraciรณn de modelo
   const { model, saveModel, updateModel } = useModelConfig();
-  // Hook para configuración de voz
+  // Hook para configuraciรณn de voz
   const { voice: currentVoice, saveVoiceLocally, updateVoice } = useVoiceConfig();
-  // Hook para configuración de idioma
+  // Hook para configuraciรณn de idioma
   const { language: currentLanguage, saveLanguageLocally, updateLanguage } = useLanguageConfig();
   // Estado para el campo de entrada de URL del servidor
   const [inputUrl, setInputUrl] = useState(backendUrl);
   // Estado para el campo de entrada del modelo
   const [inputModel, setInputModel] = useState(model);
-  // Estado de carga para probar conexión
+  // Estado de carga para probar conexiรณn
   const [isTestingConnection, setIsTestingConnection] = useState(false);
   // Estado de carga para actualizar modelo
   const [isUpdatingModel, setIsUpdatingModel] = useState(false);
@@ -37,6 +41,17 @@ export default function SettingsScreen() {
   const [inputLanguage, setInputLanguage] = useState(currentLanguage);
   // Estado de carga para actualizar idioma
   const [isUpdatingLanguage, setIsUpdatingLanguage] = useState(false);
+  // Estado para Snackbar
+  const [snackbarVisible, setSnackbarVisible] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarColor, setSnackbarColor] = useState('green');
+
+  // Función para mostrar Snackbar
+  const showSnackbar = (message: string, color: string = 'green') => {
+    setSnackbarMessage(message);
+    setSnackbarColor(color);
+    setSnackbarVisible(true);
+  };
 
   // Actualizar los inputs cuando cambien las configuraciones
   React.useEffect(() => {
@@ -55,48 +70,46 @@ export default function SettingsScreen() {
     setInputLanguage(currentLanguage);
   }, [currentLanguage]);
 
-  // Función para guardar la URL del servidor
+  // Funciรณn para guardar la URL del servidor
   const handleSave = async () => {
     if (!inputUrl.trim()) {
-      Alert.alert('Error', 'Por favor ingresa una URL válida');
+      showSnackbar('Por favor ingresa una URL válida', SNACKBAR_ERROR_COLOR);
       return;
     }
 
-    // Validación básica de URL
+    // Validaciรณn bรกsica de URL
     try {
       new URL(inputUrl);
     } catch {
-      Alert.alert('Error', 'La URL no tiene un formato válido');
+      showSnackbar('La URL no tiene un formato válido', SNACKBAR_ERROR_COLOR);
       return;
     }
 
     const success = await saveBackendUrl(inputUrl.trim());
     if (success) {
-      Alert.alert('Éxito', 'URL guardada correctamente');
+      showSnackbar('URL aplicada correctamente', SNACKBAR_SUCCESS_COLOR);
     } else {
-      Alert.alert('Error', 'No se pudo guardar la URL');
+      showSnackbar('No se pudo guardar la URL', SNACKBAR_ERROR_COLOR);
     }
   };
 
-  // Función para guardar el modelo localmente
+  // Funciรณn para guardar el modelo localmente
   const handleSaveModelLocally = async () => {
     if (!inputModel.trim()) {
-      Alert.alert('Error', 'Por favor ingresa un nombre de modelo válido');
+      showSnackbar('Por favor ingresa un nombre de modelo válido', SNACKBAR_ERROR_COLOR);
       return;
     }
 
     const result = await saveModel(inputModel.trim());
-    if (result.success) {
-      Alert.alert('Éxito', 'Modelo guardado localmente');
-    } else {
-      Alert.alert('Error', 'No se pudo guardar el modelo');
+    if (!result.success) {
+      showSnackbar('No se pudo guardar el modelo localmente', SNACKBAR_ERROR_COLOR);
     }
   };
 
-  // Función para actualizar el modelo en el servidor
+  // Funciรณn para actualizar el modelo en el servidor
   const handleUpdateModel = async () => {
     if (!inputModel.trim()) {
-      Alert.alert('Error', 'Por favor ingresa un nombre de modelo válido');
+      showSnackbar('Por favor ingresa un nombre de modelo válido', SNACKBAR_ERROR_COLOR);
       return;
     }
 
@@ -104,52 +117,51 @@ export default function SettingsScreen() {
     try {
       const result = await updateModel(inputModel.trim());
       if (result.success) {
-        Alert.alert('Éxito', 'Modelo actualizado en el servidor');
+        showSnackbar('Modelo aplicado correctamente', SNACKBAR_SUCCESS_COLOR);
       } else {
-        Alert.alert('Error', result.message || 'No se pudo actualizar el modelo en el servidor');
+        showSnackbar(result.message || 'No se pudo actualizar el modelo en el servidor', SNACKBAR_ERROR_COLOR);
       }
     } catch {
-      Alert.alert('Error', 'No se pudo actualizar el modelo');
+      showSnackbar('No se pudo actualizar el modelo', SNACKBAR_ERROR_COLOR);
     } finally {
       setIsUpdatingModel(false);
     }
   };
 
-  // Función para probar la conexión al servidor
-  const handleTestConnection = async () => {
+  // Funciรณn para probar la conexiรณn al servidor
+  const handleTestConnection = async (): Promise<boolean> => {
     setIsTestingConnection(true);
     try {
       const result = await testConnection(inputUrl.trim());
-      Alert.alert(
-        result.success ? 'Conexión Exitosa' : 'Error de Conexión',
-        result.message
-      );
+      if (!result.success) {
+        showSnackbar(result.message, SNACKBAR_ERROR_COLOR);
+      }
+      return result.success;
     } catch {
-      Alert.alert('Error', 'No se pudo probar la conexión');
+      showSnackbar('No se pudo probar la conexión', SNACKBAR_ERROR_COLOR);
+      return false;
     } finally {
       setIsTestingConnection(false);
     }
   };
 
-  // Función para guardar la voz localmente
+  // Funciรณn para guardar la voz localmente
   const handleSaveVoiceLocally = async () => {
     if (!inputVoice.trim()) {
-      Alert.alert('Error', 'Por favor ingresa un nombre de voz válido');
+      showSnackbar('Por favor selecciona una voz válida', SNACKBAR_ERROR_COLOR);
       return;
     }
 
     const result = await saveVoiceLocally(inputVoice.trim());
-    if (result.success) {
-      Alert.alert('Éxito', 'Voz guardada localmente');
-    } else {
-      Alert.alert('Error', 'No se pudo guardar la voz localmente');
+    if (!result.success) {
+      showSnackbar('No se pudo guardar la voz localmente', SNACKBAR_ERROR_COLOR);
     }
   };
 
-  // Función para actualizar la voz en el servidor
+  // Funciรณn para actualizar la voz en el servidor
   const handleUpdateVoice = async () => {
     if (!inputVoice.trim()) {
-      Alert.alert('Error', 'Por favor ingresa un nombre de voz válido');
+      showSnackbar('Por favor selecciona una voz válida', SNACKBAR_ERROR_COLOR);
       return;
     }
 
@@ -157,36 +169,34 @@ export default function SettingsScreen() {
     try {
       const result = await updateVoice(inputVoice.trim());
       if (result.success) {
-        Alert.alert('Éxito', 'Voz actualizada en el servidor');
+        showSnackbar('Voz aplicada correctamente', SNACKBAR_SUCCESS_COLOR);
       } else {
-        Alert.alert('Error', result.message || 'No se pudo actualizar la voz en el servidor');
+        showSnackbar(result.message || 'No se pudo actualizar la voz en el servidor', SNACKBAR_ERROR_COLOR);
       }
     } catch {
-      Alert.alert('Error', 'No se pudo actualizar la voz');
+      showSnackbar('No se pudo actualizar la voz', SNACKBAR_ERROR_COLOR);
     } finally {
       setIsUpdatingVoice(false);
     }
   };
 
-  // Función para guardar el idioma localmente
+  // Funciรณn para guardar el idioma localmente
   const handleSaveLanguageLocally = async () => {
     if (!inputLanguage.trim()) {
-      Alert.alert('Error', 'Por favor selecciona un idioma válido');
+      showSnackbar('Por favor selecciona un idioma válido', SNACKBAR_ERROR_COLOR);
       return;
     }
 
     const result = await saveLanguageLocally(inputLanguage.trim());
-    if (result.success) {
-      Alert.alert('Éxito', 'Idioma guardado localmente');
-    } else {
-      Alert.alert('Error', 'No se pudo guardar el idioma localmente');
+    if (!result.success) {
+      showSnackbar('No se pudo guardar el idioma localmente', SNACKBAR_ERROR_COLOR);
     }
   };
 
-  // Función para actualizar el idioma en el servidor
+  // Funciรณn para actualizar el idioma en el servidor
   const handleUpdateLanguage = async () => {
     if (!inputLanguage.trim()) {
-      Alert.alert('Error', 'Por favor selecciona un idioma válido');
+      showSnackbar('Por favor selecciona un idioma válido', SNACKBAR_ERROR_COLOR);
       return;
     }
 
@@ -194,12 +204,12 @@ export default function SettingsScreen() {
     try {
       const result = await updateLanguage(inputLanguage.trim());
       if (result.success) {
-        Alert.alert('Éxito', 'Idioma actualizado en el servidor');
+        showSnackbar('Idioma aplicado correctamente', SNACKBAR_SUCCESS_COLOR);
       } else {
-        Alert.alert('Error', result.message || 'No se pudo actualizar el idioma en el servidor');
+        showSnackbar(result.message || 'No se pudo actualizar el idioma en el servidor', SNACKBAR_ERROR_COLOR);
       }
     } catch {
-      Alert.alert('Error', 'No se pudo actualizar el idioma');
+      showSnackbar('No se pudo actualizar el idioma', SNACKBAR_ERROR_COLOR);
     } finally {
       setIsUpdatingLanguage(false);
     }
@@ -209,7 +219,7 @@ export default function SettingsScreen() {
     return (
       <ThemedView style={{flex: 1}} lightColor={Colors.light.tabBackground} darkColor={Colors.dark.tabBackground}>
         <ThemedView style={styles.container}>
-          <ThemedText>Cargando configuración...</ThemedText>
+          <ThemedText>Cargando configuraciรณn...</ThemedText>
         </ThemedView>
       </ThemedView>
     );
@@ -254,6 +264,14 @@ export default function SettingsScreen() {
           isTestingConnection={isTestingConnection}
         />
       </ScrollView>
+      <Snackbar
+        visible={snackbarVisible}
+        onDismiss={() => setSnackbarVisible(false)}
+        duration={Snackbar.DURATION_SHORT}
+        style={{ backgroundColor: snackbarColor }}
+      >
+        {snackbarMessage}
+      </Snackbar>
     </ThemedView>
   );
 }

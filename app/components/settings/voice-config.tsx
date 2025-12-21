@@ -193,29 +193,21 @@ export default function VoiceConfigSection({
 
       <View style={styles.buttonContainer}>
         <TouchableOpacity
-          style={[styles.button, styles.updateButton]}
-          onPress={handleUpdateVoice}
+          style={[styles.button, styles.applyButton, { opacity: isUpdatingVoice ? 0.5 : 1 }]}
+          onPress={async () => {
+            // Primero guardar localmente
+            await handleSaveVoiceLocally();
+            // Luego actualizar al backend
+            await handleUpdateVoice();
+          }}
           disabled={isUpdatingVoice}
         >
           <ThemedText
-            style={styles.updateButtonText}
+            style={styles.applyButtonText}
             lightColor="#FFFFFF"
             darkColor="#FFFFFF"
           >
-            {isUpdatingVoice ? t('settings.voice.updating') : t('settings.voice.update')}
-          </ThemedText>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[styles.button, styles.saveButton]}
-          onPress={handleSaveVoiceLocally}
-        >
-          <ThemedText
-            style={styles.saveButtonText}
-            lightColor="#FFFFFF"
-            darkColor="#FFFFFF"
-          >
-            {t('settings.voice.save')}
+            {isUpdatingVoice ? t('settings.voice.applying') : t('settings.voice.apply')}
           </ThemedText>
         </TouchableOpacity>
       </View>
@@ -347,12 +339,10 @@ const styles = StyleSheet.create({
     lineHeight: 20,
   },
   buttonContainer: {
-    flexDirection: 'row',
-    gap: 12,
     marginTop: 16,
   },
   button: {
-    flex: 1,
+    width: '100%',
     padding: 14,
     borderRadius: 8,
     alignItems: 'center',
@@ -362,17 +352,10 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
   },
-  saveButton: {
+  applyButton: {
     backgroundColor: '#2ab0e1',
   },
-  saveButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  updateButton: {
-    backgroundColor: '#2ab0e1',
-  },
-  updateButtonText: {
+  applyButtonText: {
     fontSize: 16,
     fontWeight: '600',
   },

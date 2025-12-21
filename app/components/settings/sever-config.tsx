@@ -10,7 +10,7 @@ interface ServerConfigSectionProps {
   setInputUrl: (value: string) => void;
   backendUrl: string;
   handleSave: () => void;
-  handleTestConnection: () => void;
+  handleTestConnection: () => Promise<boolean>;
   isTestingConnection: boolean;
 }
 
@@ -77,29 +77,23 @@ export default function ServerConfigSection({
 
       <View style={styles.buttonContainer}>
         <TouchableOpacity
-          style={[styles.button, styles.testButton]}
-          onPress={handleTestConnection}
+          style={[styles.button, styles.applyButton, { opacity: isTestingConnection ? 0.5 : 1 }]}
+          onPress={async () => {
+            // Primero probar la conexión
+            const testResult = await handleTestConnection();
+            if (testResult) {
+              // Si la conexión es exitosa, guardar la URL
+              await handleSave();
+            }
+          }}
           disabled={isTestingConnection}
         >
           <ThemedText
-            style={styles.testButtonText}
+            style={styles.applyButtonText}
             lightColor="#FFFFFF"
             darkColor="#FFFFFF"
           >
-            {isTestingConnection ? t('settings.server.testing') : t('settings.server.test')}
-          </ThemedText>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[styles.button, styles.saveButton]}
-          onPress={handleSave}
-        >
-          <ThemedText
-            style={styles.saveButtonText}
-            lightColor="#FFFFFF"
-            darkColor="#FFFFFF"
-          >
-            {t('settings.server.save')}
+            {isTestingConnection ? t('settings.server.applying') : t('settings.server.apply')}
           </ThemedText>
         </TouchableOpacity>
       </View>
@@ -146,12 +140,10 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.9)',
   },
   buttonContainer: {
-    flexDirection: 'row',
-    gap: 12,
     marginTop: 16,
   },
   button: {
-    flex: 1,
+    width: '100%',
     padding: 14,
     borderRadius: 8,
     alignItems: 'center',
@@ -161,17 +153,10 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
   },
-  saveButton: {
+  applyButton: {
     backgroundColor: '#2ab0e1',
   },
-  saveButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  testButton: {
-    backgroundColor: '#2ab0e1',
-  },
-  testButtonText: {
+  applyButtonText: {
     fontSize: 16,
     fontWeight: '600',
   },

@@ -15,9 +15,8 @@
       "current": "Idioma Actual:",
       "new": "Nuevo Idioma:",
       "select": "Seleccionar idioma",
-      "updating": "Actualizando...",
-      "update": "Actualizar",
-      "save": "Guardar"
+      "applying": "Aplicando...",
+      "apply": "Aplicar"
     },
     "model": {
       "title": "Modelo de IA",
@@ -25,9 +24,8 @@
       "current": "Modelo Actual:",
       "new": "Modelo Nuevo:",
       "placeholder": "Ej: gemma3:4b",
-      "updating": "Actualizando...",
-      "update": "Actualizar",
-      "save": "Guardar"
+      "applying": "Aplicando...",
+      "apply": "Aplicar"
     },
     "voice": {
       "title": "Voz del Bot",
@@ -39,9 +37,8 @@
       "gender": "Género:",
       "man": "Hombre",
       "woman": "Mujer",
-      "updating": "Actualizando...",
-      "update": "Actualizar",
-      "save": "Guardar"
+      "applying": "Aplicando...",
+      "apply": "Aplicar"
     },
     "server": {
       "title": "Servidor",
@@ -49,9 +46,8 @@
       "current": "URL Actual:",
       "new": "URL Nueva:",
       "placeholder": "Ej: http://192.168.100.1:8000",
-      "testing": "Probando...",
-      "test": "Probar",
-      "save": "Guardar"
+      "applying": "Aplicando...",
+      "apply": "Aplicar"
     }
   },
   "common": {

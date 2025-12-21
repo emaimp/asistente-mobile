@@ -76,29 +76,21 @@ export default function AIModelConfigSection({
 
       <View style={styles.buttonContainer}>
         <TouchableOpacity
-          style={[styles.button, styles.updateButton]}
-          onPress={handleUpdateModel}
+          style={[styles.button, styles.applyButton, { opacity: isUpdatingModel ? 0.5 : 1 }]}
+          onPress={async () => {
+            // Primero guardar localmente
+            await handleSaveModelLocally();
+            // Luego actualizar al backend
+            await handleUpdateModel();
+          }}
           disabled={isUpdatingModel}
         >
           <ThemedText
-            style={styles.updateButtonText}
+            style={styles.applyButtonText}
             lightColor="#FFFFFF"
             darkColor="#FFFFFF"
           >
-            {isUpdatingModel ? t('settings.model.updating') : t('settings.model.update')}
-          </ThemedText>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[styles.button, styles.saveButton]}
-          onPress={handleSaveModelLocally}
-        >
-          <ThemedText
-            style={styles.saveButtonText}
-            lightColor="#FFFFFF"
-            darkColor="#FFFFFF"
-          >
-            {t('settings.model.save')}
+            {isUpdatingModel ? t('settings.model.applying') : t('settings.model.apply')}
           </ThemedText>
         </TouchableOpacity>
       </View>
@@ -145,12 +137,10 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.9)',
   },
   buttonContainer: {
-    flexDirection: 'row',
-    gap: 12,
     marginTop: 16,
   },
   button: {
-    flex: 1,
+    width: '100%',
     padding: 14,
     borderRadius: 8,
     alignItems: 'center',
@@ -160,17 +150,10 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
   },
-  saveButton: {
+  applyButton: {
     backgroundColor: '#2ab0e1',
   },
-  saveButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  updateButton: {
-    backgroundColor: '#2ab0e1',
-  },
-  updateButtonText: {
+  applyButtonText: {
     fontSize: 16,
     fontWeight: '600',
   },

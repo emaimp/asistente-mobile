@@ -109,29 +109,21 @@ export default function LanguageConfigSection({
 
       <View style={styles.buttonContainer}>
         <TouchableOpacity
-          style={[styles.button, styles.updateButton]}
-          onPress={handleUpdateLanguage}
+          style={[styles.button, styles.applyButton, { opacity: isUpdatingLanguage ? 0.5 : 1 }]}
+          onPress={async () => {
+            // Primero guardar localmente
+            await handleSaveLanguageLocally();
+            // Luego actualizar al backend
+            await handleUpdateLanguage();
+          }}
           disabled={isUpdatingLanguage}
         >
           <ThemedText
-            style={styles.updateButtonText}
+            style={styles.applyButtonText}
             lightColor="#FFFFFF"
             darkColor="#FFFFFF"
           >
-            {isUpdatingLanguage ? t('settings.language.updating') : t('settings.language.update')}
-          </ThemedText>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[styles.button, styles.saveButton]}
-          onPress={handleSaveLanguageLocally}
-        >
-          <ThemedText
-            style={styles.saveButtonText}
-            lightColor="#FFFFFF"
-            darkColor="#FFFFFF"
-          >
-            {t('settings.language.save')}
+            {isUpdatingLanguage ? t('settings.language.applying') : t('settings.language.apply')}
           </ThemedText>
         </TouchableOpacity>
       </View>
@@ -215,12 +207,10 @@ const styles = StyleSheet.create({
     borderRadius: 6,
   },
   buttonContainer: {
-    flexDirection: 'row',
-    gap: 12,
     marginTop: 16,
   },
   button: {
-    flex: 1,
+    width: '100%',
     padding: 14,
     borderRadius: 8,
     alignItems: 'center',
@@ -230,17 +220,10 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
   },
-  saveButton: {
+  applyButton: {
     backgroundColor: '#2ab0e1',
   },
-  saveButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  updateButton: {
-    backgroundColor: '#2ab0e1',
-  },
-  updateButtonText: {
+  applyButtonText: {
     fontSize: 16,
     fontWeight: '600',
   },

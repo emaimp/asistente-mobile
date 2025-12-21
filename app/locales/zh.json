@@ -15,9 +15,8 @@
       "current": "当前语言:",
       "new": "新语言:",
       "select": "选择语言",
-      "updating": "更新中...",
-      "update": "更新",
-      "save": "保存"
+      "applying": "应用中...",
+      "apply": "应用"
     },
     "model": {
       "title": "AI模型",
@@ -25,9 +24,8 @@
       "current": "当前模型:",
       "new": "新模型:",
       "placeholder": "例: gemma3:4b",
-      "updating": "更新中...",
-      "update": "更新",
-      "save": "保存"
+      "applying": "应用中...",
+      "apply": "应用"
     },
     "voice": {
       "title": "机器人语音",
@@ -39,9 +37,8 @@
       "gender": "性别:",
       "man": "男性",
       "woman": "女性",
-      "updating": "更新中...",
-      "update": "更新",
-      "save": "保存"
+      "applying": "应用中...",
+      "apply": "应用"
     },
     "server": {
       "title": "服务器",
@@ -49,9 +46,8 @@
       "current": "当前URL:",
       "new": "新URL:",
       "placeholder": "例: http://192.168.100.1:8000",
-      "testing": "测试中...",
-      "test": "测试",
-      "save": "保存"
+      "applying": "应用中...",
+      "apply": "应用"
     }
   },
   "common": {
