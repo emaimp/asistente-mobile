@@ -14,18 +14,14 @@
       "description": "アプリの言語を設定します。",
       "current": "現在の言語:",
       "new": "新しい言語:",
-      "select": "言語を選択",
-      "applying": "適用中...",
-      "apply": "適用"
+      "select": "言語を選択"
     },
     "model": {
       "title": "AIモデル",
       "description": "AIモデルを設定します。",
       "current": "現在のモデル:",
       "new": "新しいモデル:",
-      "placeholder": "例: gemma3:4b",
-      "applying": "適用中...",
-      "apply": "適用"
+      "placeholder": "例: gemma3:4b"
     },
     "voice": {
       "title": "ボット音声",
@@ -36,9 +32,7 @@
       "language": "言語:",
       "gender": "性別:",
       "man": "男性",
-      "woman": "女性",
-      "applying": "適用中...",
-      "apply": "適用"
+      "woman": "女性"
     },
     "server": {
       "title": "サーバー",
@@ -48,7 +42,11 @@
       "placeholder": "例: http://192.168.100.1:8000",
       "applying": "適用中...",
       "apply": "適用"
-    }
+    },
+    "applyAll": "設定を適用",
+    "applyingAll": "設定を適用中...",
+    "applyAllSuccess": "設定が正常に適用されました。",
+    "applyAllError": "設定の適用中にエラーが発生しました。"
   },
   "common": {
     "loading": "読み込み中...",

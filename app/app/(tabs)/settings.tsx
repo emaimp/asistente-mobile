@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, ScrollView } from 'react-native';
+import { StyleSheet, ScrollView, TouchableOpacity, Text } from 'react-native';
 import { Snackbar } from 'react-native-paper';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
@@ -7,6 +7,7 @@ import { useBackendUrlConfig } from '@/hooks/api-settings/use-backend-url-config
 import { useModelConfig } from '@/hooks/api-settings/use-model-config';
 import { useVoiceConfig } from '@/hooks/api-settings/use-voice-config';
 import { useLanguageConfig } from '@/hooks/api-settings/use-language-config';
+import { useLanguage } from '@/contexts/language-context';
 import ServerConfigSection from '@/components/settings/sever-config';
 import AIModelConfigSection from '@/components/settings/model-config';
 import VoiceConfigSection from '@/components/settings/voice-config';
@@ -17,19 +18,19 @@ const SNACKBAR_SUCCESS_COLOR = '#2eb733';
 const SNACKBAR_ERROR_COLOR = '#e00023';
 
 export default function SettingsScreen() {
-  // Hooks para configuraciรณn de servidor
+  // Hooks para configuración de servidor
   const { backendUrl, saveBackendUrl, testConnection, isLoading } = useBackendUrlConfig();
-  // Hook para configuraciรณn de modelo
+  // Hook para configuración de modelo
   const { model, saveModel, updateModel } = useModelConfig();
-  // Hook para configuraciรณn de voz
+  // Hook para configuración de voz
   const { voice: currentVoice, saveVoiceLocally, updateVoice } = useVoiceConfig();
-  // Hook para configuraciรณn de idioma
+  // Hook para configuración de idioma
   const { language: currentLanguage, saveLanguageLocally, updateLanguage } = useLanguageConfig();
   // Estado para el campo de entrada de URL del servidor
   const [inputUrl, setInputUrl] = useState(backendUrl);
   // Estado para el campo de entrada del modelo
   const [inputModel, setInputModel] = useState(model);
-  // Estado de carga para probar conexiรณn
+  // Estado de carga para probar conexión
   const [isTestingConnection, setIsTestingConnection] = useState(false);
   // Estado de carga para actualizar modelo
   const [isUpdatingModel, setIsUpdatingModel] = useState(false);
@@ -45,6 +46,10 @@ export default function SettingsScreen() {
   const [snackbarVisible, setSnackbarVisible] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarColor, setSnackbarColor] = useState('green');
+  // Estado para aplicar todas las configuraciones
+  const [isApplyingAll, setIsApplyingAll] = useState(false);
+  // Hook para traducciones
+  const { t } = useLanguage();
 
   // Función para mostrar Snackbar
   const showSnackbar = (message: string, color: string = 'green') => {
@@ -70,14 +75,14 @@ export default function SettingsScreen() {
     setInputLanguage(currentLanguage);
   }, [currentLanguage]);
 
-  // Funciรณn para guardar la URL del servidor
+  // Función para guardar la URL del servidor
   const handleSave = async () => {
     if (!inputUrl.trim()) {
       showSnackbar('Por favor ingresa una URL válida', SNACKBAR_ERROR_COLOR);
       return;
     }
 
-    // Validaciรณn bรกsica de URL
+    // Validación básica de URL
     try {
       new URL(inputUrl);
     } catch {
@@ -93,42 +98,7 @@ export default function SettingsScreen() {
     }
   };
 
-  // Funciรณn para guardar el modelo localmente
-  const handleSaveModelLocally = async () => {
-    if (!inputModel.trim()) {
-      showSnackbar('Por favor ingresa un nombre de modelo válido', SNACKBAR_ERROR_COLOR);
-      return;
-    }
-
-    const result = await saveModel(inputModel.trim());
-    if (!result.success) {
-      showSnackbar('No se pudo guardar el modelo localmente', SNACKBAR_ERROR_COLOR);
-    }
-  };
-
-  // Funciรณn para actualizar el modelo en el servidor
-  const handleUpdateModel = async () => {
-    if (!inputModel.trim()) {
-      showSnackbar('Por favor ingresa un nombre de modelo válido', SNACKBAR_ERROR_COLOR);
-      return;
-    }
-
-    setIsUpdatingModel(true);
-    try {
-      const result = await updateModel(inputModel.trim());
-      if (result.success) {
-        showSnackbar('Modelo aplicado correctamente', SNACKBAR_SUCCESS_COLOR);
-      } else {
-        showSnackbar(result.message || 'No se pudo actualizar el modelo en el servidor', SNACKBAR_ERROR_COLOR);
-      }
-    } catch {
-      showSnackbar('No se pudo actualizar el modelo', SNACKBAR_ERROR_COLOR);
-    } finally {
-      setIsUpdatingModel(false);
-    }
-  };
-
-  // Funciรณn para probar la conexiรณn al servidor
+  // Función para probar la conexión al servidor
   const handleTestConnection = async (): Promise<boolean> => {
     setIsTestingConnection(true);
     try {
@@ -145,73 +115,74 @@ export default function SettingsScreen() {
     }
   };
 
-  // Funciรณn para guardar la voz localmente
-  const handleSaveVoiceLocally = async () => {
-    if (!inputVoice.trim()) {
-      showSnackbar('Por favor selecciona una voz válida', SNACKBAR_ERROR_COLOR);
-      return;
-    }
+  // Función para guardar el idioma localmente
+  const handleSaveLanguageLocally = async () => {
+    await saveLanguageLocally(inputLanguage.trim());
+  };
 
-    const result = await saveVoiceLocally(inputVoice.trim());
-    if (!result.success) {
-      showSnackbar('No se pudo guardar la voz localmente', SNACKBAR_ERROR_COLOR);
+  // Función para actualizar el idioma en el servidor
+  const handleUpdateLanguage = async () => {
+    setIsUpdatingLanguage(true);
+    try {
+      await updateLanguage(inputLanguage.trim());
+    } finally {
+      setIsUpdatingLanguage(false);
     }
   };
 
-  // Funciรณn para actualizar la voz en el servidor
-  const handleUpdateVoice = async () => {
-    if (!inputVoice.trim()) {
-      showSnackbar('Por favor selecciona una voz válida', SNACKBAR_ERROR_COLOR);
-      return;
-    }
+  // Función para guardar el modelo localmente
+  const handleSaveModelLocally = async () => {
+    await saveModel(inputModel.trim());
+  };
 
+  // Función para actualizar el modelo en el servidor
+  const handleUpdateModel = async () => {
+    setIsUpdatingModel(true);
+    try {
+      await updateModel(inputModel.trim());
+    } finally {
+      setIsUpdatingModel(false);
+    }
+  };
+
+  // Función para guardar la voz localmente
+  const handleSaveVoiceLocally = async () => {
+    await saveVoiceLocally(inputVoice.trim());
+  };
+
+  // Función para actualizar la voz en el servidor
+  const handleUpdateVoice = async () => {
     setIsUpdatingVoice(true);
     try {
-      const result = await updateVoice(inputVoice.trim());
-      if (result.success) {
-        showSnackbar('Voz aplicada correctamente', SNACKBAR_SUCCESS_COLOR);
-      } else {
-        showSnackbar(result.message || 'No se pudo actualizar la voz en el servidor', SNACKBAR_ERROR_COLOR);
-      }
-    } catch {
-      showSnackbar('No se pudo actualizar la voz', SNACKBAR_ERROR_COLOR);
+      await updateVoice(inputVoice.trim());
     } finally {
       setIsUpdatingVoice(false);
     }
   };
 
-  // Funciรณn para guardar el idioma localmente
-  const handleSaveLanguageLocally = async () => {
-    if (!inputLanguage.trim()) {
-      showSnackbar('Por favor selecciona un idioma válido', SNACKBAR_ERROR_COLOR);
-      return;
-    }
-
-    const result = await saveLanguageLocally(inputLanguage.trim());
-    if (!result.success) {
-      showSnackbar('No se pudo guardar el idioma localmente', SNACKBAR_ERROR_COLOR);
-    }
-  };
-
-  // Funciรณn para actualizar el idioma en el servidor
-  const handleUpdateLanguage = async () => {
-    if (!inputLanguage.trim()) {
-      showSnackbar('Por favor selecciona un idioma válido', SNACKBAR_ERROR_COLOR);
-      return;
-    }
-
-    setIsUpdatingLanguage(true);
+  // Función para aplicar todas las configuraciones (Idioma, Modelo, Voz)
+  const handleApplyAll = async () => {
+    setIsApplyingAll(true);
     try {
-      const result = await updateLanguage(inputLanguage.trim());
-      if (result.success) {
-        showSnackbar('Idioma aplicado correctamente', SNACKBAR_SUCCESS_COLOR);
-      } else {
-        showSnackbar(result.message || 'No se pudo actualizar el idioma en el servidor', SNACKBAR_ERROR_COLOR);
-      }
+      // Aplicar idioma
+      await handleSaveLanguageLocally();
+      await handleUpdateLanguage();
+
+      // Aplicar modelo
+      await handleSaveModelLocally();
+      await handleUpdateModel();
+
+      // Aplicar voz
+      await handleSaveVoiceLocally();
+      await handleUpdateVoice();
+
+      // Mensaje final de éxito
+      showSnackbar(t('settings.applyAllSuccess'), SNACKBAR_SUCCESS_COLOR);
     } catch {
-      showSnackbar('No se pudo actualizar el idioma', SNACKBAR_ERROR_COLOR);
+      // En caso de error general
+      showSnackbar(t('settings.applyAllError'), SNACKBAR_ERROR_COLOR);
     } finally {
-      setIsUpdatingLanguage(false);
+      setIsApplyingAll(false);
     }
   };
 
@@ -219,7 +190,7 @@ export default function SettingsScreen() {
     return (
       <ThemedView style={{flex: 1}} lightColor={Colors.light.tabBackground} darkColor={Colors.dark.tabBackground}>
         <ThemedView style={styles.container}>
-          <ThemedText>Cargando configuraciรณn...</ThemedText>
+          <ThemedText>Cargando configuración...</ThemedText>
         </ThemedView>
       </ThemedView>
     );
@@ -232,28 +203,34 @@ export default function SettingsScreen() {
           inputLanguage={inputLanguage}
           setInputLanguage={setInputLanguage}
           currentLanguage={currentLanguage}
-          handleUpdateLanguage={handleUpdateLanguage}
-          handleSaveLanguageLocally={handleSaveLanguageLocally}
-          isUpdatingLanguage={isUpdatingLanguage}
         />
 
         <AIModelConfigSection
           inputModel={inputModel}
           setInputModel={setInputModel}
           model={model}
-          handleUpdateModel={handleUpdateModel}
-          handleSaveModelLocally={handleSaveModelLocally}
-          isUpdatingModel={isUpdatingModel}
         />
 
         <VoiceConfigSection
           inputVoice={inputVoice}
           setInputVoice={setInputVoice}
           currentVoice={currentVoice}
-          handleUpdateVoice={handleUpdateVoice}
-          handleSaveVoiceLocally={handleSaveVoiceLocally}
-          isUpdatingVoice={isUpdatingVoice}
         />
+
+        {/* Botón para aplicar todas las configuraciones */}
+        <TouchableOpacity
+          style={[styles.applyAllButton, { opacity: isApplyingAll || isUpdatingLanguage || isUpdatingModel || isUpdatingVoice ? 0.5 : 1 }]}
+          onPress={handleApplyAll}
+          disabled={isApplyingAll || isUpdatingLanguage || isUpdatingModel || isUpdatingVoice}
+        >
+          <ThemedText
+            style={styles.applyAllButtonText}
+            lightColor="#FFFFFF"
+            darkColor="#FFFFFF"
+          >
+            {isApplyingAll ? t('settings.applyingAll') : t('settings.applyAll')}
+          </ThemedText>
+        </TouchableOpacity>
 
         <ServerConfigSection
           inputUrl={inputUrl}
@@ -270,7 +247,7 @@ export default function SettingsScreen() {
         duration={Snackbar.DURATION_SHORT}
         style={{ backgroundColor: snackbarColor }}
       >
-        {snackbarMessage}
+        <Text style={{ textAlign: 'center', color: 'white' }}>{snackbarMessage}</Text>
       </Snackbar>
     </ThemedView>
   );
@@ -281,13 +258,31 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   contentContainer: {
-    paddingHorizontal: 30,
-    paddingVertical: 60,
+    paddingHorizontal: 10,
+    paddingVertical: 35,
   },
   container: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
     padding: 20,
+  },
+  applyAllButton: {
+    width: '92%',
+    padding: 14,
+    borderRadius: 8,
+    alignSelf: 'center',
+    alignItems: 'center',
+    backgroundColor: '#2ab0e1',
+    marginTop: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  applyAllButtonText: {
+    fontSize: 16,
+    fontWeight: '600',
   },
 });

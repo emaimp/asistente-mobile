@@ -9,9 +9,6 @@ interface LanguageConfigSectionProps {
   inputLanguage: string;
   setInputLanguage: (value: string) => void;
   currentLanguage: string;
-  handleUpdateLanguage: () => void;
-  handleSaveLanguageLocally: () => void;
-  isUpdatingLanguage: boolean;
 }
 
 const LANGUAGES = {
@@ -25,9 +22,6 @@ export default function LanguageConfigSection({
   inputLanguage,
   setInputLanguage,
   currentLanguage,
-  handleUpdateLanguage,
-  handleSaveLanguageLocally,
-  isUpdatingLanguage,
 }: LanguageConfigSectionProps) {
   const colorScheme = useColorScheme();
   const borderColor = colorScheme === 'dark' ? '#FFFFFF' : '#000000';
@@ -107,35 +101,16 @@ export default function LanguageConfigSection({
         </View>
       </View>
 
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity
-          style={[styles.button, styles.applyButton, { opacity: isUpdatingLanguage ? 0.5 : 1 }]}
-          onPress={async () => {
-            // Primero guardar localmente
-            await handleSaveLanguageLocally();
-            // Luego actualizar al backend
-            await handleUpdateLanguage();
-          }}
-          disabled={isUpdatingLanguage}
-        >
-          <ThemedText
-            style={styles.applyButtonText}
-            lightColor="#FFFFFF"
-            darkColor="#FFFFFF"
-          >
-            {isUpdatingLanguage ? t('settings.language.applying') : t('settings.language.apply')}
-          </ThemedText>
-        </TouchableOpacity>
-      </View>
+
     </ThemedView>
   );
 }
 
 const styles = StyleSheet.create({
   section: {
-    marginBottom: 24,
+    marginBottom: 0,
     padding: 16,
-    borderWidth: 1,
+    borderWidth: 0,
     borderRadius: 12,
   },
   sectionTitle: {
@@ -206,25 +181,5 @@ const styles = StyleSheet.create({
     padding: 8,
     borderRadius: 6,
   },
-  buttonContainer: {
-    marginTop: 16,
-  },
-  button: {
-    width: '100%',
-    padding: 14,
-    borderRadius: 8,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-  applyButton: {
-    backgroundColor: '#2ab0e1',
-  },
-  applyButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-  },
+
 });

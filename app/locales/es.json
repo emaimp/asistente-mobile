@@ -14,18 +14,14 @@
       "description": "Configura el idioma de la aplicación.",
       "current": "Idioma Actual:",
       "new": "Nuevo Idioma:",
-      "select": "Seleccionar idioma",
-      "applying": "Aplicando...",
-      "apply": "Aplicar"
+      "select": "Seleccionar idioma"
     },
     "model": {
       "title": "Modelo de IA",
       "description": "Configura el modelo de Inteligencia Artificial.",
       "current": "Modelo Actual:",
       "new": "Modelo Nuevo:",
-      "placeholder": "Ej: gemma3:4b",
-      "applying": "Aplicando...",
-      "apply": "Aplicar"
+      "placeholder": "Ej: gemma3:4b"
     },
     "voice": {
       "title": "Voz del Bot",
@@ -36,9 +32,7 @@
       "language": "Idioma:",
       "gender": "Género:",
       "man": "Hombre",
-      "woman": "Mujer",
-      "applying": "Aplicando...",
-      "apply": "Aplicar"
+      "woman": "Mujer"
     },
     "server": {
       "title": "Servidor",
@@ -48,7 +42,11 @@
       "placeholder": "Ej: http://192.168.100.1:8000",
       "applying": "Aplicando...",
       "apply": "Aplicar"
-    }
+    },
+    "applyAll": "Aplicar Configuraciones",
+    "applyingAll": "Aplicando Configuraciones...",
+    "applyAllSuccess": "Se aplicaron correctamente las configuraciones.",
+    "applyAllError": "Se produjo un error al aplicar las configuraciones."
   },
   "common": {
     "loading": "Cargando...",

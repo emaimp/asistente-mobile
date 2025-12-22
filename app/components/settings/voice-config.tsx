@@ -9,9 +9,6 @@ interface VoiceConfigSectionProps {
   inputVoice: string;
   setInputVoice: (value: string) => void;
   currentVoice: string;
-  handleUpdateVoice: () => void;
-  handleSaveVoiceLocally: () => void;
-  isUpdatingVoice: boolean;
 }
 
 const VOICES = {
@@ -37,16 +34,13 @@ export default function VoiceConfigSection({
   inputVoice,
   setInputVoice,
   currentVoice,
-  handleUpdateVoice,
-  handleSaveVoiceLocally,
-  isUpdatingVoice,
 }: VoiceConfigSectionProps) {
   const colorScheme = useColorScheme();
   const borderColor = colorScheme === 'dark' ? '#FFFFFF' : '#000000';
   const { t } = useLanguage();
 
   const [selectedLanguage, setSelectedLanguage] = useState<string>('English');
-  const [selectedGender, setSelectedGender] = useState<string>('Woman');
+  const [selectedGender, setSelectedGender] = useState<string>('Man');
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
 
   const availableVoices = VOICES[selectedLanguage as keyof typeof VOICES][selectedGender as keyof typeof VOICES[keyof typeof VOICES]];
@@ -191,35 +185,16 @@ export default function VoiceConfigSection({
         </View>
       </View>
 
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity
-          style={[styles.button, styles.applyButton, { opacity: isUpdatingVoice ? 0.5 : 1 }]}
-          onPress={async () => {
-            // Primero guardar localmente
-            await handleSaveVoiceLocally();
-            // Luego actualizar al backend
-            await handleUpdateVoice();
-          }}
-          disabled={isUpdatingVoice}
-        >
-          <ThemedText
-            style={styles.applyButtonText}
-            lightColor="#FFFFFF"
-            darkColor="#FFFFFF"
-          >
-            {isUpdatingVoice ? t('settings.voice.applying') : t('settings.voice.apply')}
-          </ThemedText>
-        </TouchableOpacity>
-      </View>
+
     </ThemedView>
   );
 }
 
 const styles = StyleSheet.create({
   section: {
-    marginBottom: 24,
+    marginBottom: 0,
     padding: 16,
-    borderWidth: 1,
+    borderWidth: 0,
     borderRadius: 12,
   },
   sectionTitle: {
@@ -319,44 +294,5 @@ const styles = StyleSheet.create({
     padding: 8,
     borderRadius: 6,
   },
-  textInput: {
-    borderWidth: 1,
-    borderColor: '#2ab0e1',
-    borderRadius: 8,
-    padding: 12,
-    fontSize: 16,
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
-  },
-  voicesList: {
-    marginBottom: 16,
-  },
-  voicesText: {
-    fontSize: 14,
-    fontFamily: 'monospace',
-    backgroundColor: 'rgba(255, 255, 255, 0.6)',
-    padding: 8,
-    borderRadius: 6,
-    lineHeight: 20,
-  },
-  buttonContainer: {
-    marginTop: 16,
-  },
-  button: {
-    width: '100%',
-    padding: 14,
-    borderRadius: 8,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-  applyButton: {
-    backgroundColor: '#2ab0e1',
-  },
-  applyButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-  },
+
 });

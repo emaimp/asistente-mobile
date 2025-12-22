@@ -14,18 +14,14 @@
       "description": "Configure the app language.",
       "current": "Current Language:",
       "new": "New Language:",
-      "select": "Select language",
-      "applying": "Applying...",
-      "apply": "Apply"
+      "select": "Select language"
     },
     "model": {
       "title": "AI Model",
       "description": "Configure the AI model.",
       "current": "Current Model:",
       "new": "New Model:",
-      "placeholder": "Ex: gemma3:4b",
-      "applying": "Applying...",
-      "apply": "Apply"
+      "placeholder": "Ex: gemma3:4b"
     },
     "voice": {
       "title": "Bot Voice",
@@ -36,9 +32,7 @@
       "language": "Language:",
       "gender": "Gender:",
       "man": "Man",
-      "woman": "Woman",
-      "applying": "Applying...",
-      "apply": "Apply"
+      "woman": "Woman"
     },
     "server": {
       "title": "Server",
@@ -48,7 +42,11 @@
       "placeholder": "Ex: http://192.168.100.1:8000",
       "applying": "Applying...",
       "apply": "Apply"
-    }
+    },
+    "applyAll": "Apply Configurations",
+    "applyingAll": "Applying Configurations...",
+    "applyAllSuccess": "Configurations applied successfully.",
+    "applyAllError": "An error occurred while applying configurations."
   },
   "common": {
     "loading": "Loading...",

@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, TextInput, View } from 'react-native';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { useColorScheme } from '@/hooks/use-color-scheme';
@@ -9,18 +9,12 @@ interface AIModelConfigSectionProps {
   inputModel: string;
   setInputModel: (value: string) => void;
   model: string;
-  handleUpdateModel: () => void;
-  handleSaveModelLocally: () => void;
-  isUpdatingModel: boolean;
 }
 
 export default function AIModelConfigSection({
   inputModel,
   setInputModel,
   model,
-  handleUpdateModel,
-  handleSaveModelLocally,
-  isUpdatingModel,
 }: AIModelConfigSectionProps) {
   const colorScheme = useColorScheme();
   const borderColor = colorScheme === 'dark' ? '#FFFFFF' : '#000000';
@@ -74,35 +68,16 @@ export default function AIModelConfigSection({
         />
       </View>
 
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity
-          style={[styles.button, styles.applyButton, { opacity: isUpdatingModel ? 0.5 : 1 }]}
-          onPress={async () => {
-            // Primero guardar localmente
-            await handleSaveModelLocally();
-            // Luego actualizar al backend
-            await handleUpdateModel();
-          }}
-          disabled={isUpdatingModel}
-        >
-          <ThemedText
-            style={styles.applyButtonText}
-            lightColor="#FFFFFF"
-            darkColor="#FFFFFF"
-          >
-            {isUpdatingModel ? t('settings.model.applying') : t('settings.model.apply')}
-          </ThemedText>
-        </TouchableOpacity>
-      </View>
+
     </ThemedView>
   );
 }
 
 const styles = StyleSheet.create({
   section: {
-    marginBottom: 24,
+    marginBottom: 0,
     padding: 16,
-    borderWidth: 1,
+    borderWidth: 0,
     borderRadius: 12,
   },
   sectionTitle: {
@@ -136,25 +111,5 @@ const styles = StyleSheet.create({
     fontSize: 16,
     backgroundColor: 'rgba(255, 255, 255, 0.9)',
   },
-  buttonContainer: {
-    marginTop: 16,
-  },
-  button: {
-    width: '100%',
-    padding: 14,
-    borderRadius: 8,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-  applyButton: {
-    backgroundColor: '#2ab0e1',
-  },
-  applyButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-  },
+
 });
