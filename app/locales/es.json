@@ -34,17 +34,7 @@
       "man": "Hombre",
       "woman": "Mujer"
     },
-    "server": {
-      "title": "Servidor",
-      "description": "Configura la dirección del servidor.",
-      "current": "URL Actual:",
-      "new": "URL Nueva:",
-      "placeholder": "Ej: http://192.168.100.1:8000",
-      "applying": "Aplicando...",
-      "apply": "Aplicar"
-    },
     "applyAll": "Aplicar Configuraciones",
-    "applyingAll": "Aplicando Configuraciones...",
     "applyAllSuccess": "Se aplicaron correctamente las configuraciones.",
     "applyAllError": "Se produjo un error al aplicar las configuraciones."
   },
@@ -54,6 +44,16 @@
     "success": "Éxito",
     "cancel": "Cancelar",
     "ok": "OK"
+  },
+  "modal": {
+    "title": "Conexión al Servidor",
+    "url": "URL:",
+    "placeholder": "Ej: http://192.168.100.1:8000",
+    "dontShowAgain": "No mostrar nuevamente",
+    "connect": "Conectar",
+    "close": "Cerrar",
+    "success": "Conexión exitosa",
+    "error": "No se pudo conectar al servidor"
   },
   "languages": {
     "a": "🇺🇸 Inglés Americano",

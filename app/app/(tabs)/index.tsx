@@ -1,8 +1,10 @@
 import { StyleSheet, Image, View, Dimensions } from 'react-native';
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ThemedView } from '@/components/themed-view';
 import { ThemedText } from '@/components/themed-text';
 import AudioRecorder from '@/components/index-audio-recorder';
+import InitialModal from '@/components/initial-modal';
 import { useConversation } from '@/contexts/chatbot-conversation-context';
 import { useAudioPlayback } from '@/hooks/use-audio-playback';
 import { useLanguage } from '@/contexts/language-context';
@@ -10,7 +12,7 @@ import { Colors } from '@/constants/theme';
 
 // Componente que reproduce automáticamente el audio de la última respuesta del bot
 function AutoResponsePlayer({ messages }: { messages: any[] }) {
-  // Encontrar el último mensaje del bot con audio
+  // Encuentra el último mensaje del bot con audio
   const lastBotAudioUri = useMemo(() => {
     for (let i = messages.length - 1; i >= 0; i--) {
       if (messages[i].type === 'bot' && messages[i].audioUri) {
@@ -35,6 +37,28 @@ export default function HomeScreen() {
   const topMargin = height * 0.1; // 10% de la altura para el margen superior
   const textMarginTop = height * 0.05; // Margen superior del texto basado en altura
   const textMarginBottom = height * 0.03; // Margen inferior del texto
+  const [showInitialModal, setShowInitialModal] = useState(false); // Estado para el modal inicial
+
+  // Comprobar si se debe mostrar el modal inicial
+  useEffect(() => {
+    const checkInitialModal = async () => {
+      try {
+        const dismissed = await AsyncStorage.getItem('initial-modal-dismissed');
+        if (dismissed !== 'true') {
+          setShowInitialModal(true);
+        }
+      } catch (error) {
+        console.error('Error checking initial modal:', error);
+        setShowInitialModal(true); // Mostrar si hay error
+      }
+    };
+    checkInitialModal();
+  }, []);
+
+  // Maneja el cierre del modal inicial
+  const handleCloseModal = () => {
+    setShowInitialModal(false);
+  };
 
   return (
     <ThemedView style={{flex: 1}} lightColor={Colors.light.tabBackground} darkColor={Colors.dark.tabBackground}>
@@ -60,6 +84,7 @@ export default function HomeScreen() {
         </View>
       </View>
       <AutoResponsePlayer messages={messages} />
+      <InitialModal visible={showInitialModal} onClose={handleCloseModal} />
     </ThemedView>
   );
 }

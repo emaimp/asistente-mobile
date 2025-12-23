@@ -34,17 +34,7 @@
       "man": "男性",
       "woman": "女性"
     },
-    "server": {
-      "title": "服务器",
-      "description": "配置服务器地址。",
-      "current": "当前URL:",
-      "new": "新URL:",
-      "placeholder": "例: http://192.168.100.1:8000",
-      "applying": "应用中...",
-      "apply": "应用"
-    },
     "applyAll": "应用配置",
-    "applyingAll": "应用配置中...",
     "applyAllSuccess": "配置已成功应用。",
     "applyAllError": "应用配置时发生错误。"
   },
@@ -54,6 +44,16 @@
     "success": "成功",
     "cancel": "取消",
     "ok": "确定"
+  },
+  "modal": {
+    "title": "服务器连接",
+    "url": "URL:",
+    "placeholder": "例: http://192.168.100.1:8000",
+    "dontShowAgain": "不再显示",
+    "connect": "连接",
+    "close": "关闭",
+    "success": "连接成功",
+    "error": "无法连接到服务器"
   },
   "languages": {
     "a": "🇺🇸 美国英语",

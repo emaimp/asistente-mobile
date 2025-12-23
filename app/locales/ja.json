@@ -34,17 +34,7 @@
       "man": "男性",
       "woman": "女性"
     },
-    "server": {
-      "title": "サーバー",
-      "description": "サーバーアドレスを設定します。",
-      "current": "現在のURL:",
-      "new": "新しいURL:",
-      "placeholder": "例: http://192.168.100.1:8000",
-      "applying": "適用中...",
-      "apply": "適用"
-    },
     "applyAll": "設定を適用",
-    "applyingAll": "設定を適用中...",
     "applyAllSuccess": "設定が正常に適用されました。",
     "applyAllError": "設定の適用中にエラーが発生しました。"
   },
@@ -54,6 +44,16 @@
     "success": "成功",
     "cancel": "キャンセル",
     "ok": "OK"
+  },
+  "modal": {
+    "title": "サーバー接続",
+    "url": "URL:",
+    "placeholder": "例: http://192.168.100.1:8000",
+    "dontShowAgain": "次回から表示しない",
+    "connect": "接続",
+    "close": "閉じる",
+    "success": "接続成功",
+    "error": "サーバーに接続できませんでした"
   },
   "languages": {
     "a": "🇺🇸 アメリカ英語",

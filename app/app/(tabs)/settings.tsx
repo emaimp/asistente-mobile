@@ -1,14 +1,12 @@
 import React, { useState } from 'react';
-import { StyleSheet, ScrollView, TouchableOpacity, Text } from 'react-native';
+import { StyleSheet, ScrollView, Pressable, Text } from 'react-native';
 import { Snackbar } from 'react-native-paper';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { useBackendUrlConfig } from '@/hooks/api-settings/use-backend-url-config';
 import { useModelConfig } from '@/hooks/api-settings/use-model-config';
 import { useVoiceConfig } from '@/hooks/api-settings/use-voice-config';
 import { useLanguageConfig } from '@/hooks/api-settings/use-language-config';
 import { useLanguage } from '@/contexts/language-context';
-import ServerConfigSection from '@/components/settings/sever-config';
 import AIModelConfigSection from '@/components/settings/model-config';
 import VoiceConfigSection from '@/components/settings/voice-config';
 import LanguageConfigSection from '@/components/settings/language-config';
@@ -18,20 +16,14 @@ const SNACKBAR_SUCCESS_COLOR = '#2eb733';
 const SNACKBAR_ERROR_COLOR = '#e00023';
 
 export default function SettingsScreen() {
-  // Hooks para configuración de servidor
-  const { backendUrl, saveBackendUrl, testConnection, isLoading } = useBackendUrlConfig();
-  // Hook para configuración de modelo
+  // Hook para configuraciรณn de modelo
   const { model, saveModel, updateModel } = useModelConfig();
-  // Hook para configuración de voz
+  // Hook para configuraciรณn de voz
   const { voice: currentVoice, saveVoiceLocally, updateVoice } = useVoiceConfig();
-  // Hook para configuración de idioma
+  // Hook para configuraciรณn de idioma
   const { language: currentLanguage, saveLanguageLocally, updateLanguage } = useLanguageConfig();
-  // Estado para el campo de entrada de URL del servidor
-  const [inputUrl, setInputUrl] = useState(backendUrl);
   // Estado para el campo de entrada del modelo
   const [inputModel, setInputModel] = useState(model);
-  // Estado de carga para probar conexión
-  const [isTestingConnection, setIsTestingConnection] = useState(false);
   // Estado de carga para actualizar modelo
   const [isUpdatingModel, setIsUpdatingModel] = useState(false);
   // Estado para el campo de entrada de voz
@@ -60,10 +52,6 @@ export default function SettingsScreen() {
 
   // Actualizar los inputs cuando cambien las configuraciones
   React.useEffect(() => {
-    setInputUrl(backendUrl);
-  }, [backendUrl]);
-
-  React.useEffect(() => {
     setInputModel(model);
   }, [model]);
 
@@ -74,46 +62,6 @@ export default function SettingsScreen() {
   React.useEffect(() => {
     setInputLanguage(currentLanguage);
   }, [currentLanguage]);
-
-  // Función para guardar la URL del servidor
-  const handleSave = async () => {
-    if (!inputUrl.trim()) {
-      showSnackbar('Por favor ingresa una URL válida', SNACKBAR_ERROR_COLOR);
-      return;
-    }
-
-    // Validación básica de URL
-    try {
-      new URL(inputUrl);
-    } catch {
-      showSnackbar('La URL no tiene un formato válido', SNACKBAR_ERROR_COLOR);
-      return;
-    }
-
-    const success = await saveBackendUrl(inputUrl.trim());
-    if (success) {
-      showSnackbar('URL aplicada correctamente', SNACKBAR_SUCCESS_COLOR);
-    } else {
-      showSnackbar('No se pudo guardar la URL', SNACKBAR_ERROR_COLOR);
-    }
-  };
-
-  // Función para probar la conexión al servidor
-  const handleTestConnection = async (): Promise<boolean> => {
-    setIsTestingConnection(true);
-    try {
-      const result = await testConnection(inputUrl.trim());
-      if (!result.success) {
-        showSnackbar(result.message, SNACKBAR_ERROR_COLOR);
-      }
-      return result.success;
-    } catch {
-      showSnackbar('No se pudo probar la conexión', SNACKBAR_ERROR_COLOR);
-      return false;
-    } finally {
-      setIsTestingConnection(false);
-    }
-  };
 
   // Función para guardar el idioma localmente
   const handleSaveLanguageLocally = async () => {
@@ -176,7 +124,7 @@ export default function SettingsScreen() {
       await handleSaveVoiceLocally();
       await handleUpdateVoice();
 
-      // Mensaje final de éxito
+      // Mensaje final de รฉxito
       showSnackbar(t('settings.applyAllSuccess'), SNACKBAR_SUCCESS_COLOR);
     } catch {
       // En caso de error general
@@ -185,16 +133,6 @@ export default function SettingsScreen() {
       setIsApplyingAll(false);
     }
   };
-
-  if (isLoading) {
-    return (
-      <ThemedView style={{flex: 1}} lightColor={Colors.light.tabBackground} darkColor={Colors.dark.tabBackground}>
-        <ThemedView style={styles.container}>
-          <ThemedText>Cargando configuración...</ThemedText>
-        </ThemedView>
-      </ThemedView>
-    );
-  }
 
   return (
     <ThemedView style={{flex: 1}} lightColor={Colors.light.tabBackground} darkColor={Colors.dark.tabBackground}>
@@ -205,21 +143,21 @@ export default function SettingsScreen() {
           currentLanguage={currentLanguage}
         />
 
-        <AIModelConfigSection
-          inputModel={inputModel}
-          setInputModel={setInputModel}
-          model={model}
-        />
-
         <VoiceConfigSection
           inputVoice={inputVoice}
           setInputVoice={setInputVoice}
           currentVoice={currentVoice}
         />
 
-        {/* Botón para aplicar todas las configuraciones */}
-        <TouchableOpacity
-          style={[styles.applyAllButton, { opacity: isApplyingAll || isUpdatingLanguage || isUpdatingModel || isUpdatingVoice ? 0.5 : 1 }]}
+        <AIModelConfigSection
+          inputModel={inputModel}
+          setInputModel={setInputModel}
+          model={model}
+        />
+
+        {/* Botรณn para aplicar todas las configuraciones */}
+        <Pressable
+          style={({ pressed }) => [styles.applyAllButton, { opacity: isApplyingAll || isUpdatingLanguage || isUpdatingModel || isUpdatingVoice ? 0.5 : 1 }, pressed && styles.pressedApply]}
           onPress={handleApplyAll}
           disabled={isApplyingAll || isUpdatingLanguage || isUpdatingModel || isUpdatingVoice}
         >
@@ -228,18 +166,11 @@ export default function SettingsScreen() {
             lightColor="#FFFFFF"
             darkColor="#FFFFFF"
           >
-            {isApplyingAll ? t('settings.applyingAll') : t('settings.applyAll')}
+            {t('settings.applyAll')}
           </ThemedText>
-        </TouchableOpacity>
+        </Pressable>
 
-        <ServerConfigSection
-          inputUrl={inputUrl}
-          setInputUrl={setInputUrl}
-          backendUrl={backendUrl}
-          handleSave={handleSave}
-          handleTestConnection={handleTestConnection}
-          isTestingConnection={isTestingConnection}
-        />
+
       </ScrollView>
       <Snackbar
         visible={snackbarVisible}
@@ -270,16 +201,18 @@ const styles = StyleSheet.create({
   applyAllButton: {
     width: '92%',
     padding: 14,
-    borderRadius: 8,
+    borderRadius: 6,
     alignSelf: 'center',
     alignItems: 'center',
     backgroundColor: '#2ab0e1',
     marginTop: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    elevation: 5,
+    borderBottomWidth: 4,
+    borderBottomColor: '#105293',
+  },
+  pressedApply: {
+    transform: [{ scale: 0.95 }],
+    borderBottomWidth: 2,
+    borderBottomColor: '#105293',
   },
   applyAllButtonText: {
     fontSize: 16,

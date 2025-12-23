@@ -34,17 +34,7 @@
       "man": "Man",
       "woman": "Woman"
     },
-    "server": {
-      "title": "Server",
-      "description": "Configure the server address.",
-      "current": "Current URL:",
-      "new": "New URL:",
-      "placeholder": "Ex: http://192.168.100.1:8000",
-      "applying": "Applying...",
-      "apply": "Apply"
-    },
     "applyAll": "Apply Configurations",
-    "applyingAll": "Applying Configurations...",
     "applyAllSuccess": "Configurations applied successfully.",
     "applyAllError": "An error occurred while applying configurations."
   },
@@ -54,6 +44,16 @@
     "success": "Success",
     "cancel": "Cancel",
     "ok": "OK"
+  },
+  "modal": {
+    "title": "Server Connection",
+    "url": "URL:",
+    "placeholder": "Ex: http://192.168.100.1:8000",
+    "dontShowAgain": "Don't show again",
+    "connect": "Connect",
+    "close": "Close",
+    "success": "Connection successful",
+    "error": "Could not connect to server"
   },
   "languages": {
     "a": "🇺🇸 American English",
