@@ -6,6 +6,7 @@ import { IconSymbol } from './ui/icon-symbol';
 import { useAudioPlayback } from '@/hooks/use-audio-playback';
 import { useAudioPlaybackContext } from '@/contexts/audio-playback-context';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useLanguage } from '@/contexts/language-context';
 import Markdown from 'react-native-markdown-display';
 
 // Estructura de datos para representar un mensaje en la conversación
@@ -30,6 +31,7 @@ interface ConversationViewProps {
  * Renderiza mensajes entre usuario y bot con controles de audio.
 */
 export default function ConversationView({ messages, autoPlayInputType }: ConversationViewProps) {
+  const { t } = useLanguage();
   const colorScheme = useColorScheme();
   const userBorderColor = colorScheme === 'dark' ? '#FFFFFF' : '#000000';
   const botBorderColor = colorScheme === 'dark' ? '#FFFFFF' : '#000000';
@@ -39,7 +41,7 @@ export default function ConversationView({ messages, autoPlayInputType }: Conver
     body: {
       color: colorScheme === 'dark' ? '#FFFFFF' : '#000000',
       fontSize: 14,
-      lineHeight: 16,
+      lineHeight: 20,
     },
     strong: {
       fontWeight: 'bold' as const,
@@ -131,7 +133,7 @@ export default function ConversationView({ messages, autoPlayInputType }: Conver
                 lightColor="#000000"
                 darkColor="#FFFFFF"
               >
-                Pensando...
+                {item.type === 'user' ? t('chat.processingAudio') : t('chat.thinking')}
               </ThemedText>
             </View>
           ) : (

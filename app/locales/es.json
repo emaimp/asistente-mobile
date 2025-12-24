@@ -5,7 +5,9 @@
   "chat": {
     "placeholder": "Escribe un mensaje...",
     "sendButton": "Enviar",
-    "sending": "..."
+    "sending": "...",
+    "processingAudio": "Procesando...",
+    "thinking": "Pensando..."
   },
   "settings": {
     "title": "Configuración",

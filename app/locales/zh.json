@@ -5,7 +5,9 @@
   "chat": {
     "placeholder": "写一个消息...",
     "sendButton": "发送",
-    "sending": "..."
+    "sending": "...",
+    "processingAudio": "处理中...",
+    "thinking": "思考中..."
   },
   "settings": {
     "title": "设置",

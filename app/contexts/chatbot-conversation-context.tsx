@@ -49,6 +49,9 @@ export const ConversationProvider: React.FC<ConversationProviderProps> = ({ chil
   // ID del mensaje de carga actual
   const [loadingMessageId, setLoadingMessageId] = useState<string | null>(null);
 
+  // ID del mensaje de carga del usuario actual (para audio)
+  const [loadingUserMessageId, setLoadingUserMessageId] = useState<string | null>(null);
+
   // Hook de API para comunicación con el backend
   const { sendAudio, sendText, isProcessing } = useApi();
 
@@ -63,7 +66,20 @@ export const ConversationProvider: React.FC<ConversationProviderProps> = ({ chil
   // Procesa grabación de audio: envía al backend, agrega mensajes de user/bot
   const handleRecordingComplete = async (audioUri: string) => {
     try {
-      // Enviar al backend primero para obtener la transcripción
+      // Agregar mensaje de carga del usuario
+      const loadingUserId = generateId();
+      const loadingUserMessage: Message = {
+        id: loadingUserId,
+        type: 'user',
+        content: 'Procesando...',
+        timestamp: new Date(),
+        inputType: 'audio',
+        isLoading: true,
+      };
+      addMessage(loadingUserMessage);
+      setLoadingUserMessageId(loadingUserId);
+
+      // Enviar al backend para obtener la transcripción
       const result = await sendAudio(audioUri, currentSessionId);
 
       // Guardar session_id si es la primera respuesta
@@ -71,15 +87,19 @@ export const ConversationProvider: React.FC<ConversationProviderProps> = ({ chil
         setCurrentSessionId(result.data.session_id);
       }
 
-      // Agregar mensaje del usuario (solo texto transcrito)
-      const userMessage: Message = {
-        id: generateId(),
-        type: 'user',
-        content: result.data.question, // Mostrar la pregunta transcrita
-        timestamp: new Date(),
-        inputType: 'audio',
-      };
-      addMessage(userMessage);
+      // Reemplazar mensaje de carga del usuario con texto transcrito
+      setMessages(prev =>
+        prev.map(msg =>
+          msg.id === loadingUserId
+            ? {
+                ...msg,
+                content: result.data.question, // Mostrar la pregunta transcrita
+                isLoading: false,
+              }
+            : msg
+        )
+      );
+      setLoadingUserMessageId(null);
 
       // Agregar respuesta del bot
       const botMessage: Message = {
@@ -93,6 +113,11 @@ export const ConversationProvider: React.FC<ConversationProviderProps> = ({ chil
       addMessage(botMessage);
 
     } catch (error) {
+      // En caso de error, remover mensaje de carga del usuario
+      if (loadingUserMessageId) {
+        setMessages(prev => prev.filter(msg => msg.id !== loadingUserMessageId));
+        setLoadingUserMessageId(null);
+      }
       const message = error instanceof Error ? error.message : 'Error desconocido';
       Alert.alert('Error', `No se pudo procesar el audio: ${message}`);
     }

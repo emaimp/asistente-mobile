@@ -5,7 +5,7 @@ import { apiService } from '@/services/api';
 const MODEL_KEY = 'model';
 
 export function useModelConfig() {
-  const [model, setModel] = useState<string>('gemma3:1b');
+  const [model, setModel] = useState<string>('gemma3:4b');
 
   // Cargar configuración al iniciar
   useEffect(() => {
