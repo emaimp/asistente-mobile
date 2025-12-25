@@ -33,7 +33,7 @@ export default function HomeScreen() {
   const { messages, handleRecordingComplete, isProcessing } = useConversation();
   const { t } = useLanguage();
   const { width, height } = Dimensions.get('window');
-  const imageSize = Math.min(width * 0.85, 380); // Máximo 380px, 85% del ancho
+  const imageSize = Math.min(width * 0.80, 400); // Máximo 350px, 80% del ancho
   const topMargin = height * 0.1; // 10% de la altura para el margen superior
   const textMarginTop = height * 0.05; // Margen superior del texto basado en altura
   const textMarginBottom = height * 0.03; // Margen inferior del texto
@@ -111,11 +111,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   botImage: {
-    // width y height se establecen dinámicamente
   },
   instructionText: {
     fontSize: 18,
     textAlign: 'center',
-    // marginTop y marginBottom se establecen dinámicamente
   },
 });

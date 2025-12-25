@@ -3,8 +3,8 @@
     "pressButton": "按下按钮说话"
   },
   "chat": {
+    "title": "聊天",
     "placeholder": "写一个消息...",
-    "sendButton": "发送",
     "sending": "...",
     "processingAudio": "处理中...",
     "thinking": "思考中..."

@@ -3,8 +3,8 @@
     "pressButton": "Presiona el botón para hablar"
   },
   "chat": {
+    "title": "CHAT",
     "placeholder": "Escribe un mensaje...",
-    "sendButton": "Enviar",
     "sending": "...",
     "processingAudio": "Procesando...",
     "thinking": "Pensando..."

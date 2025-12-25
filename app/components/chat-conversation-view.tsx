@@ -7,6 +7,7 @@ import { useAudioPlayback } from '@/hooks/use-audio-playback';
 import { useAudioPlaybackContext } from '@/contexts/audio-playback-context';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useLanguage } from '@/contexts/language-context';
+import { Colors } from '@/constants/theme';
 import Markdown from 'react-native-markdown-display';
 
 // Estructura de datos para representar un mensaje en la conversación
@@ -34,7 +35,6 @@ export default function ConversationView({ messages, autoPlayInputType }: Conver
   const { t } = useLanguage();
   const colorScheme = useColorScheme();
   const userBorderColor = colorScheme === 'dark' ? '#FFFFFF' : '#000000';
-  const botBorderColor = colorScheme === 'dark' ? '#FFFFFF' : '#000000';
 
   // Estilos para Markdown según el tema
   const markdownStyles = {
@@ -120,10 +120,10 @@ export default function ConversationView({ messages, autoPlayInputType }: Conver
           style={[
             styles.messageContainer,
             isUser ? styles.userMessage : styles.botMessage,
-            { borderColor: isUser ? userBorderColor : botBorderColor }
+            { borderColor: isUser ? userBorderColor : '#2ab0e1' }
           ]}
-          lightColor={isUser ? 'rgba(230, 230, 230, 1)' : 'rgba(43, 176, 225, 1)'}
-          darkColor={isUser ? 'rgba(143, 143, 143, 1)' : 'rgba(43, 176, 225, 1)'}
+          lightColor={isUser ? '#2ab0e1' : Colors.light.background}
+          darkColor={isUser ? '#2ab0e1' : Colors.dark.background}
         >
           {item.isLoading ? (
             <View style={styles.loadingContainer}>
@@ -309,14 +309,18 @@ const styles = StyleSheet.create({
     maxWidth: '90%',
     minWidth: '30%',
     padding: 12,
-    borderRadius: 16,
+    borderRadius: 6,
     borderWidth: 1,
   },
   userMessage: {
     borderBottomRightRadius: 4,
+    maxWidth: '100%',
+    paddingHorizontal: 15,
   },
   botMessage: {
     borderBottomLeftRadius: 4,
+    maxWidth: '100%',
+    paddingHorizontal: 15,
   },
   messageText: {
     fontSize: 15,

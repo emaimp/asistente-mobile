@@ -1,4 +1,4 @@
-import { StyleSheet, View, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, Image, Dimensions } from 'react-native';
+import { StyleSheet, View, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native';
 import { useState } from 'react';
 import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
 import { ThemedText } from '@/components/themed-text';
@@ -19,9 +19,7 @@ export default function ChatScreen() {
   const iconColor = useThemeColor({}, 'text');
   const textInputColor = colorScheme === 'dark' ? 'white' : 'black';
   const placeholderColor = colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)';
-  const { width } = Dimensions.get('window');
   
-  const backgroundImageSize = Math.min(width * 0.55, 300); // 55% del ancho, máximo 300px
   const [drawerOpen, setDrawerOpen] = useState(false); // Estado para el menú lateral
   const translateX = useSharedValue(-250); // Posición inicial fuera de pantalla
 
@@ -57,55 +55,53 @@ export default function ChatScreen() {
     >
       <ThemedView style={{flex: 1}} lightColor={Colors.light.tabBackground} darkColor={Colors.dark.tabBackground}>
         <View style={styles.container}>
-          <View style={[styles.topBar, { backgroundColor: Colors[colorScheme ?? 'light'].tabBackground, borderBottomColor: colorScheme === 'dark' ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.2)' }]}>
+          <View style={[styles.topBar, { backgroundColor: Colors[colorScheme ?? 'light'].tabBackground, borderBottomColor: colorScheme === 'dark' ? 'rgba(255,255,255,0.01)' : 'rgba(0,0,0,0.01)' }]}>
             <TouchableOpacity onPress={openDrawer} style={styles.menuButton}>
               <IconSymbol name="menu" size={24} color={iconColor} />
             </TouchableOpacity>
-            <ThemedText style={styles.title}>CHAT</ThemedText>
+            <ThemedText style={styles.title}>{t('chat.title')}</ThemedText>
             <View style={styles.placeholder} />
           </View>
           {drawerOpen && (
             <>
               <TouchableOpacity style={styles.overlay} onPress={closeDrawer} />
-              <Animated.View style={[styles.drawer, drawerAnimatedStyle, { backgroundColor: colorScheme === 'dark' ? '#000000' : '#FFFFFF' }]}>
-                <ThemedText style={styles.drawerItem}>Cuenta</ThemedText>
-                <ThemedText style={styles.drawerItem}>Historial</ThemedText>
+              <Animated.View style={[styles.drawer, drawerAnimatedStyle, { backgroundColor: Colors[colorScheme ?? 'light'].tabBackground }]}>
+                <View style={styles.avatarContainer}>
+                  <IconSymbol name="person.circle.fill" size={120} color={iconColor} />
+                  <ThemedText style={styles.emailText}>usuario@example.com</ThemedText>
+                </View>
               </Animated.View>
             </>
           )}
           <View style={styles.content}>
-            <View style={styles.backgroundImageContainer}>
-              <Image
-                source={colorScheme === 'dark' ? require('@/assets/images/head-white.webp') : require('@/assets/images/head-black.webp')}
-                style={[styles.backgroundImage, { width: backgroundImageSize, height: backgroundImageSize }]}
-              />
-            </View>
             <ConversationView messages={messages} />
           </View>
 
           <View style={styles.inputContainer}>
-            <TextInput
-              style={[styles.textInput, { color: textInputColor }]}
-              value={inputText}
-              onChangeText={setInputText}
-              placeholder={t('chat.placeholder')}
-              placeholderTextColor={placeholderColor}
-              multiline
-              maxLength={500}
-              onSubmitEditing={handleSubmit}
-              blurOnSubmit={false}
-            />
-            <TouchableOpacity
-              style={[styles.sendButton, (!inputText.trim() || isProcessing) && styles.sendButtonDisabled]}
-              onPress={handleSubmit}
-              disabled={!inputText.trim() || isProcessing}
-            >
-              <IconSymbol
-                name="paperplane.fill"
-                size={20}
-                color="#FFFFFF"
+            <View style={[styles.inputWrapper, { borderColor: colorScheme === 'dark' ? 'white' : 'black' }]}>
+              <TextInput
+                style={[styles.textInput, { color: textInputColor }]}
+                value={inputText}
+                onChangeText={setInputText}
+                placeholder={t('chat.placeholder')}
+                placeholderTextColor={placeholderColor}
+                multiline
+                maxLength={500}
+                onSubmitEditing={handleSubmit}
+                blurOnSubmit={false}
               />
-            </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.sendButton, (!inputText.trim() || isProcessing) && styles.sendButtonDisabled, { borderColor: colorScheme === 'dark' ? 'white' : 'black' }]}
+                onPress={handleSubmit}
+                disabled={!inputText.trim() || isProcessing}
+              >
+                <IconSymbol
+                  name="paperplane.fill"
+                  size={20}
+                  color={(!inputText.trim() || isProcessing) ? (colorScheme === 'dark' ? 'white' : 'black') : '#2ab0e1'}
+                />
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </ThemedView>
@@ -120,52 +116,22 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     gap: 16,
-    paddingTop: 110,
-    paddingHorizontal: 20,
+    paddingTop: 105,
+    paddingHorizontal: 10,
     paddingBottom: 10,
   },
-  backgroundImageContainer: {
-    ...StyleSheet.absoluteFillObject,
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 0,
-    opacity: 0.1,
-  },
-  backgroundImage: {
-    resizeMode: 'contain',
-  },
   inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'flex-end',
     paddingHorizontal: 20,
     paddingBottom: 20,
-    gap: 10,
   },
-  textInput: {
+  title: {
     flex: 1,
-    backgroundColor: 'rgba(255, 255, 255, 0.5)',
-    borderRadius: 20,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    fontSize: 16,
-    maxHeight: 100,
-    minHeight: 44,
+    textAlign: 'center',
+    fontSize: 18,
+    fontWeight: 'bold',
   },
-  sendButton: {
-    backgroundColor: '#2ab0e1',
-    borderRadius: 20,
-    paddingHorizontal: 12,
-    paddingVertical: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
-    minWidth: 44,
-  },
-  sendButtonDisabled: {
-    backgroundColor: 'rgba(159, 159, 159, 0.5)',
-  },
-  sendButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
+  menuButton: {
+    padding: 8,
   },
   topBar: {
     position: 'absolute',
@@ -179,14 +145,50 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     zIndex: 10,
   },
-  menuButton: {
-    padding: 8,
+  drawer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: 250,
+    bottom: 0,
+    zIndex: 30,
+    padding: 20,
   },
-  title: {
+  textInput: {
     flex: 1,
-    textAlign: 'center',
-    fontSize: 18,
-    fontWeight: 'bold',
+    fontSize: 16,
+    paddingVertical: 6,
+    paddingRight: 50,
+  },
+  inputWrapper: {
+    position: 'relative',
+    borderRadius: 10,
+    borderWidth: 1,
+    paddingHorizontal: 16,
+    paddingVertical: 6,
+    minHeight: 44,
+    maxHeight: 100,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  sendButton: {
+    position: 'absolute',
+    borderRadius: 10,
+    borderWidth: 0,
+    right: 3,
+    top: 3,
+    height: 40,
+    width: 40,
+    backgroundColor: 'transparent',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  sendButtonDisabled: {
+    backgroundColor: 'transparent',
+  },
+  sendButtonText: {
+    fontSize: 16,
+    fontWeight: '600',
   },
   placeholder: {
     width: 40,
@@ -200,17 +202,13 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.5)',
     zIndex: 20,
   },
-  drawer: {
-    position: 'absolute',
-    top: 95,
-    left: 0,
-    width: 250,
-    bottom: 0,
-    zIndex: 30,
-    padding: 20,
+  avatarContainer: {
+    alignItems: 'center',
+    marginTop: 10,
   },
-  drawerItem: {
-    fontSize: 16,
-    marginVertical: 10,
+  emailText: {
+    fontSize: 14,
+    marginTop: 10,
+    opacity: 0.7,
   },
 });

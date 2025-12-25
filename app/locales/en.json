@@ -3,8 +3,8 @@
     "pressButton": "Press the button to speak"
   },
   "chat": {
+    "title": "CHAT",
     "placeholder": "Write a message...",
-    "sendButton": "Send",
     "sending": "...",
     "processingAudio": "Processing...",
     "thinking": "Thinking..."

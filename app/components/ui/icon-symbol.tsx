@@ -17,6 +17,7 @@ const MATERIAL_ICONS_MAPPING = {
   'paperplane.fill': 'send',
   'chevron.left.forwardslash.chevron.right': 'code',
   'chevron.right': 'chevron-right',
+  'person.circle.fill': 'account-circle',
   'volume.up.fill': 'volume-up',
   'play.fill': 'play-arrow',
   'pause.fill': 'pause',

@@ -3,8 +3,8 @@
     "pressButton": "ボタンを押して話す"
   },
   "chat": {
+    "title": "チャット",
     "placeholder": "メッセージを書く...",
-    "sendButton": "送信",
     "sending": "...",
     "processingAudio": "処理中...",
     "thinking": "考え中..."
