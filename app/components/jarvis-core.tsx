@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
+import { useThemeColor } from '@/hooks/use-theme-color';
 import Svg, { Circle, Line, Defs, RadialGradient, Stop, G } from 'react-native-svg';
 import Animated, {
   useSharedValue,
@@ -17,7 +18,7 @@ const AnimatedG = Animated.createAnimatedComponent(G);
 const AnimatedLine = Animated.createAnimatedComponent(Line);
 
 // Espectro de Voz Radial
-const VoiceSpectrum = ({ center, innerRadius, amplitude, timeValue, isProcessing }: { center: number, innerRadius: number, amplitude: SharedValue<number>, timeValue: SharedValue<number>, isProcessing: boolean }) => {
+const VoiceSpectrum = ({ center, innerRadius, amplitude, timeValue, isProcessing, jarvisPrimary }: { center: number, innerRadius: number, amplitude: SharedValue<number>, timeValue: SharedValue<number>, isProcessing: boolean, jarvisPrimary: string }) => {
   const barCount = 100;
 
   const Bar = ({ i, timeValue, isProcessing }: { i: number, timeValue: SharedValue<number>, isProcessing: boolean }) => {
@@ -46,7 +47,7 @@ const VoiceSpectrum = ({ center, innerRadius, amplitude, timeValue, isProcessing
     return (
       <AnimatedLine
         animatedProps={animatedBarProps}
-        stroke="#005096"
+        stroke={jarvisPrimary}
         strokeWidth={1.5}
         strokeLinecap="round"
       />
@@ -58,7 +59,7 @@ const VoiceSpectrum = ({ center, innerRadius, amplitude, timeValue, isProcessing
   return <G>{bars}</G>;
 };
 
-const HudTicks = ({ center, radius }: { center: number, radius: number }) => {
+const HudTicks = ({ center, radius, jarvisPrimary }: { center: number, radius: number, jarvisPrimary: string }) => {
   const ticks = [];
   for (let i = 0; i < 60; i++) {
     const angle = (i * 6) * (Math.PI / 180);
@@ -71,7 +72,7 @@ const HudTicks = ({ center, radius }: { center: number, radius: number }) => {
         y1={center + radius * Math.sin(angle)}
         x2={center + (radius + length) * Math.cos(angle)}
         y2={center + (radius + length) * Math.sin(angle)}
-        stroke="#005096"
+        stroke={jarvisPrimary}
         strokeWidth={isMajor ? 2 : 1}
         strokeOpacity={isMajor ? 0.8 : 0.2}
       />
@@ -81,6 +82,14 @@ const HudTicks = ({ center, radius }: { center: number, radius: number }) => {
 };
 
 export default function JarvisCore({ isProcessing = false }) {
+  // Colores dinámicos basados en género
+  const jarvisPrimary = useThemeColor({}, 'jarvisPrimary');
+  const jarvisGlow = useThemeColor({}, 'jarvisGlow');
+  const jarvisCore = useThemeColor({}, 'jarvisCore');
+  const jarvisGradientStart = useThemeColor({}, 'jarvisGradientStart');
+  const jarvisGradientMiddle = useThemeColor({}, 'jarvisGradientMiddle');
+  const jarvisGradientEnd = useThemeColor({}, 'jarvisGradientEnd');
+
   const size = 320;
   const center = size / 2;
   const rotateAngle = useSharedValue(0);
@@ -133,45 +142,45 @@ export default function JarvisCore({ isProcessing = false }) {
   return (
     <View style={styles.container}>
       <Animated.View style={[styles.glow, glowStyle]}>
-        <View style={[styles.gradient, {backgroundColor: 'rgba(94,242,255,0.5)'}]} />
+        <View style={[styles.gradient, {backgroundColor: jarvisGlow}]} />
       </Animated.View>
 
       <Svg width={size} height={size}>
         <Defs>
           <RadialGradient id="coreGlow" cx="50%" cy="50%" rx="50%" ry="50%">
-            <Stop offset="0%" stopColor="#EFFFFF" stopOpacity="1" />
-            <Stop offset="50%" stopColor="#005096" stopOpacity="0.8" />
-            <Stop offset="100%" stopColor="#003844" stopOpacity="0" />
+            <Stop offset="0%" stopColor={jarvisGradientStart} stopOpacity="1" />
+            <Stop offset="50%" stopColor={jarvisGradientMiddle} stopOpacity="0.8" />
+            <Stop offset="100%" stopColor={jarvisGradientEnd} stopOpacity="0" />
           </RadialGradient>
         </Defs>
 
         {/* HUD (estilo reloj) */}
-        <HudTicks center={center} radius={125} />
+        <HudTicks center={center} radius={125} jarvisPrimary={jarvisPrimary} />
 
         {/* Anillo de Fragmentos (Tech Ring) */}
         <AnimatedG animatedProps={rotateProps}>
           <Circle
             cx={center} cy={center} r={110}
-            stroke="#005096" strokeWidth={6} strokeOpacity={0.2}
+            stroke={jarvisPrimary} strokeWidth={6} strokeOpacity={0.2}
             strokeDasharray={[2, 10, 30, 15]} fill="none"
           />
         </AnimatedG>
 
         {/* Espectro de Voz (Radial) */}
-        <VoiceSpectrum center={center} innerRadius={55} amplitude={audioAmplitude} timeValue={timeValue} isProcessing={isProcessing} />
+        <VoiceSpectrum center={center} innerRadius={55} amplitude={audioAmplitude} timeValue={timeValue} isProcessing={isProcessing} jarvisPrimary={jarvisPrimary} />
 
         {/* Anillos Giratorios Principales */}
         <AnimatedG animatedProps={rotateProps}>
-          <Circle cx={center} cy={center} r={150} stroke="#005096" strokeWidth={10} strokeOpacity={1} strokeDasharray={[360, 360]} fill="none" />
-          <Circle cx={center} cy={center} r={150} stroke="#005096" strokeWidth={2} strokeOpacity={0.5} strokeDasharray={[360, 0]} strokeDashoffset={180} fill="none" />
+          <Circle cx={center} cy={center} r={150} stroke={jarvisPrimary} strokeWidth={10} strokeOpacity={1} strokeDasharray={[360, 360]} fill="none" />
+          <Circle cx={center} cy={center} r={150} stroke={jarvisPrimary} strokeWidth={2} strokeOpacity={0.5} strokeDasharray={[360, 0]} strokeDashoffset={180} fill="none" />
         </AnimatedG>
 
         <AnimatedG animatedProps={counterRotateProps}>
-          <Circle cx={center} cy={center} r={95} stroke="#005096" strokeWidth={1.5} strokeOpacity={0.4} strokeDasharray={[5, 10]} fill="none" />
+          <Circle cx={center} cy={center} r={95} stroke={jarvisPrimary} strokeWidth={1.5} strokeOpacity={0.4} strokeDasharray={[5, 10]} fill="none" />
         </AnimatedG>
 
         {/* Núcleo Central */}
-        <Circle cx={center} cy={center} r={45} fill="rgba(94,242,255,0.05)" />
+        <Circle cx={center} cy={center} r={45} fill={jarvisCore} />
         <AnimatedCircle cx={center} cy={center} animatedProps={coreBreathProps} fill="url(#coreGlow)" />
       </Svg>
     </View>

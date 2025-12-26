@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { StyleSheet, ScrollView, Pressable, Text } from 'react-native';
+import { StyleSheet, ScrollView, TouchableOpacity, Text } from 'react-native';
 import { Snackbar } from 'react-native-paper';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
+import { useThemeColor } from '@/hooks/use-theme-color';
 import { useModelConfig } from '@/hooks/api-settings/use-model-config';
 import { useVoiceConfig } from '@/hooks/api-settings/use-voice-config';
 import { useLanguageConfig } from '@/hooks/api-settings/use-language-config';
@@ -10,12 +11,15 @@ import { useLanguage } from '@/contexts/language-context';
 import AIModelConfigSection from '@/components/settings/model-config';
 import VoiceConfigSection from '@/components/settings/voice-config';
 import LanguageConfigSection from '@/components/settings/language-config';
-import { Colors } from '@/constants/theme';
 
 const SNACKBAR_SUCCESS_COLOR = '#2eb733';
 const SNACKBAR_ERROR_COLOR = '#e00023';
 
 export default function SettingsScreen() {
+  // Colores dinámicos basados en género
+  const tintColor = useThemeColor({}, 'tint');
+  const textColor = useThemeColor({}, 'text');
+
   // Hook para configuraciรณn de modelo
   const { model, saveModel, updateModel } = useModelConfig();
   // Hook para configuraciรณn de voz
@@ -135,7 +139,7 @@ export default function SettingsScreen() {
   };
 
   return (
-    <ThemedView style={{flex: 1}} lightColor={Colors.light.tabBackground} darkColor={Colors.dark.tabBackground}>
+    <ThemedView style={{flex: 1}}>
       <ScrollView style={styles.scrollContainer} contentContainerStyle={styles.contentContainer}>
         <LanguageConfigSection
           inputLanguage={inputLanguage}
@@ -155,21 +159,25 @@ export default function SettingsScreen() {
           model={model}
         />
 
-        {/* Botรณn para aplicar todas las configuraciones */}
-        <Pressable
-          style={({ pressed }) => [styles.applyAllButton, { opacity: isApplyingAll || isUpdatingLanguage || isUpdatingModel || isUpdatingVoice ? 0.5 : 1 }, pressed && styles.pressedApply]}
+        {/* Botón para aplicar todas las configuraciones */}
+        <TouchableOpacity
+          style={[
+            styles.applyButton,
+            {
+              backgroundColor: tintColor,
+              borderColor: textColor,
+              opacity: isApplyingAll || isUpdatingLanguage || isUpdatingModel || isUpdatingVoice ? 0.5 : 1
+            }
+          ]}
           onPress={handleApplyAll}
           disabled={isApplyingAll || isUpdatingLanguage || isUpdatingModel || isUpdatingVoice}
         >
           <ThemedText
-            style={styles.applyAllButtonText}
-            lightColor="#FFFFFF"
-            darkColor="#FFFFFF"
+            style={[styles.applyButtonText, { color: textColor }]}
           >
             {t('settings.applyAll')}
           </ThemedText>
-        </Pressable>
-
+        </TouchableOpacity>
 
       </ScrollView>
       <Snackbar
@@ -198,23 +206,17 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: 20,
   },
-  applyAllButton: {
+  applyButton: {
     width: '92%',
-    padding: 14,
-    borderRadius: 6,
+    paddingVertical: 16,
+    paddingHorizontal: 32,
+    borderRadius: 12,
+    borderWidth: 2,
     alignSelf: 'center',
     alignItems: 'center',
-    backgroundColor: '#2ab0e1',
     marginTop: 16,
-    borderBottomWidth: 4,
-    borderBottomColor: '#105293',
   },
-  pressedApply: {
-    transform: [{ scale: 0.95 }],
-    borderBottomWidth: 2,
-    borderBottomColor: '#105293',
-  },
-  applyAllButtonText: {
+  applyButtonText: {
     fontSize: 16,
     fontWeight: '600',
   },

@@ -10,7 +10,7 @@ const tintColorDark = '#cdcdcd';
 
 export const Colors = {
   light: {
-    text: '#11181C',
+    text: '#000000',
     background: '#cdcdcd',
     tint: tintColorLight,
     icon: '#687076',
@@ -19,13 +19,88 @@ export const Colors = {
     tabBackground: '#cdcdcd',
   },
   dark: {
-    text: '#ECEDEE',
+    text: '#ffffff',
     background: '#1e1e1e',
     tint: tintColorDark,
     icon: '#9BA1A6',
     tabIconDefault: '#9BA1A6',
     tabIconSelected: tintColorDark,
     tabBackground: '#1e1e1e',
+  },
+  // Colores específicos por género
+  gender: {
+    Man: {
+      light: {
+        text: '#000000',
+        background: '#cdcdcd',
+        tint: '#1976d2',
+        icon: '#687076',
+        tabIconDefault: '#1976d2',
+        tabIconSelected: '#0d47a1',
+        tabBackground: '#cdcdcd',
+
+        // Colores específicos para jarvis-core
+        jarvisPrimary: '#005096',
+        jarvisGlow: 'rgba(94,242,255,0.5)',
+        jarvisCore: 'rgba(94,242,255,0.05)',
+        jarvisGradientStart: '#EFFFFF',
+        jarvisGradientMiddle: '#005096',
+        jarvisGradientEnd: '#003844',
+      },
+      dark: {
+        text: '#ffffff',
+        background: '#1e1e1e',
+        tint: '#64b5f6',
+        icon: '#687076',
+        tabIconDefault: '#64b5f6',
+        tabIconSelected: '#bbdefb',
+        tabBackground: '#1e1e1e',
+
+        // Colores específicos para jarvis-core
+        jarvisPrimary: '#005096',
+        jarvisGlow: 'rgba(94,242,255,0.5)',
+        jarvisCore: 'rgba(94,242,255,0.05)',
+        jarvisGradientStart: '#EFFFFF',
+        jarvisGradientMiddle: '#005096',
+        jarvisGradientEnd: '#003844',
+      },
+    },
+    Woman: {
+      light: {
+        text: '#000000',
+        background: '#cdcdcd',
+        tint: '#e91e63',
+        icon: '#687076',
+        tabIconDefault: '#e91e63',
+        tabIconSelected: '#880e4f',
+        tabBackground: '#cdcdcd',
+
+        // Colores específicos para jarvis-core
+        jarvisPrimary: '#e91e63',
+        jarvisGlow: 'rgba(244,143,177,0.5)',
+        jarvisCore: 'rgba(244,143,177,0.05)',
+        jarvisGradientStart: '#fce4ec',
+        jarvisGradientMiddle: '#e91e63',
+        jarvisGradientEnd: '#4a148c',
+      },
+      dark: {
+        text: '#ffffff',
+        background: '#1e1e1e',
+        tint: '#e91e63',
+        icon: '#687076',
+        tabIconDefault: '#e91e63',
+        tabIconSelected: '#fce4ec',
+        tabBackground: '#1e1e1e',
+
+        // Colores específicos para jarvis-core
+        jarvisPrimary: '#e91e63',
+        jarvisGlow: 'rgba(244,143,177,0.5)',
+        jarvisCore: 'rgba(244,143,177,0.05)',
+        jarvisGradientStart: '#fce4ec',
+        jarvisGradientMiddle: '#e91e63',
+        jarvisGradientEnd: '#4a148c',
+      },
+    },
   },
 };
 

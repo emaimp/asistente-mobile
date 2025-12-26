@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useThemeColor } from '@/hooks/use-theme-color';
 import { useLanguage } from '@/contexts/language-context';
+import { useGender } from '@/contexts/gender-context';
 
 interface VoiceConfigSectionProps {
   inputVoice: string;
@@ -35,35 +36,33 @@ export default function VoiceConfigSection({
   setInputVoice,
   currentVoice,
 }: VoiceConfigSectionProps) {
-  const colorScheme = useColorScheme();
-  const borderColor = colorScheme === 'dark' ? '#FFFFFF' : '#000000';
+  // Colores dinámicos basados en género
+  const textColor = useThemeColor({}, 'text');
+  const tintColor = useThemeColor({}, 'tint');
+  const backgroundColor = useThemeColor({}, 'background');
   const { t } = useLanguage();
+  const { currentGender, setGender } = useGender();
 
   const [selectedLanguage, setSelectedLanguage] = useState<string>('English');
-  const [selectedGender, setSelectedGender] = useState<string>('Man');
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
 
-  const availableVoices = VOICES[selectedLanguage as keyof typeof VOICES][selectedGender as keyof typeof VOICES[keyof typeof VOICES]];
+  const availableVoices = VOICES[selectedLanguage as keyof typeof VOICES][currentGender as keyof typeof VOICES[keyof typeof VOICES]];
 
   useEffect(() => {
-    // Update inputVoice to first available voice when language/gender changes
+    // Actualizar inputVoice a la primera voz disponible cuando cambia el idioma o el género
     setInputVoice(availableVoices[0] || '');
   }, [availableVoices, setInputVoice]);
 
   return (
-    <ThemedView style={[styles.section, { borderColor }]}>
+    <ThemedView style={[styles.section, { borderColor: textColor }]}>
       <ThemedText
         type="subtitle"
         style={styles.sectionTitle}
-        lightColor="#000000"
-        darkColor="#FFFFFF"
       >
         {t('settings.voice.title')}
       </ThemedText>
       <ThemedText
         style={styles.description}
-        lightColor="#000000"
-        darkColor="#FFFFFF"
       >
         {t('settings.voice.description')}
       </ThemedText>
@@ -71,20 +70,18 @@ export default function VoiceConfigSection({
       <View style={styles.inputContainer}>
         <ThemedText
           style={styles.label}
-          lightColor="#000000"
-          darkColor="#FFFFFF"
         >
           {t('settings.voice.current')}
         </ThemedText>
-        <ThemedText style={styles.currentVoice}>{currentVoice}</ThemedText>
+        <ThemedText style={[styles.currentVoice, { color: textColor, backgroundColor: textColor + '20' }]}>
+          {currentVoice}
+        </ThemedText>
       </View>
 
       <View style={styles.selectionContainer}>
         <View style={styles.selectionRow}>
           <ThemedText
             style={styles.label}
-            lightColor="#000000"
-            darkColor="#FFFFFF"
           >
             {t('settings.voice.language')}
           </ThemedText>
@@ -92,13 +89,18 @@ export default function VoiceConfigSection({
             {Object.keys(VOICES).map((lang) => (
               <TouchableOpacity
                 key={lang}
-                style={[styles.selectionButton, selectedLanguage === lang && styles.selectedButton]}
+                style={[
+                  styles.selectionButton,
+                  { borderColor: tintColor },
+                  selectedLanguage === lang && { backgroundColor: tintColor }
+                ]}
                 onPress={() => setSelectedLanguage(lang)}
               >
                 <ThemedText
-                  style={[styles.selectionButtonText, selectedLanguage === lang && styles.selectedButtonText]}
-                  lightColor="#000000"
-                  darkColor="#FFFFFF"
+                  style={[
+                    styles.selectionButtonText,
+                    selectedLanguage === lang && { color: backgroundColor }
+                  ]}
                 >
                   {lang}
                 </ThemedText>
@@ -110,32 +112,40 @@ export default function VoiceConfigSection({
         <View style={styles.selectionRow}>
           <ThemedText
             style={styles.label}
-            lightColor="#000000"
-            darkColor="#FFFFFF"
           >
             {t('settings.voice.gender')}
           </ThemedText>
           <View style={styles.selectionButtons}>
             <TouchableOpacity
-              style={[styles.selectionButton, selectedGender === 'Man' && styles.selectedButton]}
-              onPress={() => setSelectedGender('Man')}
+              style={[
+                styles.selectionButton,
+                { borderColor: tintColor },
+                currentGender === 'Man' && { backgroundColor: tintColor }
+              ]}
+              onPress={() => setGender('Man')}
             >
               <ThemedText
-                style={[styles.selectionButtonText, selectedGender === 'Man' && styles.selectedButtonText]}
-                lightColor="#000000"
-                darkColor="#FFFFFF"
+                style={[
+                  styles.selectionButtonText,
+                  currentGender === 'Man' && { color: backgroundColor }
+                ]}
               >
                 {t('settings.voice.man')}
               </ThemedText>
             </TouchableOpacity>
             <TouchableOpacity
-              style={[styles.selectionButton, selectedGender === 'Woman' && styles.selectedButton]}
-              onPress={() => setSelectedGender('Woman')}
+              style={[
+                styles.selectionButton,
+                { borderColor: tintColor },
+                currentGender === 'Woman' && { backgroundColor: tintColor }
+              ]}
+              onPress={() => setGender('Woman')}
             >
               <ThemedText
-                style={[styles.selectionButtonText, selectedGender === 'Woman' && styles.selectedButtonText]}
-                lightColor="#000000"
-                darkColor="#FFFFFF"
+                style={[
+                  styles.selectionButtonText,
+                  currentGender === 'Woman' && { color: backgroundColor }
+                ]}
               >
                 {t('settings.voice.woman')}
               </ThemedText>
@@ -147,35 +157,39 @@ export default function VoiceConfigSection({
       <View style={styles.dropdownContainer}>
         <ThemedText
           style={styles.label}
-          lightColor="#000000"
-          darkColor="#FFFFFF"
         >
           {t('settings.voice.new')}
         </ThemedText>
         <View style={styles.dropdownWrapper}>
           <TouchableOpacity
-            style={[styles.dropdownButton, { borderColor: '#2ab0e1' }]}
+            style={[
+              styles.dropdownButton,
+              { borderColor: tintColor, backgroundColor: backgroundColor + 'E6' }
+            ]}
             onPress={() => setIsDropdownOpen(!isDropdownOpen)}
           >
-            <ThemedText style={[styles.dropdownButtonText, { color: 'black' }]}>
+            <ThemedText style={[styles.dropdownButtonText, { color: textColor }]}>
               {inputVoice || t('settings.voice.select')}
             </ThemedText>
-            <ThemedText style={[styles.dropdownArrow, { color: 'black' }]}>
+            <ThemedText style={[styles.dropdownArrow, { color: textColor }]}>
               {isDropdownOpen ? '▲' : '▼'}
             </ThemedText>
           </TouchableOpacity>
           {isDropdownOpen && (
-            <View style={[styles.dropdownList, { borderColor: '#2ab0e1' }]}>
+            <View style={[
+              styles.dropdownList,
+              { borderColor: tintColor, backgroundColor: backgroundColor + 'FF' }
+            ]}>
               {availableVoices.map((voice) => (
                 <TouchableOpacity
                   key={voice}
-                  style={styles.dropdownItem}
+                  style={[styles.dropdownItem, { borderBottomColor: textColor + '19' }]}
                   onPress={() => {
                     setInputVoice(voice);
                     setIsDropdownOpen(false);
                   }}
                 >
-                  <ThemedText style={[styles.dropdownItemText, { color: 'black' }]}>
+                  <ThemedText style={[styles.dropdownItemText, { color: textColor }]}>
                     {voice}
                   </ThemedText>
                 </TouchableOpacity>
@@ -184,8 +198,6 @@ export default function VoiceConfigSection({
           )}
         </View>
       </View>
-
-
     </ThemedView>
   );
 }
@@ -195,7 +207,7 @@ const styles = StyleSheet.create({
     marginBottom: 0,
     padding: 16,
     borderWidth: 0,
-    borderRadius: 12,
+    borderRadius: 0,
   },
   sectionTitle: {
     marginBottom: 12,
@@ -223,7 +235,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 8,
     padding: 12,
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
     height: 50,
   },
   dropdownButtonText: {
@@ -243,14 +254,12 @@ const styles = StyleSheet.create({
     borderRadius: 0,
     borderBottomLeftRadius: 8,
     borderBottomRightRadius: 8,
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
     zIndex: 1000,
     elevation: 10,
   },
   dropdownItem: {
     padding: 12,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(0, 0, 0, 0.1)',
   },
   dropdownItemText: {
     fontSize: 16,
@@ -267,19 +276,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderWidth: 1,
-    borderColor: '#2ab0e1',
     borderRadius: 6,
     backgroundColor: 'transparent',
-  },
-  selectedButton: {
-    backgroundColor: '#2ab0e1',
   },
   selectionButtonText: {
     fontSize: 14,
     fontWeight: '500',
-  },
-  selectedButtonText: {
-    color: '#FFFFFF',
   },
   label: {
     fontSize: 16,
@@ -287,12 +289,9 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   currentVoice: {
-    color: '#000000',
     fontSize: 14,
     fontFamily: 'monospace',
-    backgroundColor: 'rgba(255, 255, 255, 0.6)',
     padding: 8,
     borderRadius: 6,
   },
-
 });

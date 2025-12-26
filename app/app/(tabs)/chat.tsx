@@ -6,19 +6,18 @@ import { ThemedView } from '@/components/themed-view';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import ConversationView from '@/components/chat-conversation-view';
 import { useConversation } from '@/contexts/chatbot-conversation-context';
-import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useLanguage } from '@/contexts/language-context';
-import { Colors } from '@/constants/theme';
 import { useThemeColor } from '@/hooks/use-theme-color';
 
 export default function ChatScreen() {
+  // Colores dinámicos basados en género
+  const backgroundColor = useThemeColor({}, 'background');
+  const textColor = useThemeColor({}, 'text');
+  const tintColor = useThemeColor({}, 'tint');
+
   const { messages, handleTextSubmit, isProcessing } = useConversation();
   const { t } = useLanguage();
   const [inputText, setInputText] = useState('');
-  const colorScheme = useColorScheme();
-  const iconColor = useThemeColor({}, 'text');
-  const textInputColor = colorScheme === 'dark' ? 'white' : 'black';
-  const placeholderColor = colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)';
   
   const [drawerOpen, setDrawerOpen] = useState(false); // Estado para el menú lateral
   const translateX = useSharedValue(-250); // Posición inicial fuera de pantalla
@@ -53,11 +52,11 @@ export default function ChatScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
     >
-      <ThemedView style={{flex: 1}} lightColor={Colors.light.tabBackground} darkColor={Colors.dark.tabBackground}>
+      <ThemedView style={{flex: 1}}>
         <View style={styles.container}>
-          <View style={[styles.topBar, { backgroundColor: Colors[colorScheme ?? 'light'].tabBackground, borderBottomColor: colorScheme === 'dark' ? 'rgba(255,255,255,0.01)' : 'rgba(0,0,0,0.01)' }]}>
+          <View style={[styles.topBar, { backgroundColor: backgroundColor, borderBottomColor: textColor + '04' }]}>
             <TouchableOpacity onPress={openDrawer} style={styles.menuButton}>
-              <IconSymbol name="menu" size={24} color={iconColor} />
+              <IconSymbol name="menu" size={24} color={textColor} />
             </TouchableOpacity>
             <ThemedText style={styles.title}>{t('chat.title')}</ThemedText>
             <View style={styles.placeholder} />
@@ -65,9 +64,9 @@ export default function ChatScreen() {
           {drawerOpen && (
             <>
               <TouchableOpacity style={styles.overlay} onPress={closeDrawer} />
-              <Animated.View style={[styles.drawer, drawerAnimatedStyle, { backgroundColor: Colors[colorScheme ?? 'light'].tabBackground }]}>
+              <Animated.View style={[styles.drawer, drawerAnimatedStyle, { backgroundColor: backgroundColor }]}>
                 <View style={styles.avatarContainer}>
-                  <IconSymbol name="person.circle.fill" size={120} color={iconColor} />
+                  <IconSymbol name="person.circle.fill" size={120} color={textColor} />
                   <ThemedText style={styles.emailText}>usuario@example.com</ThemedText>
                 </View>
               </Animated.View>
@@ -78,27 +77,27 @@ export default function ChatScreen() {
           </View>
 
           <View style={styles.inputContainer}>
-            <View style={[styles.inputWrapper, { borderColor: colorScheme === 'dark' ? 'white' : 'black' }]}>
+            <View style={[styles.inputWrapper, { borderColor: textColor }]}>
               <TextInput
-                style={[styles.textInput, { color: textInputColor }]}
+                style={[styles.textInput, { color: textColor }]}
                 value={inputText}
                 onChangeText={setInputText}
                 placeholder={t('chat.placeholder')}
-                placeholderTextColor={placeholderColor}
+                placeholderTextColor={textColor + '80'}
                 multiline
                 maxLength={500}
                 onSubmitEditing={handleSubmit}
                 blurOnSubmit={false}
               />
               <TouchableOpacity
-                style={[styles.sendButton, (!inputText.trim() || isProcessing) && styles.sendButtonDisabled, { borderColor: colorScheme === 'dark' ? 'white' : 'black' }]}
+                style={[styles.sendButton, (!inputText.trim() || isProcessing) && styles.sendButtonDisabled, { borderColor: textColor }]}
                 onPress={handleSubmit}
                 disabled={!inputText.trim() || isProcessing}
               >
                 <IconSymbol
                   name="paperplane.fill"
                   size={20}
-                  color={(!inputText.trim() || isProcessing) ? (colorScheme === 'dark' ? 'white' : 'black') : '#2ab0e1'}
+                  color={(!inputText.trim() || isProcessing) ? textColor : tintColor}
                 />
               </TouchableOpacity>
             </View>
@@ -199,7 +198,6 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: 'rgba(0,0,0,0.5)',
     zIndex: 20,
   },
   avatarContainer: {

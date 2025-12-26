@@ -7,6 +7,7 @@ import { useColorScheme } from '@/hooks/use-color-scheme';
 import { ConversationProvider } from '@/contexts/chatbot-conversation-context';
 import { AudioPlaybackProvider } from '@/contexts/audio-playback-context';
 import { LanguageProvider } from '@/contexts/language-context';
+import { GenderProvider } from '@/contexts/gender-context';
 
 export const unstable_settings = {
   anchor: '(tabs)',
@@ -16,17 +17,19 @@ export default function RootLayout() {
   const colorScheme = useColorScheme();
 
   return (
-    <LanguageProvider>
-      <AudioPlaybackProvider>
-        <ConversationProvider>
-          <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-            <Stack>
-              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            </Stack>
-            <StatusBar style="auto" />
-          </ThemeProvider>
-        </ConversationProvider>
-      </AudioPlaybackProvider>
-    </LanguageProvider>
+    <GenderProvider>
+      <LanguageProvider>
+        <AudioPlaybackProvider>
+          <ConversationProvider>
+            <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+              <Stack>
+                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+              </Stack>
+              <StatusBar style="auto" />
+            </ThemeProvider>
+          </ConversationProvider>
+        </AudioPlaybackProvider>
+      </LanguageProvider>
+    </GenderProvider>
   );
 }

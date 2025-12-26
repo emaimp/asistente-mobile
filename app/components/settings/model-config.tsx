@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, TextInput, View } from 'react-native';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useThemeColor } from '@/hooks/use-theme-color';
 import { useLanguage } from '@/contexts/language-context';
 
 interface AIModelConfigSectionProps {
@@ -16,24 +16,22 @@ export default function AIModelConfigSection({
   setInputModel,
   model,
 }: AIModelConfigSectionProps) {
-  const colorScheme = useColorScheme();
-  const borderColor = colorScheme === 'dark' ? '#FFFFFF' : '#000000';
+  // Colores dinámicos basados en género
+  const textColor = useThemeColor({}, 'text');
+  const tintColor = useThemeColor({}, 'tint');
+  const backgroundColor = useThemeColor({}, 'background');
   const { t } = useLanguage();
 
   return (
-    <ThemedView style={[styles.section, { borderColor }]}>
+    <ThemedView style={[styles.section, { borderColor: textColor }]}>
       <ThemedText
         type="subtitle"
         style={styles.sectionTitle}
-        lightColor="#000000"
-        darkColor="#FFFFFF"
       >
         {t('settings.model.title')}
       </ThemedText>
       <ThemedText
         style={styles.description}
-        lightColor="#000000"
-        darkColor="#FFFFFF"
       >
         {t('settings.model.description')}
       </ThemedText>
@@ -41,34 +39,37 @@ export default function AIModelConfigSection({
       <View style={styles.inputContainer}>
         <ThemedText
           style={styles.label}
-          lightColor="#000000"
-          darkColor="#FFFFFF"
         >
           {t('settings.model.current')}
         </ThemedText>
-        <ThemedText style={styles.currentUrl}>{model}</ThemedText>
+        <ThemedText style={[styles.currentUrl, { color: textColor, backgroundColor: textColor + '20' }]}>
+          {model}
+        </ThemedText>
       </View>
 
       <View style={styles.inputContainer}>
         <ThemedText
           style={styles.label}
-          lightColor="#000000"
-          darkColor="#FFFFFF"
         >
           {t('settings.model.new')}
         </ThemedText>
         <TextInput
-          style={[styles.textInput, { color: 'black' }]}
+          style={[
+            styles.textInput,
+            {
+              color: textColor,
+              borderColor: tintColor,
+              backgroundColor: backgroundColor + 'E6'
+            }
+          ]}
           value={inputModel}
           onChangeText={setInputModel}
           placeholder={t('settings.model.placeholder')}
-          placeholderTextColor="#999"
+          placeholderTextColor={textColor + '66'}
           autoCapitalize="none"
           autoCorrect={false}
         />
       </View>
-
-
     </ThemedView>
   );
 }
@@ -78,7 +79,7 @@ const styles = StyleSheet.create({
     marginBottom: 0,
     padding: 16,
     borderWidth: 0,
-    borderRadius: 12,
+    borderRadius: 0,
   },
   sectionTitle: {
     marginBottom: 12,
@@ -96,20 +97,15 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   currentUrl: {
-    color: '#000000',
     fontSize: 14,
     fontFamily: 'monospace',
-    backgroundColor: 'rgba(255, 255, 255, 0.6)',
     padding: 8,
     borderRadius: 6,
   },
   textInput: {
     borderWidth: 1,
-    borderColor: '#2ab0e1',
     borderRadius: 8,
     padding: 12,
     fontSize: 16,
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
   },
-
 });

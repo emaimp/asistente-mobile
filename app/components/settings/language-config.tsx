@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useThemeColor } from '@/hooks/use-theme-color';
 import { useLanguage } from '@/contexts/language-context';
 
 interface LanguageConfigSectionProps {
@@ -23,26 +23,24 @@ export default function LanguageConfigSection({
   setInputLanguage,
   currentLanguage,
 }: LanguageConfigSectionProps) {
-  const colorScheme = useColorScheme();
-  const borderColor = colorScheme === 'dark' ? '#FFFFFF' : '#000000';
+  // Colores dinámicos basados en género
+  const textColor = useThemeColor({}, 'text');
+  const tintColor = useThemeColor({}, 'tint');
+  const backgroundColor = useThemeColor({}, 'background');
   const { t } = useLanguage();
 
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
 
   return (
-    <ThemedView style={[styles.section, { borderColor }]}>
+    <ThemedView style={[styles.section, { borderColor: textColor }]}>
       <ThemedText
         type="subtitle"
         style={styles.sectionTitle}
-        lightColor="#000000"
-        darkColor="#FFFFFF"
       >
         {t('settings.language.title')}
       </ThemedText>
       <ThemedText
         style={styles.description}
-        lightColor="#000000"
-        darkColor="#FFFFFF"
       >
         {t('settings.language.description')}
       </ThemedText>
@@ -50,12 +48,10 @@ export default function LanguageConfigSection({
       <View style={styles.inputContainer}>
         <ThemedText
           style={styles.label}
-          lightColor="#000000"
-          darkColor="#FFFFFF"
         >
           {t('settings.language.current')}
         </ThemedText>
-        <ThemedText style={styles.currentLanguage}>
+        <ThemedText style={[styles.currentLanguage, { color: textColor, backgroundColor: textColor + '20' }]}>
           {t(`languages.${currentLanguage}`, currentLanguage)}
         </ThemedText>
       </View>
@@ -63,35 +59,33 @@ export default function LanguageConfigSection({
       <View style={styles.dropdownContainer}>
         <ThemedText
           style={styles.label}
-          lightColor="#000000"
-          darkColor="#FFFFFF"
         >
           {t('settings.language.new')}
         </ThemedText>
         <View style={styles.dropdownWrapper}>
           <TouchableOpacity
-            style={[styles.dropdownButton, { borderColor: '#2ab0e1' }]}
+            style={[styles.dropdownButton, { borderColor: tintColor, backgroundColor: backgroundColor + 'E6' }]}
             onPress={() => setIsDropdownOpen(!isDropdownOpen)}
           >
-            <ThemedText style={[styles.dropdownButtonText, { color: 'black' }]}>
+            <ThemedText style={[styles.dropdownButtonText, { color: textColor }]}>
               {t(`languages.${inputLanguage}`, t('settings.language.select'))}
             </ThemedText>
-            <ThemedText style={[styles.dropdownArrow, { color: 'black' }]}>
+            <ThemedText style={[styles.dropdownArrow, { color: textColor }]}>
               {isDropdownOpen ? '▲' : '▼'}
             </ThemedText>
           </TouchableOpacity>
           {isDropdownOpen && (
-            <View style={[styles.dropdownList, { borderColor: '#2ab0e1' }]}>
+          <View style={[styles.dropdownList, { borderColor: tintColor, backgroundColor: backgroundColor + 'FF' }]}>
               {Object.keys(LANGUAGES).map((key) => (
                 <TouchableOpacity
                   key={key}
-                  style={styles.dropdownItem}
+                  style={[styles.dropdownItem, { borderBottomColor: textColor + '19' }]}
                   onPress={() => {
                     setInputLanguage(key);
                     setIsDropdownOpen(false);
                   }}
                 >
-                  <ThemedText style={[styles.dropdownItemText, { color: 'black' }]}>
+                  <ThemedText style={[styles.dropdownItemText, { color: textColor }]}>
                     {t(`languages.${key}`)}
                   </ThemedText>
                 </TouchableOpacity>
@@ -100,8 +94,6 @@ export default function LanguageConfigSection({
           )}
         </View>
       </View>
-
-
     </ThemedView>
   );
 }
@@ -111,7 +103,7 @@ const styles = StyleSheet.create({
     marginBottom: 0,
     padding: 16,
     borderWidth: 0,
-    borderRadius: 12,
+    borderRadius: 0,
   },
   sectionTitle: {
     marginBottom: 12,
@@ -136,7 +128,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 8,
     padding: 12,
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
     height: 50,
   },
   dropdownButtonText: {
@@ -156,14 +147,12 @@ const styles = StyleSheet.create({
     borderRadius: 0,
     borderBottomLeftRadius: 8,
     borderBottomRightRadius: 8,
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
     zIndex: 1000,
     elevation: 10,
   },
   dropdownItem: {
     padding: 12,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(0, 0, 0, 0.1)',
   },
   dropdownItemText: {
     fontSize: 16,
@@ -174,12 +163,9 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   currentLanguage: {
-    color: '#000000',
     fontSize: 14,
     fontFamily: 'monospace',
-    backgroundColor: 'rgba(255, 255, 255, 0.6)',
     padding: 8,
     borderRadius: 6,
   },
-
 });
