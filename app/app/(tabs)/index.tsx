@@ -1,10 +1,11 @@
-import { StyleSheet, Image, View, Dimensions } from 'react-native';
+import { StyleSheet, View, Dimensions } from 'react-native';
 import { useMemo, useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ThemedView } from '@/components/themed-view';
 import { ThemedText } from '@/components/themed-text';
 import AudioRecorder from '@/components/index-audio-recorder';
 import InitialModal from '@/components/initial-modal';
+import JarvisCore from '@/components/jarvis-core';
 import { useConversation } from '@/contexts/chatbot-conversation-context';
 import { useAudioPlayback } from '@/hooks/use-audio-playback';
 import { useLanguage } from '@/contexts/language-context';
@@ -64,11 +65,9 @@ export default function HomeScreen() {
     <ThemedView style={{flex: 1}} lightColor={Colors.light.tabBackground} darkColor={Colors.dark.tabBackground}>
       <View style={styles.mainContainer}>
         <View style={[styles.topHalf, { marginTop: topMargin }]}>
-          <Image
-            source={require('@/assets/images/cat-bot.webp')}
-            style={[styles.botImage, { width: imageSize, height: imageSize }]}
-            resizeMode="contain"
-          />
+          <View style={{ width: imageSize, height: imageSize }}>
+            <JarvisCore />
+          </View>
         </View>
         <View style={styles.middle}>
           <ThemedText
