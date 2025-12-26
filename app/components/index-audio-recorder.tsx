@@ -6,6 +6,7 @@ import { useAudioRecording } from '@/hooks/use-audio-recording';
 import { useAudioPlaybackContext } from '@/contexts/audio-playback-context';
 import { IconSymbol } from './ui/icon-symbol';
 import { useThemeColor } from '@/hooks/use-theme-color';
+import { useLanguage } from '@/contexts/language-context';
 
 interface AudioRecorderProps {
   onRecordingComplete: (uri: string) => void;
@@ -64,24 +65,32 @@ export default function AudioRecorder({ onRecordingComplete, isProcessing = fals
     return {}; // Azul por defecto
   };
 
+  // Traducciones y colores dinámicos basados en género
+  const { t } = useLanguage();
+  const recordingPrimary = useThemeColor({}, 'recordingPrimary');
+  const recordingSecondary = useThemeColor({}, 'recordingSecondary');
+  const playingPrimary = useThemeColor({}, 'playingPrimary');
+  const playingSecondary = useThemeColor({}, 'playingSecondary');
+  const tintColor = useThemeColor({}, 'tint');
+
   const getGradientColors = (): readonly [string, string] => {
-    if (isRecording) return ['#ff0000', '#800000'];
-    if (isProcessing) return ['#00bfff', '#004080'];
-    if (isAnyAudioPlaying) return ['#00ff00', '#008000'];
-    return ['#00bfff', '#004080'];
+    if (isRecording) return [recordingPrimary, recordingSecondary];
+    if (isProcessing) return [tintColor, tintColor + '66'];
+    if (isAnyAudioPlaying) return [playingPrimary, playingSecondary];
+    return [tintColor, tintColor + '66'];
   };
 
   const getGlowStyle = () => {
-    if (isRecording) return { backgroundColor: 'rgba(255, 70, 56, 1)', shadowColor: '#ff4638' };
-    if (isProcessing) return { backgroundColor: 'rgba(42, 176, 225, 1)', shadowColor: '#2ab0e1' };
-    if (isAnyAudioPlaying) return { backgroundColor: 'rgba(0, 240, 113, 1)', shadowColor: '#00f071' };
-    return { backgroundColor: 'rgba(42, 176, 225, 1)', shadowColor: '#2ab0e1' };
+    if (isRecording) return { backgroundColor: recordingPrimary + 'CC', shadowColor: recordingPrimary };
+    if (isProcessing) return { backgroundColor: tintColor + 'CC', shadowColor: tintColor };
+    if (isAnyAudioPlaying) return { backgroundColor: playingPrimary + 'CC', shadowColor: playingPrimary };
+    return { backgroundColor: tintColor + 'CC', shadowColor: tintColor };
   };
 
   const getStatusMessage = () => {
-    if (isRecording) return { text: 'Grabando...', style: styles.recordingText };
-    if (isProcessing) return { text: 'Procesando...', style: styles.processingText };
-    if (isAnyAudioPlaying) return { text: 'Reproduciendo...', style: styles.playingText };
+    if (isRecording) return { text: t('audioRecorder.recording'), style: [styles.statusText, { color: recordingPrimary }] };
+    if (isProcessing) return { text: t('audioRecorder.processing'), style: [styles.statusText, { color: tintColor }] };
+    if (isAnyAudioPlaying) return { text: t('audioRecorder.playing'), style: [styles.statusText, { color: playingPrimary }] };
     return null;
   };
 
@@ -146,8 +155,7 @@ const styles = StyleSheet.create({
     borderRadius: 75,
     justifyContent: 'center',
     alignItems: 'center',
-    boxShadow: '0px 4px 12px rgba(0,0,0,0.7)',
-    elevation: 12,
+    elevation: 8,
   },
   buttonTouchable: {
     width: '100%',
@@ -155,27 +163,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  recordingButton: {
-  },
-  processingButton: {
-  },
-  loadingButton: {
-  },
-  playingButton: {
-  },
-  recordingText: {
+  statusText: {
     marginTop: 40,
-    color: '#ff4638',
-    fontSize: 14,
-  },
-  processingText: {
-    marginTop: 40,
-    color: '#2ab0e1',
-    fontSize: 14,
-  },
-  playingText: {
-    marginTop: 40,
-    color: '#00f071',
     fontSize: 14,
   },
   statusTextContainer: {
@@ -186,5 +175,13 @@ const styles = StyleSheet.create({
   iconContainer: {
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  recordingButton: {
+  },
+  processingButton: {
+  },
+  loadingButton: {
+  },
+  playingButton: {
   },
 });

@@ -9,6 +9,11 @@
     "processingAudio": "Processing...",
     "thinking": "Thinking..."
   },
+  "audioRecorder": {
+    "recording": "Recording...",
+    "processing": "Processing...",
+    "playing": "Playing..."
+  },
   "settings": {
     "title": "Settings",
     "language": {

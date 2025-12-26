@@ -7,9 +7,16 @@ import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useGender } from '@/contexts/gender-context';
 
+type ThemeColorName = keyof typeof Colors.light & keyof typeof Colors.dark |
+  'jarvisPrimary' | 'jarvisGlow' | 'jarvisCore' |
+  'jarvisGradientStart' | 'jarvisGradientMiddle' | 'jarvisGradientEnd' |
+  'recordingPrimary' | 'recordingSecondary' | 'playingPrimary' | 'playingSecondary' |
+  'recordingTextColor' | 'processingTextColor' | 'playingTextColor' |
+  'successPrimary' | 'errorPrimary';
+
 export function useThemeColor(
   props: { light?: string; dark?: string },
-  colorName: keyof typeof Colors.light & keyof typeof Colors.dark | 'jarvisPrimary' | 'jarvisGlow' | 'jarvisCore' | 'jarvisGradientStart' | 'jarvisGradientMiddle' | 'jarvisGradientEnd'
+  colorName: ThemeColorName
 ) {
   const theme = useColorScheme() ?? 'light';
   const { currentGender } = useGender();
@@ -19,7 +26,7 @@ export function useThemeColor(
     return colorFromProps;
   } else {
     // Primero intentar colores específicos por género
-    const genderColors = Colors.gender[currentGender]?.[theme]?.[colorName as keyof typeof Colors.gender.Man.light];
+    const genderColors = (Colors.gender[currentGender]?.[theme] as any)?.[colorName];
     if (genderColors) {
       return genderColors;
     }

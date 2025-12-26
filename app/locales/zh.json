@@ -9,6 +9,11 @@
     "processingAudio": "处理中...",
     "thinking": "思考中..."
   },
+  "audioRecorder": {
+    "recording": "录制中...",
+    "processing": "处理中...",
+    "playing": "播放中..."
+  },
   "settings": {
     "title": "设置",
     "language": {

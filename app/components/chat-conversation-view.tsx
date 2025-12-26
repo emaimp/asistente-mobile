@@ -5,9 +5,8 @@ import { ThemedView } from '@/components/themed-view';
 import { IconSymbol } from './ui/icon-symbol';
 import { useAudioPlayback } from '@/hooks/use-audio-playback';
 import { useAudioPlaybackContext } from '@/contexts/audio-playback-context';
-import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useThemeColor } from '@/hooks/use-theme-color';
 import { useLanguage } from '@/contexts/language-context';
-import { Colors } from '@/constants/theme';
 import Markdown from 'react-native-markdown-display';
 
 // Estructura de datos para representar un mensaje en la conversación
@@ -32,14 +31,17 @@ interface ConversationViewProps {
  * Renderiza mensajes entre usuario y bot con controles de audio.
 */
 export default function ConversationView({ messages, autoPlayInputType }: ConversationViewProps) {
+  // Colores dinámicos basados en género
+  const textColor = useThemeColor({}, 'text');
+  const backgroundColor = useThemeColor({}, 'background');
+  const tintColor = useThemeColor({}, 'tint');
+
   const { t } = useLanguage();
-  const colorScheme = useColorScheme();
-  const userBorderColor = colorScheme === 'dark' ? '#FFFFFF' : '#000000';
 
   // Estilos para Markdown según el tema
   const markdownStyles = {
     body: {
-      color: colorScheme === 'dark' ? '#FFFFFF' : '#000000',
+      color: textColor,
       fontSize: 14,
       lineHeight: 20,
     },
@@ -54,24 +56,24 @@ export default function ConversationView({ messages, autoPlayInputType }: Conver
       marginBottom: 0,
     },
     code_inline: {
-      backgroundColor: colorScheme === 'dark' ? '#rgba(255, 255, 255, 0.3)' : '#rgba(255, 255, 255, 0.3)',
-      color: colorScheme === 'dark' ? '#000000' : '#FFFFFF',
+      backgroundColor: backgroundColor + '4D',
+      color: textColor,
       paddingHorizontal: 4,
       paddingVertical: 2,
       borderRadius: 4,
       fontFamily: 'monospace',
     },
     code_block: {
-      backgroundColor: colorScheme === 'dark' ? '#rgba(255, 255, 255, 0.3)' : '#rgba(255, 255, 255, 0.3)',
-      color: colorScheme === 'dark' ? '#000000' : '#FFFFFF',
+      backgroundColor: backgroundColor + '4D',
+      color: textColor,
       padding: 8,
       borderRadius: 4,
       fontFamily: 'monospace',
       marginVertical: 4,
     },
     fence: {
-      backgroundColor: colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.3)' : 'rgba(255, 255, 255, 0.3)',
-      color: colorScheme === 'dark' ? '#000000' : '#FFFFFF',
+      backgroundColor: backgroundColor + '4D',
+      color: textColor,
       padding: 8,
       borderRadius: 4,
       fontFamily: 'monospace',
@@ -120,18 +122,14 @@ export default function ConversationView({ messages, autoPlayInputType }: Conver
           style={[
             styles.messageContainer,
             isUser ? styles.userMessage : styles.botMessage,
-            { borderColor: isUser ? userBorderColor : '#2ab0e1' }
+            { borderColor: isUser ? textColor : tintColor }
           ]}
-          lightColor={isUser ? Colors.light.background : Colors.light.background}
-          darkColor={isUser ? Colors.dark.background : Colors.dark.background}
         >
           {item.isLoading ? (
             <View style={styles.loadingContainer}>
-              <ActivityIndicator size="small" color={colorScheme === 'dark' ? '#FFFFFF' : '#000000'} />
+              <ActivityIndicator size="small" color={textColor} />
               <ThemedText
                 style={styles.loadingText}
-                lightColor="#000000"
-                darkColor="#FFFFFF"
               >
                 {item.type === 'user' ? t('chat.processingAudio') : t('chat.thinking')}
               </ThemedText>
@@ -157,8 +155,6 @@ export default function ConversationView({ messages, autoPlayInputType }: Conver
 
           <ThemedText
             style={styles.timestampText}
-            lightColor="rgba(0, 0, 0, 0.7)"
-            darkColor="rgba(255, 255, 255, 0.7)"
           >
             {item.timestamp.toLocaleTimeString([], {
               hour: '2-digit',
@@ -221,6 +217,11 @@ function AudioMessagePlayer({
   isAnyAudioPlaying?: boolean;
   currentPlayingUri?: string | null;
 }) {
+  // Colores dinámicos basados en género
+  const textColor = useThemeColor({}, 'text');
+  const backgroundColor = useThemeColor({}, 'background');
+  const { t } = useLanguage();
+
   // Determinar si este audio debe reproducirse automáticamente
   const shouldAutoPlay = isLastBotMessage && (
     autoPlayInputType === 'all' ||
@@ -244,42 +245,38 @@ function AudioMessagePlayer({
   };
 
   return (
-    <View style={styles.audioContainer}>
+    <View style={[styles.audioContainer, { backgroundColor: textColor + '1A' }]}>
       <View style={styles.audioControls}>
         <TouchableOpacity
-          style={[styles.audioButton, isBlocked && styles.audioButtonBlocked]}
+          style={[styles.audioButton, isBlocked && styles.audioButtonBlocked, { backgroundColor: backgroundColor + 'FF' }]}
           onPress={handlePress}
           disabled={isLoading || (isAnyAudioPlaying && !isPlaying)}
         >
           <IconSymbol
             name={(isPlaying || (isLastBotMessage && isAnyAudioPlaying && currentPlayingUri === audioUri)) ? 'volume.up.fill' : (isAnyAudioPlaying ? 'speaker.slash.fill' : 'play.fill')}
             size={20}
-            color="white"
+            color={textColor}
           />
           <ThemedText
             style={styles.audioButtonText}
-            lightColor="#000000"
-            darkColor="#FFFFFF"
           >
-            {(isPlaying || (isLastBotMessage && isAnyAudioPlaying)) ? 'Reproduciendo' : (isAnyAudioPlaying ? 'Reproducir' : (isLoading ? 'Cargando...' : 'Reproducir'))}
+            {(isPlaying || (isLastBotMessage && isAnyAudioPlaying)) ? t('audioRecorder.playing') : (isAnyAudioPlaying ? t('audioRecorder.playing') : (isLoading ? t('chat.processingAudio') : t('audioRecorder.playing')))}
           </ThemedText>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[styles.stopButton, (currentPlayingUri !== audioUri) && styles.audioButtonBlocked]}
+          style={[styles.stopButton, (currentPlayingUri !== audioUri) && styles.audioButtonBlocked, { backgroundColor: backgroundColor + 'FF' }]}
           onPress={async () => await stopAllPlayback()}
           disabled={isLoading || currentPlayingUri !== audioUri}
         >
           <IconSymbol
             name="stop.fill"
             size={20}
-            color="white"
+            color={textColor}
           />
           <ThemedText
             style={styles.audioButtonText}
-            lightColor="#000000"
-            darkColor="#FFFFFF"
           >
-            Detener
+            {t('chat.thinking')}
           </ThemedText>
         </TouchableOpacity>
       </View>
@@ -335,7 +332,6 @@ const styles = StyleSheet.create({
     padding: 4,
     marginTop: 8,
     borderRadius: 12,
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
   },
   audioControls: {
     gap: 8,
@@ -347,7 +343,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: 8,
-    backgroundColor: 'rgba(255, 255, 255, 0.3)',
     borderRadius: 8,
   },
   audioButtonBlocked: {
@@ -355,7 +350,6 @@ const styles = StyleSheet.create({
   },
   stopButton: {
     padding: 8,
-    backgroundColor: 'rgba(255, 255, 255, 0.3)',
     borderRadius: 8,
     flexDirection: 'row',
     alignItems: 'center',

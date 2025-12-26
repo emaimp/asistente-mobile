@@ -17,6 +17,10 @@ export const Colors = {
     tabIconDefault: '#687076',
     tabIconSelected: tintColorLight,
     tabBackground: '#cdcdcd',
+
+    // Colores para notificaciones
+    successPrimary: '#2eb733',
+    errorPrimary: '#e00023',
   },
   dark: {
     text: '#ffffff',
@@ -26,6 +30,10 @@ export const Colors = {
     tabIconDefault: '#9BA1A6',
     tabIconSelected: tintColorDark,
     tabBackground: '#1e1e1e',
+
+    // Colores para notificaciones
+    successPrimary: '#2eb733',
+    errorPrimary: '#e00023',
   },
   // Colores específicos por género
   gender: {
@@ -33,36 +41,48 @@ export const Colors = {
       light: {
         text: '#000000',
         background: '#cdcdcd',
-        tint: '#1976d2',
+        tint: '#005096',
         icon: '#687076',
-        tabIconDefault: '#1976d2',
+        tabIconDefault: '#005096',
         tabIconSelected: '#0d47a1',
         tabBackground: '#cdcdcd',
 
         // Colores específicos para jarvis-core
         jarvisPrimary: '#005096',
-        jarvisGlow: 'rgba(94,242,255,0.5)',
+        jarvisGlow: 'rgba(0,80,150,0.3)',
         jarvisCore: 'rgba(94,242,255,0.05)',
         jarvisGradientStart: '#EFFFFF',
         jarvisGradientMiddle: '#005096',
         jarvisGradientEnd: '#003844',
+
+        // Colores para estados del audio recorder
+        recordingPrimary: '#ff0000',
+        recordingSecondary: '#800000',
+        playingPrimary: '#00ff00',
+        playingSecondary: '#008000',
       },
       dark: {
         text: '#ffffff',
         background: '#1e1e1e',
-        tint: '#64b5f6',
+        tint: '#005096',
         icon: '#687076',
-        tabIconDefault: '#64b5f6',
-        tabIconSelected: '#bbdefb',
+        tabIconDefault: '#005096',
+        tabIconSelected: '#0d47a1',
         tabBackground: '#1e1e1e',
 
         // Colores específicos para jarvis-core
         jarvisPrimary: '#005096',
-        jarvisGlow: 'rgba(94,242,255,0.5)',
+        jarvisGlow: 'rgba(0,80,150,0.3)',
         jarvisCore: 'rgba(94,242,255,0.05)',
         jarvisGradientStart: '#EFFFFF',
         jarvisGradientMiddle: '#005096',
         jarvisGradientEnd: '#003844',
+
+        // Colores para estados del audio recorder
+        recordingPrimary: '#ff0000',
+        recordingSecondary: '#800000',
+        playingPrimary: '#00ff00',
+        playingSecondary: '#008000',
       },
     },
     Woman: {
@@ -77,11 +97,17 @@ export const Colors = {
 
         // Colores específicos para jarvis-core
         jarvisPrimary: '#e91e63',
-        jarvisGlow: 'rgba(244,143,177,0.5)',
+        jarvisGlow: 'rgba(233,30,99,0.3)',
         jarvisCore: 'rgba(244,143,177,0.05)',
         jarvisGradientStart: '#fce4ec',
         jarvisGradientMiddle: '#e91e63',
         jarvisGradientEnd: '#4a148c',
+
+        // Colores para estados del audio recorder
+        recordingPrimary: '#ff0000',
+        recordingSecondary: '#800000',
+        playingPrimary: '#00ff00',
+        playingSecondary: '#008000',
       },
       dark: {
         text: '#ffffff',
@@ -89,16 +115,22 @@ export const Colors = {
         tint: '#e91e63',
         icon: '#687076',
         tabIconDefault: '#e91e63',
-        tabIconSelected: '#fce4ec',
+        tabIconSelected: '#880e4f',
         tabBackground: '#1e1e1e',
 
         // Colores específicos para jarvis-core
         jarvisPrimary: '#e91e63',
-        jarvisGlow: 'rgba(244,143,177,0.5)',
+        jarvisGlow: 'rgba(233,30,99,0.3)',
         jarvisCore: 'rgba(244,143,177,0.05)',
         jarvisGradientStart: '#fce4ec',
         jarvisGradientMiddle: '#e91e63',
         jarvisGradientEnd: '#4a148c',
+
+        // Colores para estados del audio recorder
+        recordingPrimary: '#ff0000',
+        recordingSecondary: '#800000',
+        playingPrimary: '#00ff00',
+        playingSecondary: '#008000',
       },
     },
   },

@@ -12,19 +12,18 @@ import AIModelConfigSection from '@/components/settings/model-config';
 import VoiceConfigSection from '@/components/settings/voice-config';
 import LanguageConfigSection from '@/components/settings/language-config';
 
-const SNACKBAR_SUCCESS_COLOR = '#2eb733';
-const SNACKBAR_ERROR_COLOR = '#e00023';
-
 export default function SettingsScreen() {
   // Colores dinámicos basados en género
   const tintColor = useThemeColor({}, 'tint');
   const textColor = useThemeColor({}, 'text');
+  const successPrimary = useThemeColor({}, 'successPrimary');
+  const errorPrimary = useThemeColor({}, 'errorPrimary');
 
-  // Hook para configuraciรณn de modelo
+  // Hook para configuración de modelo
   const { model, saveModel, updateModel } = useModelConfig();
-  // Hook para configuraciรณn de voz
+  // Hook para configuración de voz
   const { voice: currentVoice, saveVoiceLocally, updateVoice } = useVoiceConfig();
-  // Hook para configuraciรณn de idioma
+  // Hook para configuración de idioma
   const { language: currentLanguage, saveLanguageLocally, updateLanguage } = useLanguageConfig();
   // Estado para el campo de entrada del modelo
   const [inputModel, setInputModel] = useState(model);
@@ -128,11 +127,11 @@ export default function SettingsScreen() {
       await handleSaveVoiceLocally();
       await handleUpdateVoice();
 
-      // Mensaje final de รฉxito
-      showSnackbar(t('settings.applyAllSuccess'), SNACKBAR_SUCCESS_COLOR);
+      // Mensaje final de éxito
+      showSnackbar(t('settings.applyAllSuccess'), successPrimary);
     } catch {
       // En caso de error general
-      showSnackbar(t('settings.applyAllError'), SNACKBAR_ERROR_COLOR);
+      showSnackbar(t('settings.applyAllError'), errorPrimary);
     } finally {
       setIsApplyingAll(false);
     }
