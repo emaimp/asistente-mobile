@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { View, StyleSheet, Text } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import Svg, { Circle, Line, Defs, RadialGradient, Stop, G } from 'react-native-svg';
 import Animated, {
   useSharedValue,
@@ -11,22 +11,28 @@ import Animated, {
   interpolate,
   SharedValue
 } from 'react-native-reanimated';
-import { LinearGradient } from 'expo-linear-gradient';
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 const AnimatedG = Animated.createAnimatedComponent(G);
 const AnimatedLine = Animated.createAnimatedComponent(Line);
 
-/* ───────── Espectro de Voz Radial ───────── */
-const VoiceSpectrum = ({ center, innerRadius, amplitude }: { center: number, innerRadius: number, amplitude: SharedValue<number> }) => {
-  const barCount = 70;
+// Espectro de Voz Radial
+const VoiceSpectrum = ({ center, innerRadius, amplitude, timeValue, isProcessing }: { center: number, innerRadius: number, amplitude: SharedValue<number>, timeValue: SharedValue<number>, isProcessing: boolean }) => {
+  const barCount = 100;
 
-  const Bar = ({ i }: { i: number }) => {
+  const Bar = ({ i, timeValue, isProcessing }: { i: number, timeValue: SharedValue<number>, isProcessing: boolean }) => {
     const angle = (i * (360 / barCount)) * (Math.PI / 180);
 
     const animatedBarProps = useAnimatedProps(() => {
-      const randomFactor = Math.sin(i * 0.5) * 0.5 + 0.5;
-      const height = interpolate(amplitude.value, [0, 2], [10, 5 * randomFactor]);
+      let height;
+      if (!isProcessing) {
+        const randomFactor = Math.sin(i * 0.5) * 0.5 + 0.5;
+        height = interpolate(amplitude.value, [0, 2], [10, 5 * randomFactor]);
+      } else {
+        const freq = 0.1;
+        const wave = (Math.sin(timeValue.value * freq + i * 0.3) + 1) * 0.5;
+        height = 10 + 5 * wave;
+      }
 
       return {
         x1: center + innerRadius * Math.cos(angle),
@@ -47,7 +53,7 @@ const VoiceSpectrum = ({ center, innerRadius, amplitude }: { center: number, inn
     );
   };
 
-  const bars = Array.from({ length: barCount }, (_, i) => <Bar key={i} i={i} />);
+  const bars = Array.from({ length: barCount }, (_, i) => <Bar key={i} i={i} timeValue={timeValue} isProcessing={isProcessing} />);
 
   return <G>{bars}</G>;
 };
@@ -80,32 +86,37 @@ export default function JarvisCore({ isProcessing = false }) {
 
   const rotateAngle = useSharedValue(0);
   const breathValue = useSharedValue(0);
-  const audioAmplitude = useSharedValue(0); // <--- VALOR PARA EL AUDIO
+  const audioAmplitude = useSharedValue(0);
+
+  const timeValue = useSharedValue(0);
+
+  useEffect(() => {
+    timeValue.value = withRepeat(
+      withTiming(1000, { duration: 3500, easing: Easing.linear }),
+      -1, false
+    );
+  }, [timeValue]);
 
   useEffect(() => {
     rotateAngle.value = withRepeat(
-      withTiming(360, { duration: isProcessing ? 3000 : 10000, easing: Easing.linear }),
+      withTiming(360, { duration: 10000, easing: Easing.linear }),
       -1, false
     );
 
     breathValue.value = withRepeat(
-      withTiming(1, { duration: isProcessing ? 600 : 1800, easing: Easing.inOut(Easing.ease) }),
+      withTiming(1, { duration: 1800, easing: Easing.inOut(Easing.ease) }),
       -1, true
     );
 
-    // Simulación de ruido de audio (esto lo reemplazarás con datos reales)
+    // Simulación de ruido de audio
     audioAmplitude.value = withRepeat(
       withTiming(1, { duration: 400, easing: Easing.bezier(0.25, 0.1, 0.25, 1) }),
       -1, true
     );
-  }, [audioAmplitude, breathValue, isProcessing, rotateAngle]);
+  }, [audioAmplitude, breathValue, rotateAngle]);
 
   const glowStyle = useAnimatedStyle(() => ({
-    transform: [
-      { rotate: `${rotateAngle.value}deg` },
-      { scale: interpolate(breathValue.value, [0, 1], [0.80, 0.85]) }
-    ],
-    opacity: interpolate(breathValue.value, [0, 1], isProcessing ? [0.4, 0.8] : [0.2, 0.5]),
+    opacity: 0.1,
   }));
 
   const rotateProps = useAnimatedProps(() => ({
@@ -124,7 +135,7 @@ export default function JarvisCore({ isProcessing = false }) {
   return (
     <View style={styles.container}>
       <Animated.View style={[styles.glow, glowStyle]}>
-        <LinearGradient colors={['rgba(94,242,255,0.4)', 'transparent']} style={styles.gradient} />
+        <View style={[styles.gradient, {backgroundColor: 'rgba(94,242,255,0.3)'}]} />
       </Animated.View>
 
       <Svg width={size} height={size}>
@@ -137,7 +148,7 @@ export default function JarvisCore({ isProcessing = false }) {
         </Defs>
 
         {/* HUD Exterior */}
-        <HudTicks center={center} radius={145} />
+        <HudTicks center={center} radius={125} />
 
         {/* Anillo de Fragmentos (Tech Ring) */}
         <AnimatedG animatedProps={rotateProps}>
@@ -149,11 +160,12 @@ export default function JarvisCore({ isProcessing = false }) {
         </AnimatedG>
 
         {/* Espectro de Voz (Radial) */}
-        <VoiceSpectrum center={center} innerRadius={55} amplitude={audioAmplitude} />
+        <VoiceSpectrum center={center} innerRadius={55} amplitude={audioAmplitude} timeValue={timeValue} isProcessing={isProcessing} />
 
         {/* Anillos Giratorios Principales */}
         <AnimatedG animatedProps={rotateProps}>
-          <Circle cx={center} cy={center} r={130} stroke="#5EF2FF" strokeWidth={2} strokeOpacity={0.5} strokeDasharray={[20, 15]} fill="none" />
+          <Circle cx={center} cy={center} r={150} stroke="#5EF2FF" strokeWidth={10} strokeOpacity={1} strokeDasharray={[360, 360]} fill="none" />
+          <Circle cx={center} cy={center} r={150} stroke="#5EF2FF" strokeWidth={2} strokeOpacity={0.5} strokeDasharray={[360, 0]} strokeDashoffset={180} fill="none" />
         </AnimatedG>
 
         <AnimatedG animatedProps={counterRotateProps}>
@@ -164,11 +176,6 @@ export default function JarvisCore({ isProcessing = false }) {
         <Circle cx={center} cy={center} r={45} fill="rgba(94,242,255,0.05)" />
         <AnimatedCircle cx={center} cy={center} animatedProps={coreBreathProps} fill="url(#coreGlow)" />
       </Svg>
-
-      <View style={styles.centerText} pointerEvents="none">
-        <Text style={styles.jarvisText}>J.A.R.V.I.S</Text>
-        <Text style={styles.subtitleText}>{isProcessing ? 'PROCESSING...' : 'CORE SYSTEM'}</Text>
-      </View>
     </View>
   );
 }
@@ -182,8 +189,8 @@ const styles = StyleSheet.create({
   },
   glow: {
     position: 'absolute',
-    width: 340,
-    height: 340
+    width: 190,
+    height: 190
   },
   gradient: {
     flex: 1,
@@ -192,20 +199,5 @@ const styles = StyleSheet.create({
   centerText: {
     position: 'absolute',
     alignItems: 'center'
-  },
-  jarvisText: {
-    color: '#5EF2FF',
-    fontSize: 22,
-    fontWeight: '900',
-    letterSpacing: 4,
-    textShadowColor: 'rgba(94,242,255,0.8)',
-    textShadowRadius: 10
-  },
-  subtitleText: {
-    color: 'rgba(94,242,255,0.5)',
-    fontSize: 10,
-    fontFamily: 'monospace',
-    marginTop: 4,
-    letterSpacing: 1
   },
 });

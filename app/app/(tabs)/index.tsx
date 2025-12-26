@@ -8,6 +8,7 @@ import InitialModal from '@/components/initial-modal';
 import JarvisCore from '@/components/jarvis-core';
 import { useConversation } from '@/contexts/chatbot-conversation-context';
 import { useAudioPlayback } from '@/hooks/use-audio-playback';
+import { useAudioPlaybackContext } from '@/contexts/audio-playback-context';
 import { useLanguage } from '@/contexts/language-context';
 import { Colors } from '@/constants/theme';
 
@@ -32,6 +33,7 @@ function AutoResponsePlayer({ messages }: { messages: any[] }) {
 
 export default function HomeScreen() {
   const { messages, handleRecordingComplete, isProcessing } = useConversation();
+  const { isAnyAudioPlaying } = useAudioPlaybackContext();
   const { t } = useLanguage();
   const { width, height } = Dimensions.get('window');
   const imageSize = Math.min(width * 0.80, 400); // Máximo 350px, 80% del ancho
@@ -66,7 +68,7 @@ export default function HomeScreen() {
       <View style={styles.mainContainer}>
         <View style={[styles.topHalf, { marginTop: topMargin }]}>
           <View style={{ width: imageSize, height: imageSize }}>
-            <JarvisCore />
+            <JarvisCore isProcessing={isAnyAudioPlaying} />
           </View>
         </View>
         <View style={styles.middle}>
