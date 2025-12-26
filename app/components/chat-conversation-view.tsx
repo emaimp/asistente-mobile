@@ -122,8 +122,8 @@ export default function ConversationView({ messages, autoPlayInputType }: Conver
             isUser ? styles.userMessage : styles.botMessage,
             { borderColor: isUser ? userBorderColor : '#2ab0e1' }
           ]}
-          lightColor={isUser ? '#2ab0e1' : Colors.light.background}
-          darkColor={isUser ? '#2ab0e1' : Colors.dark.background}
+          lightColor={isUser ? Colors.light.background : Colors.light.background}
+          darkColor={isUser ? Colors.dark.background : Colors.dark.background}
         >
           {item.isLoading ? (
             <View style={styles.loadingContainer}>

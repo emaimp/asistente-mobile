@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
-import Animated, { useSharedValue, useAnimatedStyle, withRepeat, withTiming, withDelay, cancelAnimation } from 'react-native-reanimated';
+import Animated, { useSharedValue, useAnimatedStyle, withRepeat, withTiming, cancelAnimation } from 'react-native-reanimated';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useAudioRecording } from '@/hooks/use-audio-recording';
 import { useAudioPlaybackContext } from '@/contexts/audio-playback-context';
@@ -22,35 +22,16 @@ export default function AudioRecorder({ onRecordingComplete, isProcessing = fals
   const buttonScale = useSharedValue(1);
   const lastAutoPlayedUri = useRef<string | null>(null);
 
-
-
-  // Brillo pulsante siempre activo con ritmo y escala según estado
+  // Brillo pulsante en todos los estados sin variación
   useEffect(() => {
-    const getGlowConfig = () => {
-      if (isRecording) return { scale: 1.3, duration: 800 };
-      if (isProcessing) return { scale: 1.3, duration: 1000 };
-      if (isAnyAudioPlaying) return { scale: 1.3, duration: 600 };
-      return { scale: 1.3, duration: 2000 }; // inactivo
-    };
-
     // Cancelar animaciones anteriores
     cancelAnimation(glowScale);
     cancelAnimation(glowOpacity);
 
-    // Resetear valores iniciales
-    glowScale.value = 1;
-    glowOpacity.value = 0.5;
-
-    const { scale, duration } = getGlowConfig();
-
-    // Iniciar nuevas animaciones
-    glowScale.value = withRepeat(
-      withTiming(scale, { duration }), -1, true
-    );
-    glowOpacity.value = withRepeat(
-      withTiming(0.2, { duration }), -1, true
-    );
-  }, [isRecording, isProcessing, isAnyAudioPlaying, glowScale, glowOpacity]);
+    // Iniciar animaciones constantes
+    glowScale.value = withRepeat(withTiming(1.2, { duration: 2000 }), -1, true);
+    glowOpacity.value = withRepeat(withTiming(0.3, { duration: 2000 }), -1, true);
+  }, [glowScale, glowOpacity]);
 
   // Resetear el flag de última reproducción automática cuando cambia la URI
   useEffect(() => {
@@ -91,10 +72,10 @@ export default function AudioRecorder({ onRecordingComplete, isProcessing = fals
   };
 
   const getGlowStyle = () => {
-    if (isRecording) return { backgroundColor: 'rgba(255, 70, 56, 0.6)', shadowColor: '#ff4638' };
-    if (isProcessing) return { backgroundColor: 'rgba(42, 176, 225, 0.6)', shadowColor: '#2ab0e1' };
-    if (isAnyAudioPlaying) return { backgroundColor: 'rgba(0, 240, 113, 0.6)', shadowColor: '#00f071' };
-    return { backgroundColor: 'rgba(42, 176, 225, 0.6)', shadowColor: '#2ab0e1' };
+    if (isRecording) return { backgroundColor: 'rgba(255, 70, 56, 1)', shadowColor: '#ff4638' };
+    if (isProcessing) return { backgroundColor: 'rgba(42, 176, 225, 1)', shadowColor: '#2ab0e1' };
+    if (isAnyAudioPlaying) return { backgroundColor: 'rgba(0, 240, 113, 1)', shadowColor: '#00f071' };
+    return { backgroundColor: 'rgba(42, 176, 225, 1)', shadowColor: '#2ab0e1' };
   };
 
   const getStatusMessage = () => {
@@ -122,20 +103,6 @@ export default function AudioRecorder({ onRecordingComplete, isProcessing = fals
     <View style={styles.container}>
       <View style={styles.buttonContainer}>
         <Animated.View style={[styles.glow, getGlowStyle(), glowAnimatedStyle]} />
-        {/* Ondas circulares cuando está activo */}
-        {(isRecording || isProcessing || isAnyAudioPlaying) && (
-          <>
-            {[...Array(3)].map((_, i) => (
-              <AudioWave
-                key={i}
-                delay={i * 300}
-                color={isRecording ? '#ff4638' : isAnyAudioPlaying ? '#00f071' : '#2ab0e1'}
-                maxScale={isRecording ? 1.3 : isProcessing ? 1.3 : 1.3}
-                duration={isRecording ? 800 : isProcessing ? 1000 : 600}
-              />
-            ))}
-          </>
-        )}
         <LinearGradient colors={getGradientColors()} start={{x: 0, y: 0}} end={{x: 0, y: 1}} style={[styles.button, getButtonStyle()]} >
           <Pressable
             style={styles.buttonTouchable}
@@ -157,32 +124,6 @@ export default function AudioRecorder({ onRecordingComplete, isProcessing = fals
   );
 }
 
-// Componente para ondas circulares de audio
-function AudioWave({ delay, color, maxScale = 1.3, duration = 800 }: { delay: number; color: string; maxScale?: number; duration?: number }) {
-  const scale = useSharedValue(0);
-  const opacity = useSharedValue(1);
-
-  useEffect(() => {
-    scale.value = withDelay(delay, withRepeat(withTiming(maxScale, { duration }), -1, false));
-    opacity.value = withDelay(delay, withRepeat(withTiming(0, { duration }), -1, false));
-  }, [delay, scale, opacity, maxScale, duration]);
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: scale.value }],
-    opacity: opacity.value,
-    borderColor: color,
-  }));
-
-  return (
-    <Animated.View
-      style={[
-        styles.audioWave,
-        animatedStyle,
-      ]}
-    />
-  );
-}
-
 const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
@@ -193,15 +134,26 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-
+  glow: {
+    position: 'absolute',
+    width: 130,
+    height: 130,
+    borderRadius: 75,
+  },
   button: {
-    width: 150,
-    height: 150,
+    width: 130,
+    height: 130,
     borderRadius: 75,
     justifyContent: 'center',
     alignItems: 'center',
     boxShadow: '0px 4px 12px rgba(0,0,0,0.7)',
     elevation: 12,
+  },
+  buttonTouchable: {
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   recordingButton: {
   },
@@ -225,32 +177,6 @@ const styles = StyleSheet.create({
     marginTop: 40,
     color: '#00f071',
     fontSize: 14,
-  },
-  buttonTouchable: {
-    width: '100%',
-    height: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  glow: {
-    position: 'absolute',
-    width: 150,
-    height: 150,
-    borderRadius: 75,
-    backgroundColor: 'rgba(80, 200, 250, 0.6)',
-    shadowColor: '#2ab0e1',
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 1,
-    shadowRadius: 20,
-  },
-  audioWave: {
-    position: 'absolute',
-    width: 150,
-    height: 150,
-    borderRadius: 75,
-    borderWidth: 5,
-    borderColor: '#ff4638',
-    backgroundColor: 'transparent',
   },
   statusTextContainer: {
     height: 70,

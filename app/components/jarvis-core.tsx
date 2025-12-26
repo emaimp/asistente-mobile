@@ -46,7 +46,7 @@ const VoiceSpectrum = ({ center, innerRadius, amplitude, timeValue, isProcessing
     return (
       <AnimatedLine
         animatedProps={animatedBarProps}
-        stroke="#5EF2FF"
+        stroke="#005096"
         strokeWidth={1.5}
         strokeLinecap="round"
       />
@@ -71,7 +71,7 @@ const HudTicks = ({ center, radius }: { center: number, radius: number }) => {
         y1={center + radius * Math.sin(angle)}
         x2={center + (radius + length) * Math.cos(angle)}
         y2={center + (radius + length) * Math.sin(angle)}
-        stroke="#5EF2FF"
+        stroke="#005096"
         strokeWidth={isMajor ? 2 : 1}
         strokeOpacity={isMajor ? 0.8 : 0.2}
       />
@@ -83,11 +83,9 @@ const HudTicks = ({ center, radius }: { center: number, radius: number }) => {
 export default function JarvisCore({ isProcessing = false }) {
   const size = 320;
   const center = size / 2;
-
   const rotateAngle = useSharedValue(0);
   const breathValue = useSharedValue(0);
   const audioAmplitude = useSharedValue(0);
-
   const timeValue = useSharedValue(0);
 
   useEffect(() => {
@@ -135,26 +133,26 @@ export default function JarvisCore({ isProcessing = false }) {
   return (
     <View style={styles.container}>
       <Animated.View style={[styles.glow, glowStyle]}>
-        <View style={[styles.gradient, {backgroundColor: 'rgba(94,242,255,0.3)'}]} />
+        <View style={[styles.gradient, {backgroundColor: 'rgba(94,242,255,0.5)'}]} />
       </Animated.View>
 
       <Svg width={size} height={size}>
         <Defs>
           <RadialGradient id="coreGlow" cx="50%" cy="50%" rx="50%" ry="50%">
             <Stop offset="0%" stopColor="#EFFFFF" stopOpacity="1" />
-            <Stop offset="50%" stopColor="#5EF2FF" stopOpacity="0.8" />
+            <Stop offset="50%" stopColor="#005096" stopOpacity="0.8" />
             <Stop offset="100%" stopColor="#003844" stopOpacity="0" />
           </RadialGradient>
         </Defs>
 
-        {/* HUD Exterior */}
+        {/* HUD (estilo reloj) */}
         <HudTicks center={center} radius={125} />
 
         {/* Anillo de Fragmentos (Tech Ring) */}
         <AnimatedG animatedProps={rotateProps}>
           <Circle
             cx={center} cy={center} r={110}
-            stroke="#5EF2FF" strokeWidth={6} strokeOpacity={0.2}
+            stroke="#005096" strokeWidth={6} strokeOpacity={0.2}
             strokeDasharray={[2, 10, 30, 15]} fill="none"
           />
         </AnimatedG>
@@ -164,12 +162,12 @@ export default function JarvisCore({ isProcessing = false }) {
 
         {/* Anillos Giratorios Principales */}
         <AnimatedG animatedProps={rotateProps}>
-          <Circle cx={center} cy={center} r={150} stroke="#5EF2FF" strokeWidth={10} strokeOpacity={1} strokeDasharray={[360, 360]} fill="none" />
-          <Circle cx={center} cy={center} r={150} stroke="#5EF2FF" strokeWidth={2} strokeOpacity={0.5} strokeDasharray={[360, 0]} strokeDashoffset={180} fill="none" />
+          <Circle cx={center} cy={center} r={150} stroke="#005096" strokeWidth={10} strokeOpacity={1} strokeDasharray={[360, 360]} fill="none" />
+          <Circle cx={center} cy={center} r={150} stroke="#005096" strokeWidth={2} strokeOpacity={0.5} strokeDasharray={[360, 0]} strokeDashoffset={180} fill="none" />
         </AnimatedG>
 
         <AnimatedG animatedProps={counterRotateProps}>
-          <Circle cx={center} cy={center} r={95} stroke="#5EF2FF" strokeWidth={1.5} strokeOpacity={0.4} strokeDasharray={[5, 10]} fill="none" />
+          <Circle cx={center} cy={center} r={95} stroke="#005096" strokeWidth={1.5} strokeOpacity={0.4} strokeDasharray={[5, 10]} fill="none" />
         </AnimatedG>
 
         {/* Núcleo Central */}
