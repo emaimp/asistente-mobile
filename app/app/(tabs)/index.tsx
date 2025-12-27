@@ -1,16 +1,16 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StyleSheet, View, Dimensions } from 'react-native';
 import { useMemo, useState, useEffect } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ThemedView } from '@/components/themed-view';
 import { ThemedText } from '@/components/themed-text';
-import AudioRecorder from '@/components/index-audio-recorder';
-import InitialModal from '@/components/initial-modal';
-import JarvisCore from '@/components/jarvis-core';
 import { useConversation } from '@/contexts/chatbot-conversation-context';
 import { useAudioPlayback } from '@/hooks/use-audio-playback';
 import { useAudioPlaybackContext } from '@/contexts/audio-playback-context';
 import { useLanguage } from '@/contexts/language-context';
 import { Colors } from '@/constants/theme';
+import AudioRecorder from '@/components/index-audio-recorder';
+import InitialModal from '@/components/initial-modal';
+import JarvisCore from '@/components/jarvis-core';
 
 // Componente que reproduce automáticamente el audio de la última respuesta del bot
 function AutoResponsePlayer({ messages }: { messages: any[] }) {
@@ -37,8 +37,8 @@ export default function HomeScreen() {
   const { t } = useLanguage();
   const { width, height } = Dimensions.get('window');
   const imageSize = Math.min(width * 0.80, 400); // Máximo 350px, 80% del ancho
-  const topMargin = height * 0.1; // 10% de la altura para el margen superior
-  const textMarginTop = height * 0.05; // Margen superior del texto basado en altura
+  const topMargin = height * 0.15; // 15% de la altura para el margen superior
+  const textMarginTop = height * 0.07; // Margen superior del texto basado en altura
   const textMarginBottom = height * 0.03; // Margen inferior del texto
   const [showInitialModal, setShowInitialModal] = useState(false); // Estado para el modal inicial
 

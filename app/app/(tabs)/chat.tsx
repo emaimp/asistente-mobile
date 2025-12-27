@@ -77,7 +77,7 @@ export default function ChatScreen() {
           </View>
 
           <View style={styles.inputContainer}>
-            <View style={[styles.inputWrapper, { borderColor: textColor }]}>
+            <View style={[styles.inputWrapper, { borderColor: tintColor }]}>
               <TextInput
                 style={[styles.textInput, { color: textColor }]}
                 value={inputText}
@@ -90,7 +90,7 @@ export default function ChatScreen() {
                 blurOnSubmit={false}
               />
               <TouchableOpacity
-                style={[styles.sendButton, (!inputText.trim() || isProcessing) && styles.sendButtonDisabled, { borderColor: textColor }]}
+                style={[styles.sendButton, (!inputText.trim() || isProcessing) && styles.sendButtonDisabled, { borderColor: tintColor }]}
                 onPress={handleSubmit}
                 disabled={!inputText.trim() || isProcessing}
               >
@@ -161,8 +161,8 @@ const styles = StyleSheet.create({
   },
   inputWrapper: {
     position: 'relative',
-    borderRadius: 10,
     borderWidth: 1,
+    borderRadius: 8,
     paddingHorizontal: 16,
     paddingVertical: 6,
     minHeight: 44,
@@ -172,8 +172,8 @@ const styles = StyleSheet.create({
   },
   sendButton: {
     position: 'absolute',
-    borderRadius: 10,
     borderWidth: 0,
+    borderRadius: 8,
     right: 3,
     top: 3,
     height: 40,

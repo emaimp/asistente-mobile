@@ -20,7 +20,7 @@ export const Colors = {
 
     // Colores para notificaciones
     successPrimary: '#00a21c',
-    errorPrimary: '#b50f05',
+    errorPrimary: '#cb0000',
   },
   dark: {
     text: '#ffffff',
@@ -33,7 +33,7 @@ export const Colors = {
 
     // Colores para notificaciones
     successPrimary: '#00a21c',
-    errorPrimary: '#b50f05',
+    errorPrimary: '#cb0000',
   },
   // Colores específicos por género
   gender: {

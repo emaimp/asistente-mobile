@@ -1,25 +1,29 @@
-import { Tabs } from 'expo-router';
 import React from 'react';
+import { Tabs } from 'expo-router';
+import { View, StyleSheet } from 'react-native';
 import { HapticTab } from '@/components/haptic-tab';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useConversation } from '@/contexts/chatbot-conversation-context';
+import { useGender } from '@/contexts/gender-context';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
   const { messages } = useConversation();
+  const { currentGender } = useGender();
   const botMessageCount = messages.filter(message => message.type === 'bot').length;
 
   return (
     <Tabs
       initialRouteName="index"
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+        tabBarActiveTintColor: Colors.gender[currentGender][colorScheme ?? 'light'].tint,
         headerShown: false,
         tabBarButton: HapticTab,
         tabBarStyle: {
-          backgroundColor: Colors[colorScheme ?? 'light'].tabBackground,
+          backgroundColor: Colors.gender[currentGender][colorScheme ?? 'light'].tabBackground,
+          overflow: 'visible',
         },
       }}>
       <Tabs.Screen
@@ -35,7 +39,13 @@ export default function TabLayout() {
         name="index"
         options={{
           title: 'Bot',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="bot" color={color} />,
+          tabBarIcon: ({ color }) => (
+            <View style={styles.container}>
+              <View style={[styles.button, { backgroundColor: color }]}>
+                <IconSymbol size={24} name="bot" color="white" />
+              </View>
+            </View>
+          ),
           tabBarLabel: () => null,
         }}
       />
@@ -50,3 +60,21 @@ export default function TabLayout() {
     </Tabs>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    position: 'relative',
+    width: '100%',
+    height: '100%',
+  },
+  button: {
+    position: 'absolute',
+    top: -15,
+    left: '-50%',
+    width: 55,
+    height: 55,
+    borderRadius: 55,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});
