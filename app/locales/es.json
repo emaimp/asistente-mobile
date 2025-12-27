@@ -7,7 +7,9 @@
     "placeholder": "Escribe un mensaje...",
     "sending": "...",
     "processingAudio": "Procesando...",
-    "thinking": "Pensando..."
+    "thinking": "Pensando...",
+    "play": "Reproducir",
+    "stop": "Detener"
   },
   "audioRecorder": {
     "recording": "Grabando...",

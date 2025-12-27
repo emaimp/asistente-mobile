@@ -33,6 +33,7 @@ const ENTYPO_MAPPING = {
 
 const FONTAWESOME5_MAPPING = {
   'mic.fill': 'microphone-alt',
+  'record.fill': 'record-vinyl',
 };
 
 const FONTAWESOME6_MAPPING = {

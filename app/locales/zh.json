@@ -7,7 +7,9 @@
     "placeholder": "写一个消息...",
     "sending": "...",
     "processingAudio": "处理中...",
-    "thinking": "思考中..."
+    "thinking": "思考中...",
+    "play": "播放",
+    "stop": "停止"
   },
   "audioRecorder": {
     "recording": "录制中...",

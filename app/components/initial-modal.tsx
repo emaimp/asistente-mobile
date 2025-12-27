@@ -130,7 +130,7 @@ export default function InitialModal({ visible, onClose }: InitialModalProps) {
               onPress={handleConnect}
               disabled={isConnected}
             >
-              <Text style={[styles.buttonText, { color: textColor }]}>
+              <Text style={[styles.buttonText, { color: 'white' }]}>
                 {t('modal.connect')}
               </Text>
             </TouchableOpacity>
@@ -144,7 +144,7 @@ export default function InitialModal({ visible, onClose }: InitialModalProps) {
               ]}
               onPress={handleCancel}
             >
-              <Text style={[styles.buttonText, { color: textColor }]}>
+              <Text style={[styles.buttonText, { color: 'white' }]}>
                 {t('modal.close')}
               </Text>
             </TouchableOpacity>

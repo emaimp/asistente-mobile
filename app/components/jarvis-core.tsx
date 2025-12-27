@@ -155,13 +155,13 @@ export default function JarvisCore({ isProcessing = false }) {
         </Defs>
 
         {/* HUD (estilo reloj) */}
-        <HudTicks center={center} radius={125} jarvisPrimary={jarvisPrimary} />
+        <HudTicks center={center} radius={120} jarvisPrimary={jarvisPrimary} />
 
         {/* Anillo de Fragmentos (Tech Ring) */}
         <AnimatedG animatedProps={rotateProps}>
           <Circle
-            cx={center} cy={center} r={110}
-            stroke={jarvisPrimary} strokeWidth={6} strokeOpacity={0.2}
+            cx={center} cy={center} r={105}
+            stroke={jarvisPrimary} strokeWidth={7} strokeOpacity={0.5}
             strokeDasharray={[2, 10, 30, 15]} fill="none"
           />
         </AnimatedG>
@@ -171,12 +171,12 @@ export default function JarvisCore({ isProcessing = false }) {
 
         {/* Anillos Giratorios Principales */}
         <AnimatedG animatedProps={rotateProps}>
-          <Circle cx={center} cy={center} r={150} stroke={jarvisPrimary} strokeWidth={15} strokeOpacity={1} strokeDasharray={[360, 90]} fill="none" />
+          <Circle cx={center} cy={center} r={150} stroke={jarvisPrimary} strokeWidth={17} strokeOpacity={1} strokeDasharray={[360, 90]} fill="none" />
           <Circle cx={center} cy={center} r={150} stroke={jarvisPrimary} strokeWidth={2} strokeOpacity={0.5} strokeDasharray={[360, 0]} strokeDashoffset={180} fill="none" />
         </AnimatedG>
 
         <AnimatedG animatedProps={counterRotateProps}>
-          <Circle cx={center} cy={center} r={95} stroke={jarvisPrimary} strokeWidth={1.5} strokeOpacity={0.4} strokeDasharray={[5, 10]} fill="none" />
+          <Circle cx={center} cy={center} r={90} stroke={jarvisPrimary} strokeWidth={1.5} strokeOpacity={0.4} strokeDasharray={[5, 10]} fill="none" />
         </AnimatedG>
 
         {/* Núcleo Central */}
@@ -196,8 +196,8 @@ const styles = StyleSheet.create({
   },
   glow: {
     position: 'absolute',
-    width: 190,
-    height: 190
+    width: 180,
+    height: 180
   },
   gradient: {
     flex: 1,

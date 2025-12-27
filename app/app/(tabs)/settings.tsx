@@ -15,7 +15,6 @@ import LanguageConfigSection from '@/components/settings/language-config';
 export default function SettingsScreen() {
   // Colores dinámicos basados en género
   const tintColor = useThemeColor({}, 'tint');
-  const backgroundColor = useThemeColor({}, 'background');
   const tabIconSelected = useThemeColor({}, 'tabIconSelected');
   const successPrimary = useThemeColor({}, 'successPrimary');
   const errorPrimary = useThemeColor({}, 'errorPrimary');
@@ -191,7 +190,7 @@ export default function SettingsScreen() {
           disabled={isApplyingAll || isUpdatingLanguage || isUpdatingModel || isUpdatingVoice}
         >
           <ThemedText
-            style={[styles.applyButtonText, { color: backgroundColor }]}
+            style={[styles.applyButtonText, { color: 'white' }]}
           >
             {t('settings.applyAll')}
           </ThemedText>

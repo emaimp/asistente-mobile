@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { View, Text, Pressable, StyleSheet } from 'react-native';
+import { View, Text, Pressable, StyleSheet, Dimensions } from 'react-native';
 import Animated, { useSharedValue, useAnimatedStyle, withRepeat, withTiming, cancelAnimation } from 'react-native-reanimated';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useAudioRecording } from '@/hooks/use-audio-recording';
@@ -16,6 +16,10 @@ interface AudioRecorderProps {
 }
 
 export default function AudioRecorder({ onRecordingComplete, isProcessing = false, audioUri, onRecordingStart }: AudioRecorderProps) {
+  const { height: screenHeight } = Dimensions.get('window');
+  const isSmallScreen = screenHeight < 700; // Umbral para pantallas pequeñas
+  const styles = getResponsiveStyles(isSmallScreen); // Estilos responsivos
+
   const { isRecording, startRecording, stopRecording } = useAudioRecording(onRecordingComplete);
   const { isAnyAudioPlaying, stopAllPlayback } = useAudioPlaybackContext();
   const glowScale = useSharedValue(1);
@@ -52,45 +56,44 @@ export default function AudioRecorder({ onRecordingComplete, isProcessing = fals
     transform: [{ scale: buttonScale.value }],
   }));
 
+  // Determinar el ícono y estilos según el estado
   const getIconName = () => {
-    if (isProcessing) return 'mic.fill'; // Azul - procesando
-    if (isAnyAudioPlaying) return 'volume.up.fill'; // Verde - reproduciendo
-    return 'mic.fill'; // Azul - default
+    if (isRecording) return 'record.fill'; // Grabando
+    if (isProcessing) return 'mic.fill'; // Procesando
+    if (isAnyAudioPlaying) return 'volume.up.fill'; // Reproduciendo
+    return 'mic.fill'; // Default
   };
 
+  // Determinar estilos de botón según el estado
   const getButtonStyle = () => {
-    if (isRecording) return styles.recordingButton;
-    if (isProcessing) return styles.processingButton;
-    if (isAnyAudioPlaying) return styles.playingButton; // Verde durante reproducción global
-    return {}; // Azul por defecto
+    if (isRecording) return styles.recordingButton; // Grabando
+    if (isProcessing) return styles.processingButton; // Procesando
+    if (isAnyAudioPlaying) return styles.playingButton; // Reproduciendo
+    return {}; // Default
   };
 
   // Traducciones y colores dinámicos basados en género
   const { t } = useLanguage();
-  const recordingPrimary = useThemeColor({}, 'recordingPrimary');
-  const recordingSecondary = useThemeColor({}, 'recordingSecondary');
-  const playingPrimary = useThemeColor({}, 'playingPrimary');
-  const playingSecondary = useThemeColor({}, 'playingSecondary');
   const tintColor = useThemeColor({}, 'tint');
 
   const getGradientColors = (): readonly [string, string] => {
-    if (isRecording) return [recordingPrimary, recordingSecondary];
+    if (isRecording) return [tintColor, tintColor + '66'];
     if (isProcessing) return [tintColor, tintColor + '66'];
-    if (isAnyAudioPlaying) return [playingPrimary, playingSecondary];
+    if (isAnyAudioPlaying) return [tintColor, tintColor + '66'];
     return [tintColor, tintColor + '66'];
   };
 
   const getGlowStyle = () => {
-    if (isRecording) return { backgroundColor: recordingPrimary + 'CC', shadowColor: recordingPrimary };
+    if (isRecording) return { backgroundColor: tintColor + 'CC', shadowColor: tintColor };
     if (isProcessing) return { backgroundColor: tintColor + 'CC', shadowColor: tintColor };
-    if (isAnyAudioPlaying) return { backgroundColor: playingPrimary + 'CC', shadowColor: playingPrimary };
+    if (isAnyAudioPlaying) return { backgroundColor: tintColor + 'CC', shadowColor: tintColor };
     return { backgroundColor: tintColor + 'CC', shadowColor: tintColor };
   };
 
   const getStatusMessage = () => {
-    if (isRecording) return { text: t('audioRecorder.recording'), style: [styles.statusText, { color: recordingPrimary }] };
+    if (isRecording) return { text: t('audioRecorder.recording'), style: [styles.statusText, { color: tintColor }] };
     if (isProcessing) return { text: t('audioRecorder.processing'), style: [styles.statusText, { color: tintColor }] };
-    if (isAnyAudioPlaying) return { text: t('audioRecorder.playing'), style: [styles.statusText, { color: playingPrimary }] };
+    if (isAnyAudioPlaying) return { text: t('audioRecorder.playing'), style: [styles.statusText, { color: tintColor }] };
     return null;
   };
 
@@ -133,7 +136,8 @@ export default function AudioRecorder({ onRecordingComplete, isProcessing = fals
   );
 }
 
-const styles = StyleSheet.create({
+// Estilos responsivos
+const getResponsiveStyles = (isSmallScreen: boolean) => StyleSheet.create({
   container: {
     alignItems: 'center',
     marginVertical: 0,
@@ -145,8 +149,8 @@ const styles = StyleSheet.create({
   },
   glow: {
     position: 'absolute',
-    width: 130,
-    height: 130,
+    width: 122,
+    height: 122,
     borderRadius: 75,
   },
   button: {
@@ -164,11 +168,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   statusText: {
-    marginTop: 40,
-    fontSize: 14,
+    marginTop: isSmallScreen ? 10 : 20,
+    fontSize: 16,
   },
   statusTextContainer: {
-    height: 70,
+    height: isSmallScreen ? 35 : 50,
     alignItems: 'center',
     justifyContent: 'center',
   },

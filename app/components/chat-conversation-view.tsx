@@ -260,7 +260,7 @@ function AudioMessagePlayer({
           <ThemedText
             style={styles.audioButtonText}
           >
-            {(isPlaying || (isLastBotMessage && isAnyAudioPlaying)) ? t('audioRecorder.playing') : (isAnyAudioPlaying ? t('audioRecorder.playing') : (isLoading ? t('chat.processingAudio') : t('audioRecorder.playing')))}
+            {isPlaying ? t('audioRecorder.playing') : (isLoading ? t('chat.processingAudio') : t('chat.play'))}
           </ThemedText>
         </TouchableOpacity>
         <TouchableOpacity
@@ -276,7 +276,7 @@ function AudioMessagePlayer({
           <ThemedText
             style={styles.audioButtonText}
           >
-            {t('chat.thinking')}
+            {t('chat.stop')}
           </ThemedText>
         </TouchableOpacity>
       </View>

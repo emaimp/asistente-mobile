@@ -106,7 +106,7 @@ export const Colors = {
         // Colores para estados del audio recorder
         recordingPrimary: '#ff0000',
         recordingSecondary: '#800000',
-        playingPrimary: '#00ff00',
+        playingPrimary: '#19e619',
         playingSecondary: '#008000',
       },
       dark: {
@@ -129,7 +129,7 @@ export const Colors = {
         // Colores para estados del audio recorder
         recordingPrimary: '#ff0000',
         recordingSecondary: '#800000',
-        playingPrimary: '#00ff00',
+        playingPrimary: '#19e619',
         playingSecondary: '#008000',
       },
     },
