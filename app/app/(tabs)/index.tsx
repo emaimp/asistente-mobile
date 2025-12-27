@@ -1,16 +1,16 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StyleSheet, View, Dimensions } from 'react-native';
 import { useMemo, useState, useEffect } from 'react';
-import { ThemedView } from '@/components/themed-view';
-import { ThemedText } from '@/components/themed-text';
+import { ThemedView } from '@/components/ui/themed-view';
+import { ThemedText } from '@/components/ui/themed-text';
 import { useConversation } from '@/contexts/chatbot-conversation-context';
 import { useAudioPlayback } from '@/hooks/use-audio-playback';
 import { useAudioPlaybackContext } from '@/contexts/audio-playback-context';
 import { useLanguage } from '@/contexts/language-context';
 import { Colors } from '@/constants/theme';
-import AudioRecorder from '@/components/index-audio-recorder';
-import InitialModal from '@/components/initial-modal';
-import JarvisCore from '@/components/jarvis-core';
+import InitialModal from '@/components/main/initial-modal';
+import AudioRecorder from '@/components/main/audio-recorder';
+import JarvisCore from '@/components/main/jarvis-core';
 
 // Componente que reproduce automáticamente el audio de la última respuesta del bot
 function AutoResponsePlayer({ messages }: { messages: any[] }) {

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
+import { ThemedText } from '@/components/ui/themed-text';
+import { ThemedView } from '@/components/ui/themed-view';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { useLanguage } from '@/contexts/language-context';
 

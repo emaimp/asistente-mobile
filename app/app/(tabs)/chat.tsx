@@ -1,24 +1,23 @@
-import { StyleSheet, View, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native';
-import { useState } from 'react';
 import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
+import { StyleSheet, View, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native';
+import { useState } from 'react';
+import { ThemedText } from '@/components/ui/themed-text';
+import { ThemedView } from '@/components/ui/themed-view';
 import { IconSymbol } from '@/components/ui/icon-symbol';
-import ConversationView from '@/components/chat-conversation-view';
+import { ChatInput } from '@/components/chat/input';
 import { useConversation } from '@/contexts/chatbot-conversation-context';
 import { useLanguage } from '@/contexts/language-context';
 import { useThemeColor } from '@/hooks/use-theme-color';
+import ConversationView from '@/components/chat-conversation';
 
 export default function ChatScreen() {
   // Colores dinámicos basados en género
   const backgroundColor = useThemeColor({}, 'background');
   const textColor = useThemeColor({}, 'text');
-  const tintColor = useThemeColor({}, 'tint');
 
   const { messages, handleTextSubmit, isProcessing } = useConversation();
   const { t } = useLanguage();
-  const [inputText, setInputText] = useState('');
-  
+
   const [drawerOpen, setDrawerOpen] = useState(false); // Estado para el menú lateral
   const translateX = useSharedValue(-250); // Posición inicial fuera de pantalla
 
@@ -36,15 +35,6 @@ export default function ChatScreen() {
   const drawerAnimatedStyle = useAnimatedStyle(() => ({
     transform: [{ translateX: translateX.value }],
   }));
-
-  // Maneja el envío del texto
-  const handleSubmit = async () => {
-    if (inputText.trim() && !isProcessing) {
-      const textToSend = inputText.trim();
-      setInputText('');
-      await handleTextSubmit(textToSend);
-    }
-  };
 
   return (
     <KeyboardAvoidingView
@@ -76,32 +66,11 @@ export default function ChatScreen() {
             <ConversationView messages={messages} />
           </View>
 
-          <View style={styles.inputContainer}>
-            <View style={[styles.inputWrapper, { borderColor: tintColor }]}>
-              <TextInput
-                style={[styles.textInput, { color: textColor }]}
-                value={inputText}
-                onChangeText={setInputText}
-                placeholder={t('chat.placeholder')}
-                placeholderTextColor={textColor + '80'}
-                multiline
-                maxLength={500}
-                onSubmitEditing={handleSubmit}
-                blurOnSubmit={false}
-              />
-              <TouchableOpacity
-                style={[styles.sendButton, (!inputText.trim() || isProcessing) && styles.sendButtonDisabled, { borderColor: tintColor }]}
-                onPress={handleSubmit}
-                disabled={!inputText.trim() || isProcessing}
-              >
-                <IconSymbol
-                  name="paperplane.fill"
-                  size={20}
-                  color={(!inputText.trim() || isProcessing) ? textColor : tintColor}
-                />
-              </TouchableOpacity>
-            </View>
-          </View>
+          <ChatInput
+            onSubmit={handleTextSubmit}
+            isProcessing={isProcessing}
+            placeholder={t('chat.placeholder')}
+          />
         </View>
       </ThemedView>
     </KeyboardAvoidingView>
@@ -118,10 +87,6 @@ const styles = StyleSheet.create({
     paddingTop: 105,
     paddingHorizontal: 10,
     paddingBottom: 10,
-  },
-  inputContainer: {
-    paddingHorizontal: 20,
-    paddingBottom: 20,
   },
   title: {
     flex: 1,
@@ -152,42 +117,6 @@ const styles = StyleSheet.create({
     bottom: 0,
     zIndex: 30,
     padding: 20,
-  },
-  textInput: {
-    flex: 1,
-    fontSize: 16,
-    paddingVertical: 6,
-    paddingRight: 50,
-  },
-  inputWrapper: {
-    position: 'relative',
-    borderWidth: 1,
-    borderRadius: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 6,
-    minHeight: 44,
-    maxHeight: 100,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  sendButton: {
-    position: 'absolute',
-    borderWidth: 0,
-    borderRadius: 8,
-    right: 3,
-    top: 3,
-    height: 40,
-    width: 40,
-    backgroundColor: 'transparent',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  sendButtonDisabled: {
-    backgroundColor: 'transparent',
-  },
-  sendButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
   },
   placeholder: {
     width: 40,

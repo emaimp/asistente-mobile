@@ -4,7 +4,7 @@ import Animated, { useSharedValue, useAnimatedStyle, withRepeat, withTiming, can
 import { LinearGradient } from 'expo-linear-gradient';
 import { useAudioRecording } from '@/hooks/use-audio-recording';
 import { useAudioPlaybackContext } from '@/contexts/audio-playback-context';
-import { IconSymbol } from './ui/icon-symbol';
+import { IconSymbol } from '../ui/icon-symbol';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { useLanguage } from '@/contexts/language-context';
 

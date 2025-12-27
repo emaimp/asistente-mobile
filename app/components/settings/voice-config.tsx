@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
+import { ThemedText } from '@/components/ui/themed-text';
+import { ThemedView } from '@/components/ui/themed-view';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { useLanguage } from '@/contexts/language-context';
 import { useGender } from '@/contexts/gender-context';
@@ -99,7 +99,7 @@ export default function VoiceConfigSection({
                 <ThemedText
                   style={[
                     styles.selectionButtonText,
-                    selectedLanguage === lang && { color: backgroundColor }
+                    selectedLanguage === lang && { color: 'white' }
                   ]}
                 >
                   {lang}
@@ -127,7 +127,7 @@ export default function VoiceConfigSection({
               <ThemedText
                 style={[
                   styles.selectionButtonText,
-                  currentGender === 'Man' && { color: backgroundColor }
+                  currentGender === 'Man' && { color: 'white' }
                 ]}
               >
                 {t('settings.voice.man')}
@@ -144,7 +144,7 @@ export default function VoiceConfigSection({
               <ThemedText
                 style={[
                   styles.selectionButtonText,
-                  currentGender === 'Woman' && { color: backgroundColor }
+                  currentGender === 'Woman' && { color: 'white' }
                 ]}
               >
                 {t('settings.voice.woman')}

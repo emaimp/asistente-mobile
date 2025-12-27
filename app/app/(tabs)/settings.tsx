@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { StyleSheet, ScrollView, TouchableOpacity, Text } from 'react-native';
 import { Snackbar } from 'react-native-paper';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
+import { ThemedText } from '@/components/ui/themed-text';
+import { ThemedView } from '@/components/ui/themed-view';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { useModelConfig } from '@/hooks/api-settings/use-model-config';
 import { useVoiceConfig } from '@/hooks/api-settings/use-voice-config';
