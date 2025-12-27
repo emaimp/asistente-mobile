@@ -5,7 +5,7 @@ export class ConfigApi {
   async setModel(modelName: string): Promise<boolean> {
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 segundos de timeout
+      const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 segundos de timeout
 
       const response = await fetch(`${this.baseUrl}/api/model/`, {
         method: 'POST',
@@ -40,7 +40,7 @@ export class ConfigApi {
   async setVoice(voiceName: string): Promise<boolean> {
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 segundos de timeout
+      const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 segundos de timeout
 
       const response = await fetch(`${this.baseUrl}/api/voice/`, {
         method: 'POST',
@@ -75,7 +75,7 @@ export class ConfigApi {
   async setLanguage(languageCode: string): Promise<boolean> {
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 segundos de timeout
+      const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 segundos de timeout
 
       const response = await fetch(`${this.baseUrl}/api/language/`, {
         method: 'POST',

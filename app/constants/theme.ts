@@ -19,8 +19,8 @@ export const Colors = {
     tabBackground: '#cdcdcd',
 
     // Colores para notificaciones
-    successPrimary: '#2eb733',
-    errorPrimary: '#e00023',
+    successPrimary: '#00a21c',
+    errorPrimary: '#b50f05',
   },
   dark: {
     text: '#ffffff',
@@ -32,8 +32,8 @@ export const Colors = {
     tabBackground: '#1e1e1e',
 
     // Colores para notificaciones
-    successPrimary: '#2eb733',
-    errorPrimary: '#e00023',
+    successPrimary: '#00a21c',
+    errorPrimary: '#b50f05',
   },
   // Colores específicos por género
   gender: {
@@ -44,7 +44,7 @@ export const Colors = {
         tint: '#005096',
         icon: '#687076',
         tabIconDefault: '#005096',
-        tabIconSelected: '#0d47a1',
+        tabIconSelected: '#0b3660',
         tabBackground: '#cdcdcd',
 
         // Colores específicos para jarvis-core
@@ -67,7 +67,7 @@ export const Colors = {
         tint: '#005096',
         icon: '#687076',
         tabIconDefault: '#005096',
-        tabIconSelected: '#0d47a1',
+        tabIconSelected: '#0b3660',
         tabBackground: '#1e1e1e',
 
         // Colores específicos para jarvis-core

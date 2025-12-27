@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Modal } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Modal } from 'react-native';
 import { Snackbar } from 'react-native-paper';
 import { ThemedView } from '@/components/themed-view';
 import { ThemedText } from '@/components/themed-text';
 import { useThemeColor } from '@/hooks/use-theme-color';
-import { useBackendUrlConfig } from '@/hooks/api-settings/use-backend-url-config';
 import { useLanguage } from '@/contexts/language-context';
+import { useBackendUrlConfig } from '@/hooks/api-settings/use-backend-url-config';
 
 interface InitialModalProps {
   visible: boolean;
@@ -17,9 +17,10 @@ const STORAGE_KEY = 'initial-modal-dismissed';
 
 export default function InitialModal({ visible, onClose }: InitialModalProps) {
   // Colores dinámicos basados en género
+  const tintColor = useThemeColor({}, 'tint');
   const textColor = useThemeColor({}, 'text');
   const backgroundColor = useThemeColor({}, 'background');
-  const tintColor = useThemeColor({}, 'tint');
+  const tabIconSelected = useThemeColor({}, 'tabIconSelected');
   const successPrimary = useThemeColor({}, 'successPrimary');
   const errorPrimary = useThemeColor({}, 'errorPrimary');
 
@@ -122,14 +123,14 @@ export default function InitialModal({ visible, onClose }: InitialModalProps) {
                 styles.button,
                 {
                   backgroundColor: tintColor,
-                  borderColor: textColor,
+                  shadowColor: tabIconSelected,
                   opacity: isConnected ? 0.5 : 1
                 }
               ]}
               onPress={handleConnect}
               disabled={isConnected}
             >
-              <Text style={[styles.buttonText, { color: textColor }]}>
+              <Text style={[styles.buttonText, { color: backgroundColor }]}>
                 {t('modal.connect')}
               </Text>
             </TouchableOpacity>
@@ -138,12 +139,12 @@ export default function InitialModal({ visible, onClose }: InitialModalProps) {
                 styles.button,
                 {
                   backgroundColor: errorPrimary,
-                  borderColor: textColor
+                  shadowColor: tabIconSelected
                 }
               ]}
               onPress={handleCancel}
             >
-              <Text style={[styles.buttonText, { color: textColor }]}>
+              <Text style={[styles.buttonText, { color: backgroundColor }]}>
                 {t('modal.close')}
               </Text>
             </TouchableOpacity>
@@ -219,10 +220,14 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 16,
     paddingHorizontal: 20,
-    borderRadius: 12,
-    borderWidth: 2,
+    borderRadius: 8,
+    borderWidth: 0,
     alignItems: 'center',
     marginHorizontal: 5,
+    shadowOffset: { width: -6, height: -6 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 3,
   },
   buttonText: {
     fontSize: 16,

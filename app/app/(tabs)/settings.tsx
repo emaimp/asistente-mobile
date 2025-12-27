@@ -15,7 +15,8 @@ import LanguageConfigSection from '@/components/settings/language-config';
 export default function SettingsScreen() {
   // Colores dinámicos basados en género
   const tintColor = useThemeColor({}, 'tint');
-  const textColor = useThemeColor({}, 'text');
+  const backgroundColor = useThemeColor({}, 'background');
+  const tabIconSelected = useThemeColor({}, 'tabIconSelected');
   const successPrimary = useThemeColor({}, 'successPrimary');
   const errorPrimary = useThemeColor({}, 'errorPrimary');
 
@@ -68,14 +69,20 @@ export default function SettingsScreen() {
 
   // Función para guardar el idioma localmente
   const handleSaveLanguageLocally = async () => {
-    await saveLanguageLocally(inputLanguage.trim());
+    const result = await saveLanguageLocally(inputLanguage.trim());
+    if (!result.success) {
+      throw new Error('Error saving language locally');
+    }
   };
 
   // Función para actualizar el idioma en el servidor
   const handleUpdateLanguage = async () => {
     setIsUpdatingLanguage(true);
     try {
-      await updateLanguage(inputLanguage.trim());
+      const result = await updateLanguage(inputLanguage.trim());
+      if (!result.success) {
+        throw new Error(result.message || 'Error updating language');
+      }
     } finally {
       setIsUpdatingLanguage(false);
     }
@@ -83,14 +90,20 @@ export default function SettingsScreen() {
 
   // Función para guardar el modelo localmente
   const handleSaveModelLocally = async () => {
-    await saveModel(inputModel.trim());
+    const result = await saveModel(inputModel.trim());
+    if (!result.success) {
+      throw new Error('Error saving model locally');
+    }
   };
 
   // Función para actualizar el modelo en el servidor
   const handleUpdateModel = async () => {
     setIsUpdatingModel(true);
     try {
-      await updateModel(inputModel.trim());
+      const result = await updateModel(inputModel.trim());
+      if (!result.success) {
+        throw new Error(result.message || 'Error updating model');
+      }
     } finally {
       setIsUpdatingModel(false);
     }
@@ -98,14 +111,20 @@ export default function SettingsScreen() {
 
   // Función para guardar la voz localmente
   const handleSaveVoiceLocally = async () => {
-    await saveVoiceLocally(inputVoice.trim());
+    const result = await saveVoiceLocally(inputVoice.trim());
+    if (!result.success) {
+      throw new Error('Error saving voice locally');
+    }
   };
 
   // Función para actualizar la voz en el servidor
   const handleUpdateVoice = async () => {
     setIsUpdatingVoice(true);
     try {
-      await updateVoice(inputVoice.trim());
+      const result = await updateVoice(inputVoice.trim());
+      if (!result.success) {
+        throw new Error(result.message || 'Error updating voice');
+      }
     } finally {
       setIsUpdatingVoice(false);
     }
@@ -164,7 +183,7 @@ export default function SettingsScreen() {
             styles.applyButton,
             {
               backgroundColor: tintColor,
-              borderColor: textColor,
+              shadowColor: tabIconSelected,
               opacity: isApplyingAll || isUpdatingLanguage || isUpdatingModel || isUpdatingVoice ? 0.5 : 1
             }
           ]}
@@ -172,7 +191,7 @@ export default function SettingsScreen() {
           disabled={isApplyingAll || isUpdatingLanguage || isUpdatingModel || isUpdatingVoice}
         >
           <ThemedText
-            style={[styles.applyButtonText, { color: textColor }]}
+            style={[styles.applyButtonText, { color: backgroundColor }]}
           >
             {t('settings.applyAll')}
           </ThemedText>
@@ -206,14 +225,18 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   applyButton: {
-    width: '92%',
+    width: '90%',
     paddingVertical: 16,
-    paddingHorizontal: 32,
-    borderRadius: 12,
-    borderWidth: 2,
+    paddingHorizontal: 30,
+    borderRadius: 8,
+    borderWidth: 0,
     alignSelf: 'center',
     alignItems: 'center',
     marginTop: 16,
+    shadowOffset: { width: -6, height: -6 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 3,
   },
   applyButtonText: {
     fontSize: 16,

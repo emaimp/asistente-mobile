@@ -171,7 +171,7 @@ export default function JarvisCore({ isProcessing = false }) {
 
         {/* Anillos Giratorios Principales */}
         <AnimatedG animatedProps={rotateProps}>
-          <Circle cx={center} cy={center} r={150} stroke={jarvisPrimary} strokeWidth={10} strokeOpacity={1} strokeDasharray={[360, 360]} fill="none" />
+          <Circle cx={center} cy={center} r={150} stroke={jarvisPrimary} strokeWidth={15} strokeOpacity={1} strokeDasharray={[360, 90]} fill="none" />
           <Circle cx={center} cy={center} r={150} stroke={jarvisPrimary} strokeWidth={2} strokeOpacity={0.5} strokeDasharray={[360, 0]} strokeDashoffset={180} fill="none" />
         </AnimatedG>
 
