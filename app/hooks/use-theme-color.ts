@@ -8,10 +8,9 @@ import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useGender } from '@/contexts/gender-context';
 
 type ThemeColorName = keyof typeof Colors.light & keyof typeof Colors.dark |
+  'backgroundAlt' |
   'jarvisPrimary' | 'jarvisGlow' | 'jarvisCore' |
   'jarvisGradientStart' | 'jarvisGradientMiddle' | 'jarvisGradientEnd' |
-  'recordingPrimary' | 'recordingSecondary' | 'playingPrimary' | 'playingSecondary' |
-  'recordingTextColor' | 'processingTextColor' | 'playingTextColor' |
   'successPrimary' | 'errorPrimary';
 
 export function useThemeColor(

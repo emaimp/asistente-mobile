@@ -69,5 +69,17 @@
     "e": "🇪🇸 西班牙语",
     "j": "🇯🇵 日语",
     "z": "🇨🇳 中文"
+  },
+  "login": {
+    "title": "登录",
+    "email": "电子邮件",
+    "password": "密码",
+    "button": "登录",
+    "cancel": "取消",
+    "forgotPassword": "忘记密码？",
+    "emailPlaceholder": "输入您的电子邮件",
+    "passwordPlaceholder": "输入您的密码",
+    "loginSuccess": "登录成功",
+    "loginError": "登录失败"
   }
 }

@@ -20,6 +20,7 @@ export default function InitialModal({ visible, onClose }: InitialModalProps) {
   const tintColor = useThemeColor({}, 'tint');
   const textColor = useThemeColor({}, 'text');
   const backgroundColor = useThemeColor({}, 'background');
+  const backgroundAltColor = useThemeColor({}, 'backgroundAlt');
   const tabIconSelected = useThemeColor({}, 'tabIconSelected');
   const successPrimary = useThemeColor({}, 'successPrimary');
   const errorPrimary = useThemeColor({}, 'errorPrimary');
@@ -85,7 +86,7 @@ export default function InitialModal({ visible, onClose }: InitialModalProps) {
       onRequestClose={handleCancel}
     >
       <View style={styles.overlay}>
-        <ThemedView style={[styles.modalContainer, { borderColor: textColor }]}>
+        <ThemedView style={[styles.modalContainer, { borderColor: textColor, backgroundColor: backgroundAltColor }]}>
           <Text style={[styles.title, { color: textColor }]}>
             {t('modal.title')}
           </Text>

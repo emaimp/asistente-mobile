@@ -34,12 +34,12 @@ export const BackgroundPattern: React.FC<BackgroundPatternProps> = ({ size, gend
     ].join(' '),
     poly3: [
       `0,${svgHeight * 0.7}`,
-      `${svgWidth * 1},${svgHeight}`,
+      `${svgWidth * 0.95},${svgHeight}`,
       `0,${svgHeight}`
     ].join(' '),
     poly4: [
       `0,${svgHeight * 0.7}`,
-      `${svgWidth * 0.77},${svgHeight}`,
+      `${svgWidth * 0.76},${svgHeight}`,
       `0,${svgHeight}`
     ].join(' '),
     };

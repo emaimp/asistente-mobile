@@ -69,5 +69,17 @@
     "e": "🇪🇸 Español",
     "j": "🇯🇵 Japonés",
     "z": "🇨🇳 Chino"
+  },
+  "login": {
+    "title": "Iniciar Sesión",
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "button": "Iniciar Sesión",
+    "cancel": "Cancelar",
+    "forgotPassword": "¿Olvidaste tu contraseña?",
+    "emailPlaceholder": "Ingresa tu correo electrónico",
+    "passwordPlaceholder": "Ingresa tu contraseña",
+    "loginSuccess": "Inicio de sesión exitoso",
+    "loginError": "Error al iniciar sesión"
   }
 }

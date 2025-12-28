@@ -69,5 +69,17 @@
     "e": "🇪🇸 スペイン語",
     "j": "🇯🇵 日本語",
     "z": "🇨🇳 中国語"
+  },
+  "login": {
+    "title": "ログイン",
+    "email": "メールアドレス",
+    "password": "パスワード",
+    "button": "ログイン",
+    "cancel": "キャンセル",
+    "forgotPassword": "パスワードをお忘れですか？",
+    "emailPlaceholder": "メールアドレスを入力してください",
+    "passwordPlaceholder": "パスワードを入力してください",
+    "loginSuccess": "ログイン成功",
+    "loginError": "ログイン失敗"
   }
 }

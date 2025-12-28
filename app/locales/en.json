@@ -69,5 +69,17 @@
     "e": "🇪🇸 Spanish",
     "j": "🇯🇵 Japanese",
     "z": "🇨🇳 Chinese"
+  },
+  "login": {
+    "title": "Login",
+    "email": "Email",
+    "password": "Password",
+    "button": "Login",
+    "cancel": "Cancel",
+    "forgotPassword": "Forgot Password?",
+    "emailPlaceholder": "Enter your email",
+    "passwordPlaceholder": "Enter your password",
+    "loginSuccess": "Login successful",
+    "loginError": "Login failed"
   }
 }
