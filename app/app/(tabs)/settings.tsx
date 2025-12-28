@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
-import { StyleSheet, ScrollView, TouchableOpacity, Text } from 'react-native';
+import { StyleSheet, ScrollView, TouchableOpacity, Text, View } from 'react-native';
 import { Snackbar } from 'react-native-paper';
 import { ThemedText } from '@/components/ui/themed-text';
 import { ThemedView } from '@/components/ui/themed-view';
+import { BackgroundPattern } from '@/components/ui/background-pattern';
 import { useThemeColor } from '@/hooks/use-theme-color';
+import { useGender } from '@/contexts/gender-context';
+import { useColorScheme } from '@/hooks/use-color-scheme';
+import { Colors } from '@/constants/theme';
 import { useModelConfig } from '@/hooks/api-settings/use-model-config';
 import { useVoiceConfig } from '@/hooks/api-settings/use-voice-config';
 import { useLanguageConfig } from '@/hooks/api-settings/use-language-config';
@@ -18,6 +22,8 @@ export default function SettingsScreen() {
   const tabIconSelected = useThemeColor({}, 'tabIconSelected');
   const successPrimary = useThemeColor({}, 'successPrimary');
   const errorPrimary = useThemeColor({}, 'errorPrimary');
+  const gender = useGender().currentGender;
+  const colorScheme = useColorScheme();
 
   // Hook para configuración de modelo
   const { model, saveModel, updateModel } = useModelConfig();
@@ -156,7 +162,9 @@ export default function SettingsScreen() {
   };
 
   return (
-    <ThemedView style={{flex: 1}}>
+    <ThemedView style={{flex: 1, backgroundColor: 'transparent'}}>
+      <BackgroundPattern gender={gender} colorScheme={colorScheme as 'light' | 'dark'} />
+      <View style={[StyleSheet.absoluteFillObject, {backgroundColor: Colors[colorScheme === 'dark' ? 'dark' : 'light'].tabBackground, zIndex: -2}]} />
       <ScrollView style={styles.scrollContainer} contentContainerStyle={styles.contentContainer}>
         <LanguageConfigSection
           inputLanguage={inputLanguage}

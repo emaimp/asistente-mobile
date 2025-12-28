@@ -54,7 +54,7 @@ export default function VoiceConfigSection({
   }, [availableVoices, setInputVoice]);
 
   return (
-    <ThemedView style={[styles.section, { borderColor: textColor }]}>
+    <ThemedView style={[styles.section, { borderColor: textColor, backgroundColor: 'transparent' }]}>
       <ThemedText
         type="subtitle"
         style={styles.sectionTitle}

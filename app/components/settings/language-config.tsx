@@ -32,7 +32,7 @@ export default function LanguageConfigSection({
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
 
   return (
-    <ThemedView style={[styles.section, { borderColor: textColor }]}>
+    <ThemedView style={[styles.section, { borderColor: textColor, backgroundColor: 'transparent' }]}>
       <ThemedText
         type="subtitle"
         style={styles.sectionTitle}

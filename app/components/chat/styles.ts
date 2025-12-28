@@ -1,6 +1,8 @@
 import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
+
+  // chat-conversation.tsx (conversación)
   container: {
     flex: 1,
   },
@@ -44,6 +46,18 @@ export const styles = StyleSheet.create({
     marginTop: 4,
     textAlign: 'right',
   },
+  loadingContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 8,
+  },
+  loadingText: {
+    fontSize: 14,
+    marginLeft: 8,
+  },
+
+  // audio.tsx (controles de audio)
   audioContainer: {
     padding: 4,
     marginTop: 8,
@@ -74,14 +88,42 @@ export const styles = StyleSheet.create({
     fontSize: 14,
     marginLeft: 6,
   },
-  loadingContainer: {
+
+  // input.tsx (entrada de texto)
+  inputContainer: {
+    paddingHorizontal: 20,
+    paddingBottom: 20,
+  },
+  inputWrapper: {
+    position: 'relative',
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 6,
+    minHeight: 44,
+    maxHeight: 100,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 8,
   },
-  loadingText: {
-    fontSize: 14,
-    marginLeft: 8,
+  textInput: {
+    flex: 1,
+    fontSize: 16,
+    paddingVertical: 6,
+    paddingRight: 50,
+  },
+  sendButton: {
+    position: 'absolute',
+    borderWidth: 0,
+    borderRadius: 8,
+    right: 3,
+    top: 3,
+    height: 40,
+    width: 40,
+    backgroundColor: 'transparent',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  sendButtonDisabled: {
+    backgroundColor: 'transparent',
   },
 });

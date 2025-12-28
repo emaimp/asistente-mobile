@@ -149,17 +149,17 @@ const getResponsiveStyles = (isSmallScreen: boolean) => StyleSheet.create({
   },
   glow: {
     position: 'absolute',
-    width: 122,
-    height: 122,
+    width: 100,
+    height: 100,
     borderRadius: 75,
   },
   button: {
-    width: 130,
-    height: 130,
+    width: 110,
+    height: 110,
     borderRadius: 75,
     justifyContent: 'center',
     alignItems: 'center',
-    elevation: 8,
+    elevation: 3,
   },
   buttonTouchable: {
     width: '100%',

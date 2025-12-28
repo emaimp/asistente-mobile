@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { View, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, TextInput, TouchableOpacity } from 'react-native';
 import { IconSymbol } from '../ui/icon-symbol';
 import { useThemeColor } from '@/hooks/use-theme-color';
+import { styles } from './styles';
 
 interface ChatInputProps {
   onSubmit: (text: string) => Promise<void>;
@@ -18,6 +19,7 @@ export function ChatInput({ onSubmit, isProcessing, placeholder }: ChatInputProp
   // Colores dinámicos basados en género
   const textColor = useThemeColor({}, 'text');
   const tintColor = useThemeColor({}, 'tint');
+  const backgroundColor = useThemeColor({}, 'background');
 
   // Maneja el envío del texto
   const handleSubmit = async () => {
@@ -30,7 +32,7 @@ export function ChatInput({ onSubmit, isProcessing, placeholder }: ChatInputProp
 
   return (
     <View style={styles.inputContainer}>
-      <View style={[styles.inputWrapper, { borderColor: tintColor }]}>
+      <View style={[styles.inputWrapper, { borderColor: tintColor, backgroundColor }]}>
         <TextInput
           style={[styles.textInput, { color: textColor }]}
           value={inputText}
@@ -57,42 +59,3 @@ export function ChatInput({ onSubmit, isProcessing, placeholder }: ChatInputProp
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  inputContainer: {
-    paddingHorizontal: 20,
-    paddingBottom: 20,
-  },
-  inputWrapper: {
-    position: 'relative',
-    borderWidth: 1,
-    borderRadius: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 6,
-    minHeight: 44,
-    maxHeight: 100,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  textInput: {
-    flex: 1,
-    fontSize: 16,
-    paddingVertical: 6,
-    paddingRight: 50,
-  },
-  sendButton: {
-    position: 'absolute',
-    borderWidth: 0,
-    borderRadius: 8,
-    right: 3,
-    top: 3,
-    height: 40,
-    width: 40,
-    backgroundColor: 'transparent',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  sendButtonDisabled: {
-    backgroundColor: 'transparent',
-  },
-});

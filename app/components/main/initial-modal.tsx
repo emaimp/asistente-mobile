@@ -85,7 +85,7 @@ export default function InitialModal({ visible, onClose }: InitialModalProps) {
       onRequestClose={handleCancel}
     >
       <View style={styles.overlay}>
-        <ThemedView style={styles.modalContainer}>
+        <ThemedView style={[styles.modalContainer, { borderColor: textColor }]}>
           <Text style={[styles.title, { color: textColor }]}>
             {t('modal.title')}
           </Text>
@@ -168,7 +168,7 @@ export default function InitialModal({ visible, onClose }: InitialModalProps) {
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -177,6 +177,7 @@ const styles = StyleSheet.create({
     maxWidth: 300,
     padding: 20,
     borderRadius: 6,
+    borderWidth: 1,
     alignItems: 'center',
   },
   title: {

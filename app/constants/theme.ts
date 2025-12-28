@@ -5,18 +5,18 @@
 
 import { Platform } from 'react-native';
 
-const tintColorLight = '#1e1e1e';
-const tintColorDark = '#cdcdcd';
+const tintColorLight = '#000000';
+const tintColorDark = '#ffffff';
 
 export const Colors = {
   light: {
     text: '#000000',
-    background: '#cdcdcd',
+    background: '#ffffff',
     tint: tintColorLight,
     icon: '#687076',
     tabIconDefault: '#687076',
     tabIconSelected: tintColorLight,
-    tabBackground: '#cdcdcd',
+    tabBackground: '#ffffff',
 
     // Colores para notificaciones
     successPrimary: '#00a21c',
@@ -24,28 +24,29 @@ export const Colors = {
   },
   dark: {
     text: '#ffffff',
-    background: '#1e1e1e',
+    background: '#000000',
     tint: tintColorDark,
     icon: '#9BA1A6',
     tabIconDefault: '#9BA1A6',
     tabIconSelected: tintColorDark,
-    tabBackground: '#1e1e1e',
+    tabBackground: '#000000',
 
     // Colores para notificaciones
     successPrimary: '#00a21c',
     errorPrimary: '#cb0000',
   },
+
   // Colores específicos por género
   gender: {
     Man: {
       light: {
         text: '#000000',
-        background: '#cdcdcd',
+        background: '#ffffff',
         tint: '#005096',
         icon: '#687076',
         tabIconDefault: '#005096',
         tabIconSelected: '#0b3660',
-        tabBackground: '#cdcdcd',
+        tabBackground: '#ffffff',
 
         // Colores específicos para jarvis-core
         jarvisPrimary: '#005096',
@@ -54,21 +55,15 @@ export const Colors = {
         jarvisGradientStart: '#EFFFFF',
         jarvisGradientMiddle: '#005096',
         jarvisGradientEnd: '#003844',
-
-        // Colores para estados del audio recorder
-        recordingPrimary: '#ff0000',
-        recordingSecondary: '#800000',
-        playingPrimary: '#00ff00',
-        playingSecondary: '#008000',
       },
       dark: {
         text: '#ffffff',
-        background: '#1e1e1e',
+        background: '#000000',
         tint: '#005096',
         icon: '#687076',
         tabIconDefault: '#005096',
         tabIconSelected: '#0b3660',
-        tabBackground: '#1e1e1e',
+        tabBackground: '#000000',
 
         // Colores específicos para jarvis-core
         jarvisPrimary: '#005096',
@@ -77,23 +72,17 @@ export const Colors = {
         jarvisGradientStart: '#EFFFFF',
         jarvisGradientMiddle: '#005096',
         jarvisGradientEnd: '#003844',
-
-        // Colores para estados del audio recorder
-        recordingPrimary: '#ff0000',
-        recordingSecondary: '#800000',
-        playingPrimary: '#00ff00',
-        playingSecondary: '#008000',
       },
     },
     Woman: {
       light: {
         text: '#000000',
-        background: '#cdcdcd',
+        background: '#ffffff',
         tint: '#e91e63',
         icon: '#687076',
         tabIconDefault: '#e91e63',
         tabIconSelected: '#880e4f',
-        tabBackground: '#cdcdcd',
+        tabBackground: '#ffffff',
 
         // Colores específicos para jarvis-core
         jarvisPrimary: '#e91e63',
@@ -103,11 +92,6 @@ export const Colors = {
         jarvisGradientMiddle: '#e91e63',
         jarvisGradientEnd: '#4a148c',
 
-        // Colores para estados del audio recorder
-        recordingPrimary: '#ff0000',
-        recordingSecondary: '#800000',
-        playingPrimary: '#19e619',
-        playingSecondary: '#008000',
       },
       dark: {
         text: '#ffffff',
@@ -116,7 +100,7 @@ export const Colors = {
         icon: '#687076',
         tabIconDefault: '#e91e63',
         tabIconSelected: '#880e4f',
-        tabBackground: '#1e1e1e',
+        tabBackground: '#000000',
 
         // Colores específicos para jarvis-core
         jarvisPrimary: '#e91e63',
@@ -125,12 +109,39 @@ export const Colors = {
         jarvisGradientStart: '#fce4ec',
         jarvisGradientMiddle: '#e91e63',
         jarvisGradientEnd: '#4a148c',
+      },
+    },
+  },
+};
 
-        // Colores para estados del audio recorder
-        recordingPrimary: '#ff0000',
-        recordingSecondary: '#800000',
-        playingPrimary: '#19e619',
-        playingSecondary: '#008000',
+// Esquema de colores para el background
+export const BackgroundPatterns = {
+  // Polígonos en escalas de blanco y negro
+  gender: {
+    Man: {
+      light: {
+        tone1: '#f5f5f5',
+        tone2: '#ffffff',
+        tone3: '#e3e4e5',
+      },
+      dark: {
+        tone1: '#1a1a1a',
+        tone2: '#000000',
+        tone3: '#404040',
+        tone4: '#525252',
+      },
+    },
+    Woman: {
+      light: {
+        tone1: '#f5f5f5',
+        tone2: '#ffffff',
+        tone3: '#e3e4e5',
+      },
+      dark: {
+        tone1: '#1a1a1a',
+        tone2: '#2d2d2d',
+        tone3: '#404040',
+        tone4: '#525252',
       },
     },
   },

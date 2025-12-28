@@ -1,22 +1,29 @@
 import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
-import { StyleSheet, View, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native';
+import { StyleSheet, View, TouchableOpacity, KeyboardAvoidingView, Platform, StatusBar } from 'react-native';
 import { useState } from 'react';
 import { ThemedText } from '@/components/ui/themed-text';
 import { ThemedView } from '@/components/ui/themed-view';
+import { BackgroundPattern } from '@/components/ui/background-pattern';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { ChatInput } from '@/components/chat/input';
 import { useConversation } from '@/contexts/chatbot-conversation-context';
 import { useLanguage } from '@/contexts/language-context';
+import { useGender } from '@/contexts/gender-context';
+import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useThemeColor } from '@/hooks/use-theme-color';
+import { Colors } from '@/constants/theme';
 import ConversationView from '@/components/chat-conversation';
 
 export default function ChatScreen() {
   // Colores dinámicos basados en género
   const backgroundColor = useThemeColor({}, 'background');
+  const tabBackgroundColor = useThemeColor({}, 'tabBackground');
   const textColor = useThemeColor({}, 'text');
 
   const { messages, handleTextSubmit, isProcessing } = useConversation();
   const { t } = useLanguage();
+  const gender = useGender().currentGender;
+  const colorScheme = useColorScheme();
 
   const [drawerOpen, setDrawerOpen] = useState(false); // Estado para el menú lateral
   const translateX = useSharedValue(-250); // Posición inicial fuera de pantalla
@@ -42,9 +49,11 @@ export default function ChatScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
     >
-      <ThemedView style={{flex: 1}}>
+      <ThemedView style={{flex: 1, backgroundColor: 'transparent'}}>
+        <BackgroundPattern gender={gender} colorScheme={colorScheme as 'light' | 'dark'} />
+        <View style={[StyleSheet.absoluteFillObject, {backgroundColor: Colors[colorScheme === 'dark' ? 'dark' : 'light'].tabBackground, zIndex: -2}]} />
         <View style={styles.container}>
-          <View style={[styles.topBar, { backgroundColor: backgroundColor, borderBottomColor: textColor + '04' }]}>
+          <View style={[styles.topBar, { backgroundColor: tabBackgroundColor, borderBottomColor: textColor + '10' }]}>
             <TouchableOpacity onPress={openDrawer} style={styles.menuButton}>
               <IconSymbol name="menu" size={24} color={textColor} />
             </TouchableOpacity>
@@ -99,13 +108,14 @@ const styles = StyleSheet.create({
   },
   topBar: {
     position: 'absolute',
-    top: 45,
+    top: 0,
     left: 0,
     right: 0,
-    height: 50,
+    height: 95,
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 20,
+    paddingTop: StatusBar.currentHeight || 24,
     borderBottomWidth: 1,
     zIndex: 10,
   },
