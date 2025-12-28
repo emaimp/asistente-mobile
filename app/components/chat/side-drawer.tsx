@@ -73,6 +73,8 @@ const SideDrawer = forwardRef<SideDrawerRef, SideDrawerProps>(({ backgroundColor
 
 SideDrawer.displayName = 'SideDrawer';
 
+export default SideDrawer;
+
 const styles = StyleSheet.create({
   drawer: {
     position: 'absolute',
@@ -113,5 +115,3 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
-
-export default SideDrawer;
