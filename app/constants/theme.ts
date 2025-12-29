@@ -36,46 +36,48 @@ export const Colors = {
     errorPrimary: '#cb0000',
   },
 
-  // Colores específicos por género
+  // Colores para el género masculino
   gender: {
     Man: {
       light: {
         text: '#000000',
         background: '#ffffff',
         backgroundAlt: '#f5f5f5',
-        tint: '#005096',
+        tint: '#229be7',
         icon: '#687076',
-        tabIconDefault: '#005096',
+        tabIconDefault: '#229be7',
         tabIconSelected: '#0b3660',
         tabBackground: '#ffffff',
 
-        // Colores específicos para jarvis-core
-        jarvisPrimary: '#005096',
+        // Colores para jarvis-core
+        jarvisPrimary: '#229be7',
         jarvisGlow: 'rgba(0,80,150,0.3)',
         jarvisCore: 'rgba(94,242,255,0.05)',
         jarvisGradientStart: '#EFFFFF',
-        jarvisGradientMiddle: '#005096',
+        jarvisGradientMiddle: '#229be7',
         jarvisGradientEnd: '#003844',
       },
       dark: {
         text: '#ffffff',
         background: '#000000',
         backgroundAlt: '#1a1a1a',
-        tint: '#005096',
+        tint: '#229be7',
         icon: '#687076',
-        tabIconDefault: '#005096',
+        tabIconDefault: '#229be7',
         tabIconSelected: '#0b3660',
         tabBackground: '#000000',
 
-        // Colores específicos para jarvis-core
-        jarvisPrimary: '#005096',
+        // Colores para jarvis-core
+        jarvisPrimary: '#229be7',
         jarvisGlow: 'rgba(0,80,150,0.3)',
         jarvisCore: 'rgba(94,242,255,0.05)',
         jarvisGradientStart: '#EFFFFF',
-        jarvisGradientMiddle: '#005096',
+        jarvisGradientMiddle: '#229be7',
         jarvisGradientEnd: '#003844',
       },
     },
+
+    // Colores para el género femenino
     Woman: {
       light: {
         text: '#000000',
@@ -87,7 +89,7 @@ export const Colors = {
         tabIconSelected: '#880e4f',
         tabBackground: '#ffffff',
 
-        // Colores específicos para jarvis-core
+        // Colores para jarvis-core
         jarvisPrimary: '#e91e63',
         jarvisGlow: 'rgba(233,30,99,0.3)',
         jarvisCore: 'rgba(244,143,177,0.05)',
@@ -106,7 +108,7 @@ export const Colors = {
         tabIconSelected: '#880e4f',
         tabBackground: '#000000',
 
-        // Colores específicos para jarvis-core
+        // Colores para jarvis-core
         jarvisPrimary: '#e91e63',
         jarvisGlow: 'rgba(233,30,99,0.3)',
         jarvisCore: 'rgba(244,143,177,0.05)',

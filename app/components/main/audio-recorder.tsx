@@ -124,7 +124,7 @@ export default function AudioRecorder({ onRecordingComplete, isProcessing = fals
             disabled={isProcessing}
           >
             <Animated.View style={[buttonAnimatedStyle, styles.iconContainer]}>
-              <IconSymbol name={getIconName()} size={55} color={iconColor} />
+              <IconSymbol name={getIconName()} size={40} color={iconColor} />
             </Animated.View>
           </Pressable>
         </LinearGradient>
@@ -149,14 +149,14 @@ const getResponsiveStyles = (isSmallScreen: boolean) => StyleSheet.create({
   },
   glow: {
     position: 'absolute',
-    width: 100,
-    height: 100,
-    borderRadius: 75,
+    width: 104,
+    height: 104,
+    borderRadius: 52,
   },
   button: {
     width: 110,
     height: 110,
-    borderRadius: 75,
+    borderRadius: 55,
     justifyContent: 'center',
     alignItems: 'center',
     elevation: 3,

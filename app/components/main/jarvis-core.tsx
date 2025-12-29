@@ -18,21 +18,47 @@ const AnimatedG = Animated.createAnimatedComponent(G);
 const AnimatedLine = Animated.createAnimatedComponent(Line);
 
 // Espectro de Voz Radial
-const VoiceSpectrum = ({ center, innerRadius, amplitude, timeValue, isProcessing, jarvisPrimary }: { center: number, innerRadius: number, amplitude: SharedValue<number>, timeValue: SharedValue<number>, isProcessing: boolean, jarvisPrimary: string }) => {
-  const barCount = 100;
+const VoiceSpectrum = ({
+  center,
+  innerRadius,
+  amplitude,
+  timeValue,
+  isProcessing,
+  jarvisPrimary,
+  scale
+}: {
+  center: number,
+  innerRadius: number,
+  amplitude: SharedValue<number>,
+  timeValue: SharedValue<number>,
+  isProcessing: boolean,
+  jarvisPrimary: string,
+  scale: number
+}) => {
+  const barCount = 80;
 
-  const Bar = ({ i, timeValue, isProcessing }: { i: number, timeValue: SharedValue<number>, isProcessing: boolean }) => {
+  const Bar = ({
+    i,
+    timeValue,
+    isProcessing,
+    scale
+  }: {
+    i: number,
+    timeValue: SharedValue<number>,
+    isProcessing: boolean,
+    scale: number
+  }) => {
     const angle = (i * (360 / barCount)) * (Math.PI / 180);
 
     const animatedBarProps = useAnimatedProps(() => {
       let height;
       if (!isProcessing) {
         const randomFactor = Math.sin(i * 0.5) * 0.5 + 0.5;
-        height = interpolate(amplitude.value, [0, 2], [10, 5 * randomFactor]);
+        height = interpolate(amplitude.value, [0, 2], [10 * scale, 5 * randomFactor * scale]);
       } else {
         const freq = 0.1;
         const wave = (Math.sin(timeValue.value * freq + i * 0.3) + 1) * 0.5;
-        height = 10 + 5 * wave;
+        height = (10 + 5 * wave) * scale;
       }
 
       return {
@@ -48,23 +74,23 @@ const VoiceSpectrum = ({ center, innerRadius, amplitude, timeValue, isProcessing
       <AnimatedLine
         animatedProps={animatedBarProps}
         stroke={jarvisPrimary}
-        strokeWidth={1.5}
+        strokeWidth={Math.max(1, 1.5 * scale)}
         strokeLinecap="round"
       />
     );
   };
 
-  const bars = Array.from({ length: barCount }, (_, i) => <Bar key={i} i={i} timeValue={timeValue} isProcessing={isProcessing} />);
+  const bars = Array.from({ length: barCount }, (_, i) => <Bar key={i} i={i} timeValue={timeValue} isProcessing={isProcessing} scale={scale} />);
 
   return <G>{bars}</G>;
 };
 
-const HudTicks = ({ center, radius, jarvisPrimary }: { center: number, radius: number, jarvisPrimary: string }) => {
+const HudTicks = ({ center, radius, jarvisPrimary, scale }: { center: number, radius: number, jarvisPrimary: string, scale: number }) => {
   const ticks = [];
   for (let i = 0; i < 60; i++) {
     const angle = (i * 6) * (Math.PI / 180);
     const isMajor = i % 5 === 0;
-    const length = isMajor ? 12 : 5;
+    const length = isMajor ? 12 * scale : 5 * scale;
     ticks.push(
       <Line
         key={i}
@@ -73,7 +99,7 @@ const HudTicks = ({ center, radius, jarvisPrimary }: { center: number, radius: n
         x2={center + (radius + length) * Math.cos(angle)}
         y2={center + (radius + length) * Math.sin(angle)}
         stroke={jarvisPrimary}
-        strokeWidth={isMajor ? 2 : 1}
+        strokeWidth={Math.max(1, isMajor ? 2 * scale : 1 * scale)}
         strokeOpacity={isMajor ? 0.8 : 0.2}
       />
     );
@@ -81,7 +107,7 @@ const HudTicks = ({ center, radius, jarvisPrimary }: { center: number, radius: n
   return <G>{ticks}</G>;
 };
 
-export default function JarvisCore({ isProcessing = false }) {
+export default function JarvisCore({ isProcessing = false, size = 320 }) {
   // Colores dinámicos basados en género
   const jarvisPrimary = useThemeColor({}, 'jarvisPrimary');
   const jarvisGlow = useThemeColor({}, 'jarvisGlow');
@@ -90,8 +116,8 @@ export default function JarvisCore({ isProcessing = false }) {
   const jarvisGradientMiddle = useThemeColor({}, 'jarvisGradientMiddle');
   const jarvisGradientEnd = useThemeColor({}, 'jarvisGradientEnd');
 
-  const size = 320;
   const center = size / 2;
+  const scale = size / 320; // Factor de escala basado en tamaño original
   const rotateAngle = useSharedValue(0);
   const breathValue = useSharedValue(0);
   const audioAmplitude = useSharedValue(0);
@@ -135,14 +161,14 @@ export default function JarvisCore({ isProcessing = false }) {
   }));
 
   const coreBreathProps = useAnimatedProps(() => ({
-    r: interpolate(breathValue.value, [0, 1], [42, 52]),
+    r: interpolate(breathValue.value, [0, 1], [42 * scale, 52 * scale]),
     fillOpacity: interpolate(breathValue.value, [0, 1], [0.6, 1]),
   }));
 
   return (
     <View style={styles.container}>
-      <Animated.View style={[styles.glow, glowStyle]}>
-        <View style={[styles.gradient, {backgroundColor: jarvisGlow}]} />
+      <Animated.View style={[{ position: 'absolute', width: 180 * scale, height: 180 * scale, borderRadius: 170 * scale }, glowStyle]}>
+        <View style={[{ flex: 1, backgroundColor: jarvisGlow, borderRadius: 170 * scale }]} />
       </Animated.View>
 
       <Svg width={size} height={size}>
@@ -155,32 +181,32 @@ export default function JarvisCore({ isProcessing = false }) {
         </Defs>
 
         {/* HUD (estilo reloj) */}
-        <HudTicks center={center} radius={120} jarvisPrimary={jarvisPrimary} />
+        <HudTicks center={center} radius={120 * scale} jarvisPrimary={jarvisPrimary} scale={scale} />
 
         {/* Anillo de Fragmentos (Tech Ring) */}
         <AnimatedG animatedProps={rotateProps}>
           <Circle
-            cx={center} cy={center} r={105}
-            stroke={jarvisPrimary} strokeWidth={7} strokeOpacity={0.5}
-            strokeDasharray={[2, 10, 30, 15]} fill="none"
+            cx={center} cy={center} r={105 * scale}
+            stroke={jarvisPrimary} strokeWidth={Math.max(1, 7 * scale)} strokeOpacity={0.5}
+            strokeDasharray={[2 * scale, 10 * scale, 30 * scale, 15 * scale]} fill="none"
           />
         </AnimatedG>
 
         {/* Espectro de Voz (Radial) */}
-        <VoiceSpectrum center={center} innerRadius={55} amplitude={audioAmplitude} timeValue={timeValue} isProcessing={isProcessing} jarvisPrimary={jarvisPrimary} />
+        <VoiceSpectrum center={center} innerRadius={55 * scale} amplitude={audioAmplitude} timeValue={timeValue} isProcessing={isProcessing} jarvisPrimary={jarvisPrimary} scale={scale} />
 
         {/* Anillos Giratorios Principales */}
         <AnimatedG animatedProps={rotateProps}>
-          <Circle cx={center} cy={center} r={150} stroke={jarvisPrimary} strokeWidth={17} strokeOpacity={1} strokeDasharray={[360, 90]} fill="none" />
-          <Circle cx={center} cy={center} r={150} stroke={jarvisPrimary} strokeWidth={2} strokeOpacity={0.5} strokeDasharray={[360, 0]} strokeDashoffset={180} fill="none" />
+          <Circle cx={center} cy={center} r={150 * scale} stroke={jarvisPrimary} strokeWidth={Math.max(1, 17 * scale)} strokeOpacity={1} strokeDasharray={[360 * scale, 90 * scale]} fill="none" />
+          <Circle cx={center} cy={center} r={150 * scale} stroke={jarvisPrimary} strokeWidth={Math.max(1, 2 * scale)} strokeOpacity={0.5} strokeDasharray={[360 * scale, 0]} strokeDashoffset={180 * scale} fill="none" />
         </AnimatedG>
 
         <AnimatedG animatedProps={counterRotateProps}>
-          <Circle cx={center} cy={center} r={90} stroke={jarvisPrimary} strokeWidth={1.5} strokeOpacity={0.4} strokeDasharray={[5, 10]} fill="none" />
+          <Circle cx={center} cy={center} r={90 * scale} stroke={jarvisPrimary} strokeWidth={Math.max(1, 1.5 * scale)} strokeOpacity={0.4} strokeDasharray={[5 * scale, 10 * scale]} fill="none" />
         </AnimatedG>
 
         {/* Núcleo Central */}
-        <Circle cx={center} cy={center} r={45} fill={jarvisCore} />
+        <Circle cx={center} cy={center} r={45 * scale} fill={jarvisCore} />
         <AnimatedCircle cx={center} cy={center} animatedProps={coreBreathProps} fill="url(#coreGlow)" />
       </Svg>
     </View>

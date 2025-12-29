@@ -42,8 +42,8 @@ export default function HomeScreen() {
 
   const gender = useGender().currentGender;
   const colorScheme = useColorScheme();
-  const jarvisSize = Math.min(width * 0.8, height * 0.4); // Tamaño responsivo: 80% ancho o 40% alto
-  const topMargin = height * 0.20; // 20% de la altura para el margen superior
+  const jarvisSize = Math.min(width * 0.6, height * 0.6); // Tamaño responsivo
+  const topMargin = height * 0.20; // Altura para el margen superior
   const textMarginTop = height * 0.05; // Margen superior del texto basado en altura
   const textMarginBottom = height * 0.01; // Margen inferior del texto
 
@@ -77,7 +77,7 @@ export default function HomeScreen() {
       <View style={styles.mainContainer}>
         <View style={[styles.topHalf, { marginTop: topMargin }]}>
           <View style={{ width: jarvisSize, height: jarvisSize }}>
-            <JarvisCore isProcessing={isAnyAudioPlaying} />
+            <JarvisCore isProcessing={isAnyAudioPlaying} size={jarvisSize} />
           </View>
         </View>
         <View style={styles.middle}>

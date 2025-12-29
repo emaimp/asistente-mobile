@@ -70,8 +70,9 @@ const styles = StyleSheet.create({
   button: {
     position: 'absolute',
     top: -15,
-    left: '-50%',
-    width: 55,
+    left: '50%',
+    transform: [{ translateX: -27.5 }],
+    width: '180%',
     height: 55,
     borderRadius: 55,
     justifyContent: 'center',
