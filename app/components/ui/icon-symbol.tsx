@@ -29,6 +29,8 @@ const MATERIAL_ICONS_MAPPING = {
 
 const ENTYPO_MAPPING = {
   'message.fill': 'chat',
+  'eye.fill': 'eye',
+  'eye.slash.fill': 'eye-with-line',
 };
 
 const FONTAWESOME5_MAPPING = {

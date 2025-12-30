@@ -1,19 +1,22 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { StyleSheet, View, Dimensions } from 'react-native';
-import { useMemo, useState, useEffect } from 'react';
+import { StyleSheet, View, Dimensions, TouchableOpacity, Text } from 'react-native';
+import { useMemo, useState, useEffect, useRef } from 'react';
 import { ThemedView } from '@/components/ui/themed-view';
-import { ThemedText } from '@/components/ui/themed-text';
 import { BackgroundPattern } from '@/components/ui/background-pattern';
+import { IconSymbol } from '@/components/ui/icon-symbol';
 import { useConversation } from '@/contexts/chatbot-conversation-context';
 import { useAudioPlayback } from '@/hooks/use-audio-playback';
 import { useAudioPlaybackContext } from '@/contexts/audio-playback-context';
 import { useLanguage } from '@/contexts/language-context';
 import { useGender } from '@/contexts/gender-context';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useThemeColor } from '@/hooks/use-theme-color';
 import { Colors } from '@/constants/theme';
-import InitialModal from '@/components/main/initial-modal';
-import AudioRecorder from '@/components/main/audio-recorder';
+import { ChatInput } from '@/components/chat/input';
+import { TopBar } from '@/components/ui/top-bar';
+import SideDrawer, { SideDrawerRef } from '@/components/ui/side-drawer';
 import JarvisCore from '@/components/main/jarvis-core';
+import InitialModal from '@/components/main/initial-modal';
 
 // Componente que reproduce automáticamente el audio de la última respuesta del bot
 function AutoResponsePlayer({ messages }: { messages: any[] }) {
@@ -35,18 +38,25 @@ function AutoResponsePlayer({ messages }: { messages: any[] }) {
 }
 
 export default function HomeScreen() {
-  const { messages, handleRecordingComplete, isProcessing } = useConversation();
+  const { messages, handleRecordingComplete, handleTextSubmit, isProcessing } = useConversation();
   const { isAnyAudioPlaying } = useAudioPlaybackContext();
-  const { width, height } = Dimensions.get('window');
   const { t } = useLanguage();
 
-  const gender = useGender().currentGender;
-  const colorScheme = useColorScheme();
+  const { width, height } = Dimensions.get('window'); // Dimensiones de la ventana
   const jarvisSize = Math.min(width * 0.6, height * 0.6); // Tamaño responsivo
-  const topMargin = height * 0.20; // Altura para el margen superior
-  const textMarginTop = height * 0.05; // Margen superior del texto basado en altura
-  const textMarginBottom = height * 0.01; // Margen inferior del texto
 
+  const gender = useGender().currentGender; // 'Man' | 'Woman'
+  const colorScheme = useColorScheme(); // 'light' | 'dark'
+
+  const drawerRef = useRef<SideDrawerRef>(null); // Referencia al SideDrawer
+
+  // Colores del tema
+  const tintColor = useThemeColor({}, 'tint');
+  const textColor = useThemeColor({}, 'text');
+  const backgroundColor = useThemeColor({}, 'background');
+  const backgroundAltColor = useThemeColor({}, 'backgroundAlt');
+
+  const [showChat, setShowChat] = useState(false); // Estado para mostrar/ocultar chat
   const [showInitialModal, setShowInitialModal] = useState(false); // Estado para el modal inicial
 
   // Comprobar si se debe mostrar el modal inicial
@@ -74,56 +84,81 @@ export default function HomeScreen() {
     <ThemedView style={{flex: 1, backgroundColor: 'transparent'}}>
       <BackgroundPattern gender={gender} colorScheme={colorScheme as 'light' | 'dark'} />
       <View style={[StyleSheet.absoluteFillObject, {backgroundColor: Colors[colorScheme === 'dark' ? 'dark' : 'light'].tabBackground, zIndex: -2}]} />
-      <View style={styles.mainContainer}>
-        <View style={[styles.topHalf, { marginTop: topMargin }]}>
-          <View style={{ width: jarvisSize, height: jarvisSize }}>
-            <JarvisCore isProcessing={isAnyAudioPlaying} size={jarvisSize} />
+      <TopBar
+        backgroundColor={backgroundColor}
+        leftElement={
+          <TouchableOpacity onPress={() => drawerRef.current?.open()}>
+            <IconSymbol name="menu" size={24} color={textColor} />
+          </TouchableOpacity>
+        }
+        rightElement={
+          <View style={styles.topBarRight}>
+            <TouchableOpacity onPress={() => setShowChat(!showChat)} style={styles.toggleButton}>
+              <IconSymbol name={showChat ? "eye.slash.fill" : "eye.fill"} size={20} color={textColor} />
+            </TouchableOpacity>
+            <View style={styles.messageContainer}>
+              <IconSymbol name="message.fill" size={24} color={textColor} />
+              {messages.length > 0 && (
+                <View style={[styles.messageBadge, { backgroundColor: tintColor }]}>
+                  <Text style={[styles.badgeText, { color: backgroundColor }]}>{messages.length}</Text>
+                </View>
+              )}
+            </View>
           </View>
-        </View>
-        <View style={styles.middle}>
-          <ThemedText
-            style={[styles.instructionText, { marginTop: textMarginTop, marginBottom: textMarginBottom }]}
-            lightColor="#000000"
-            darkColor="#FFFFFF"
-          >
-            {t('home.pressButton')}
-          </ThemedText>
-        </View>
-        <View style={styles.bottomHalf}>
-          <AudioRecorder onRecordingComplete={handleRecordingComplete} isProcessing={isProcessing} />
+        }
+      />
+      <View style={styles.mainContainer}>
+        <View style={{ width: jarvisSize, height: jarvisSize }}>
+          <JarvisCore isProcessing={isAnyAudioPlaying} size={jarvisSize} />
         </View>
       </View>
+      <ChatInput
+        onSubmit={handleTextSubmit}
+        onRecordingStart={() => {}}
+        onRecordingComplete={handleRecordingComplete}
+        isProcessing={isProcessing}
+        placeholder={t('chat.placeholder')}
+      />
       <AutoResponsePlayer messages={messages} />
       <InitialModal visible={showInitialModal} onClose={handleCloseModal} />
+      <SideDrawer ref={drawerRef} backgroundColor={backgroundAltColor} />
     </ThemedView>
   );
 }
 
 const styles = StyleSheet.create({
-  stepContainer: {
-    marginTop: 0,
-    marginBottom: 0,
-  },
   mainContainer: {
     flex: 1,
-  },
-  topHalf: {
-    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  middle: {
+  toggleButton: {
+    padding: 8,
+  },
+  topBarRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  messageContainer: {
+    position: 'relative',
+  },
+  messageBadge: {
+    position: 'absolute',
+    top: -8,
+    right: -8,
+    borderRadius: 10,
+    minWidth: 18,
+    height: 18,
     justifyContent: 'center',
     alignItems: 'center',
+    paddingHorizontal: 4,
   },
-  bottomHalf: {
-    flex: 1,
-    justifyContent: 'center',
+  badgeText: {
+    fontSize: 10,
+    fontWeight: 'bold',
   },
-  botImage: {
-  },
-  instructionText: {
-    fontSize: 18,
-    textAlign: 'center',
+  eyeIcon: {
+    fontSize: 20,
   },
 });

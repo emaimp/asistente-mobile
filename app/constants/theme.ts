@@ -12,6 +12,7 @@ export const Colors = {
   light: {
     text: '#000000',
     background: '#ffffff',
+    backgroundAlt: '#f5f5f5',
     tint: tintColorLight,
     icon: '#687076',
     tabIconDefault: '#687076',
@@ -25,6 +26,7 @@ export const Colors = {
   dark: {
     text: '#ffffff',
     background: '#000000',
+    backgroundAlt: '#1a1a1a',
     tint: tintColorDark,
     icon: '#9BA1A6',
     tabIconDefault: '#9BA1A6',
@@ -42,7 +44,6 @@ export const Colors = {
       light: {
         text: '#000000',
         background: '#ffffff',
-        backgroundAlt: '#f5f5f5',
         tint: '#229be7',
         icon: '#687076',
         tabIconDefault: '#229be7',
@@ -60,7 +61,6 @@ export const Colors = {
       dark: {
         text: '#ffffff',
         background: '#000000',
-        backgroundAlt: '#1a1a1a',
         tint: '#229be7',
         icon: '#687076',
         tabIconDefault: '#229be7',
@@ -82,7 +82,6 @@ export const Colors = {
       light: {
         text: '#000000',
         background: '#ffffff',
-        backgroundAlt: '#f5f5f5',
         tint: '#e91e63',
         icon: '#687076',
         tabIconDefault: '#e91e63',
@@ -101,7 +100,6 @@ export const Colors = {
       dark: {
         text: '#ffffff',
         background: '#000000',
-        backgroundAlt: '#1a1a1a',
         tint: '#e91e63',
         icon: '#687076',
         tabIconDefault: '#e91e63',

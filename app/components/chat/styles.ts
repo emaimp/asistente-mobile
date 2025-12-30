@@ -110,6 +110,7 @@ export const styles = StyleSheet.create({
     fontSize: 16,
     paddingVertical: 6,
     paddingRight: 50,
+    paddingLeft: 50,
   },
   sendButton: {
     position: 'absolute',
@@ -125,5 +126,14 @@ export const styles = StyleSheet.create({
   },
   sendButtonDisabled: {
     backgroundColor: 'transparent',
+  },
+  recordButton: {
+    position: 'absolute',
+    left: 3,
+    top: 3,
+    height: 40,
+    width: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
