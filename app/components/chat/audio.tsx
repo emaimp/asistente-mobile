@@ -1,93 +1,75 @@
 import React from 'react';
 import { View, TouchableOpacity } from 'react-native';
-import { ThemedText } from '@/components/ui/themed-text';
 import { IconSymbol } from '../ui/icon-symbol';
-import { useAudioPlayback } from '@/hooks/use-audio-playback';
-import { useAudioPlaybackContext } from '@/contexts/audio-playback-context';
+import { useAudioPlayer } from '@/hooks/use-audio-player';
 import { useThemeColor } from '@/hooks/use-theme-color';
-import { useLanguage } from '@/contexts/language-context';
 import { styles } from './styles';
 
 /*
- * Renderiza controles de reproducción de audio para mensajes del bot.
- * Maneja estado de reproducción y prevención de ecos.
+ * Controles de reproducción de audio.
+ * Dos botones: Play/Pause (alternativo) y Stop.
 */
-export function AudioMessagePlayer({
-  audioUri,
-  inputType,
-  autoPlayInputType,
-  isLastBotMessage = false,
-  isAnyAudioPlaying = false,
-  currentPlayingUri
-}: {
-  audioUri: string;
-  inputType?: 'audio' | 'text';
-  autoPlayInputType?: 'audio' | 'text' | 'all';
-  isLastBotMessage?: boolean;
-  isAnyAudioPlaying?: boolean;
-  currentPlayingUri?: string | null;
-}) {
-  // Colores dinámicos basados en género
+export function AudioMessagePlayer({ audioUri }: { audioUri: string }) {
+  // Colores del tema
   const textColor = useThemeColor({}, 'text');
   const backgroundColor = useThemeColor({}, 'background');
-  const { t } = useLanguage();
 
-  // Determinar si este audio debe reproducirse automáticamente
-  const shouldAutoPlay = isLastBotMessage && (
-    autoPlayInputType === 'all' ||
-    (autoPlayInputType === 'audio' && inputType === 'audio') ||
-    (autoPlayInputType === 'text' && inputType === 'text')
-  );
+  // Hook simple de reproducción
+  const { playbackState, play, pause, stop, isLoaded } = useAudioPlayer(audioUri);
 
-  // Hook personalizado para controlar reproducción específica de este audio
-  const { isPlaying, isLoading, play } = useAudioPlayback(audioUri, shouldAutoPlay);
+  // Manejadores de eventos
+  const handlePlayPause = async () => {
+    if (playbackState === 'stopped' || playbackState === 'paused') {
+      await play();
+    } else if (playbackState === 'playing') {
+      await pause();
+    }
+  };
 
-  // Función para detener todas las reproducciones
-  const { stopAllPlayback } = useAudioPlaybackContext();
+  const handleStop = async () => {
+    await stop();
+  };
 
-  // Bloquear todos los controles cuando hay audio reproduciendo para evitar eco
-  const isBlocked = isAnyAudioPlaying;
-
-  const handlePress = () => {
-    if (!isPlaying) {
-      play();
+  // Icono para el botón play/pause
+  const getPlayPauseIcon = () => {
+    switch (playbackState) {
+      case 'stopped':
+      case 'paused':
+        return 'play.fill';
+      case 'playing':
+        return 'pause.fill';
+      default:
+        return 'play.fill';
     }
   };
 
   return (
     <View style={[styles.audioContainer, { backgroundColor: textColor + '1A' }]}>
       <View style={styles.audioControls}>
+        {/* Botón Play/Pause */}
         <TouchableOpacity
-          style={[styles.audioButton, isBlocked && styles.audioButtonBlocked, { backgroundColor: backgroundColor + 'FF' }]}
-          onPress={handlePress}
-          disabled={isLoading || (isAnyAudioPlaying && !isPlaying)}
+          style={[styles.audioButton, { backgroundColor: backgroundColor + 'FF' }]}
+          onPress={handlePlayPause}
+          disabled={!isLoaded}
         >
           <IconSymbol
-            name={(isPlaying || (isLastBotMessage && isAnyAudioPlaying && currentPlayingUri === audioUri)) ? 'volume.up.fill' : (isAnyAudioPlaying ? 'speaker.slash.fill' : 'play.fill')}
+            name={getPlayPauseIcon()}
             size={20}
             color={textColor}
           />
-          <ThemedText
-            style={styles.audioButtonText}
-          >
-            {isPlaying ? t('audioRecorder.playing') : (isLoading ? t('chat.processingAudio') : t('chat.play'))}
-          </ThemedText>
         </TouchableOpacity>
+
+        {/* Botón Stop */}
         <TouchableOpacity
-          style={[styles.stopButton, (currentPlayingUri !== audioUri) && styles.audioButtonBlocked, { backgroundColor: backgroundColor + 'FF' }]}
-          onPress={async () => await stopAllPlayback()}
-          disabled={isLoading || currentPlayingUri !== audioUri}
+          style={[styles.audioButton, { backgroundColor: backgroundColor + 'FF' }]}
+          onPress={handleStop}
+          disabled={!isLoaded}
         >
           <IconSymbol
             name="stop.fill"
             size={20}
             color={textColor}
           />
-          <ThemedText
-            style={styles.audioButtonText}
-          >
-            {t('chat.stop')}
-          </ThemedText>
         </TouchableOpacity>
       </View>
     </View>

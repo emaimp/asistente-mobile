@@ -12,7 +12,7 @@ import Markdown from 'react-native-markdown-display';
 /*
  * Componente simplificado para mostrar la conversación.
  * Renderiza mensajes de texto plano con controles de audio básicos.
- */
+*/
 export default function ConversationView() {
   const { messages } = useConversationContext();
   const { t } = useLanguage();
@@ -106,11 +106,6 @@ export default function ConversationView() {
             {item.type === 'bot' && item.audioUri && (
               <AudioMessagePlayer
                 audioUri={item.audioUri}
-                inputType={item.inputType}
-                autoPlayInputType={undefined}
-                isLastBotMessage={false}
-                isAnyAudioPlaying={false}
-                currentPlayingUri={null}
               />
             )}
 
