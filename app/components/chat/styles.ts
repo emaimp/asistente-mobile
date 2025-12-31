@@ -7,8 +7,8 @@ export const styles = StyleSheet.create({
     flex: 1,
   },
   contentContainer: {
-    paddingHorizontal: 0,
-    paddingVertical: 0,
+    paddingHorizontal: 10,
+    paddingTop: 10,
     paddingBottom: 100,
   },
   messageWrapper: {

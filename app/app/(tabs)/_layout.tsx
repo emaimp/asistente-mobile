@@ -5,14 +5,11 @@ import { HapticTab } from '@/components/ui/haptic-tab';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
-import { useConversation } from '@/contexts/chatbot-conversation-context';
 import { useGender } from '@/contexts/gender-context';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
-  const { messages } = useConversation();
   const { currentGender } = useGender();
-  const botMessageCount = messages.filter(message => message.type === 'bot').length;
 
   return (
     <Tabs
@@ -27,11 +24,10 @@ export default function TabLayout() {
         },
       }}>
       <Tabs.Screen
-        name="chat"
+        name="account"
         options={{
-          title: 'Chat',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="message.fill" color={color} />,
-          tabBarBadge: botMessageCount > 0 ? botMessageCount.toString() : undefined,
+          title: 'Cuenta',
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="person.circle.fill" color={color} />,
           tabBarLabel: () => null,
         }}
       />

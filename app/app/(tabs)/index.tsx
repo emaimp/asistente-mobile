@@ -17,6 +17,7 @@ import { TopBar } from '@/components/ui/top-bar';
 import SideDrawer, { SideDrawerRef } from '@/components/ui/side-drawer';
 import JarvisCore from '@/components/main/jarvis-core';
 import InitialModal from '@/components/main/initial-modal';
+import ConversationView from '@/components/chat-conversation';
 
 // Componente que reproduce automáticamente el audio de la última respuesta del bot
 function AutoResponsePlayer({ messages }: { messages: any[] }) {
@@ -108,9 +109,13 @@ export default function HomeScreen() {
         }
       />
       <View style={styles.mainContainer}>
-        <View style={{ width: jarvisSize, height: jarvisSize }}>
-          <JarvisCore isProcessing={isAnyAudioPlaying} size={jarvisSize} />
-        </View>
+        {showChat ? (
+          <ConversationView messages={messages} autoPlayInputType="all" />
+        ) : (
+          <View style={{ width: jarvisSize, height: jarvisSize }}>
+            <JarvisCore isProcessing={isAnyAudioPlaying} size={jarvisSize} />
+          </View>
+        )}
       </View>
       <ChatInput
         onSubmit={handleTextSubmit}
