@@ -1,12 +1,10 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StyleSheet, View, Dimensions, TouchableOpacity, Text } from 'react-native';
-import { useMemo, useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { ThemedView } from '@/components/ui/themed-view';
 import { BackgroundPattern } from '@/components/ui/background-pattern';
 import { IconSymbol } from '@/components/ui/icon-symbol';
-import { useConversation } from '@/contexts/chatbot-conversation-context';
-import { useAudioPlayback } from '@/hooks/use-audio-playback';
-import { useAudioPlaybackContext } from '@/contexts/audio-playback-context';
+import { useConversationContext } from '@/contexts/conversation-context';
 import { useLanguage } from '@/contexts/language-context';
 import { useGender } from '@/contexts/gender-context';
 import { useColorScheme } from '@/hooks/use-color-scheme';
@@ -19,28 +17,8 @@ import JarvisCore from '@/components/main/jarvis-core';
 import InitialModal from '@/components/main/initial-modal';
 import ConversationView from '@/components/chat-conversation';
 
-// Componente que reproduce automáticamente el audio de la última respuesta del bot
-function AutoResponsePlayer({ messages }: { messages: any[] }) {
-  // Encuentra el último mensaje del bot con audio
-  const lastBotAudioUri = useMemo(() => {
-    for (let i = messages.length - 1; i >= 0; i--) {
-      if (messages[i].type === 'bot' && messages[i].audioUri) {
-        return messages[i].audioUri;
-      }
-    }
-    return null;
-  }, [messages]);
-
-  // Reproducción automática del último audio del bot
-  useAudioPlayback(lastBotAudioUri, true);
-
-  // Este componente no renderiza nada visible
-  return null;
-}
-
 export default function HomeScreen() {
-  const { messages, handleRecordingComplete, handleTextSubmit, isProcessing } = useConversation();
-  const { isAnyAudioPlaying } = useAudioPlaybackContext();
+  const { messages, sendTextMessage, sendAudioMessage, isProcessing } = useConversationContext();
   const { t } = useLanguage();
 
   const { width, height } = Dimensions.get('window'); // Dimensiones de la ventana
@@ -110,21 +88,20 @@ export default function HomeScreen() {
       />
       <View style={styles.mainContainer}>
         {showChat ? (
-          <ConversationView messages={messages} autoPlayInputType="all" />
+          <ConversationView />
         ) : (
           <View style={{ width: jarvisSize, height: jarvisSize }}>
-            <JarvisCore isProcessing={isAnyAudioPlaying} size={jarvisSize} />
+            <JarvisCore isProcessing={isProcessing} size={jarvisSize} />
           </View>
         )}
       </View>
       <ChatInput
-        onSubmit={handleTextSubmit}
+        onSubmit={sendTextMessage}
         onRecordingStart={() => {}}
-        onRecordingComplete={handleRecordingComplete}
+        onRecordingComplete={sendAudioMessage}
         isProcessing={isProcessing}
         placeholder={t('chat.placeholder')}
       />
-      <AutoResponsePlayer messages={messages} />
       <InitialModal visible={showInitialModal} onClose={handleCloseModal} />
       <SideDrawer ref={drawerRef} backgroundColor={backgroundAltColor} />
     </ThemedView>

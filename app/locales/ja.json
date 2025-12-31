@@ -6,15 +6,12 @@
     "title": "チャット",
     "placeholder": "メッセージを書く...",
     "sending": "...",
-    "processingAudio": "処理中...",
+    "processing": "処理中...",
     "thinking": "考え中...",
     "play": "再生",
-    "stop": "停止"
-  },
-  "audioRecorder": {
-    "recording": "録音中...",
-    "processing": "処理中...",
-    "playing": "再生中..."
+    "stop": "停止",
+    "errorMessage": "メッセージの処理中にエラーが発生しました。",
+    "errorAudio": "音声の処理中にエラーが発生しました。"
   },
   "settings": {
     "title": "設定",

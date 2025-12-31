@@ -5,20 +5,27 @@ export const styles = StyleSheet.create({
   // chat-conversation.tsx (conversación)
   container: {
     flex: 1,
+    width: '100%',
+    paddingTop: 95, // Compensar TopBar absoluta (height: 95)
   },
   contentContainer: {
+    flexGrow: 1,
     paddingHorizontal: 10,
     paddingTop: 10,
     paddingBottom: 100,
+    width: '100%',
   },
   messageWrapper: {
     marginBottom: 12,
+    width: '100%',
   },
   userMessageWrapper: {
     alignItems: 'flex-end',
+    width: '100%',
   },
   botMessageWrapper: {
     alignItems: 'flex-start',
+    width: '100%',
   },
   messageContainer: {
     maxWidth: '90%',

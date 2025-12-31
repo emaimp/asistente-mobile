@@ -6,15 +6,12 @@
     "title": "聊天",
     "placeholder": "写一个消息...",
     "sending": "...",
-    "processingAudio": "处理中...",
+    "processing": "处理中...",
     "thinking": "思考中...",
     "play": "播放",
-    "stop": "停止"
-  },
-  "audioRecorder": {
-    "recording": "录制中...",
-    "processing": "处理中...",
-    "playing": "播放中..."
+    "stop": "停止",
+    "errorMessage": "处理消息时发生错误。",
+    "errorAudio": "处理音频时发生错误。"
   },
   "settings": {
     "title": "设置",

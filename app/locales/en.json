@@ -6,15 +6,12 @@
     "title": "CHAT",
     "placeholder": "Write a message...",
     "sending": "...",
-    "processingAudio": "Processing...",
+    "processing": "Processing...",
     "thinking": "Thinking...",
     "play": "Play",
-    "stop": "Stop"
-  },
-  "audioRecorder": {
-    "recording": "Recording...",
-    "processing": "Processing...",
-    "playing": "Playing..."
+    "stop": "Stop",
+    "errorMessage": "An error occurred while processing the message.",
+    "errorAudio": "An error occurred while processing the audio."
   },
   "settings": {
     "title": "Settings",

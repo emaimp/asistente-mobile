@@ -1,13 +1,12 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import 'react-native-reanimated';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import 'react-native-reanimated';
-
-import { useColorScheme } from '@/hooks/use-color-scheme';
-import { ConversationProvider } from '@/contexts/chatbot-conversation-context';
+import { ConversationProvider } from '@/contexts/conversation-context';
 import { AudioPlaybackProvider } from '@/contexts/audio-playback-context';
 import { LanguageProvider } from '@/contexts/language-context';
 import { GenderProvider } from '@/contexts/gender-context';
+import { useColorScheme } from '@/hooks/use-color-scheme';
+import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 
 export const unstable_settings = {
   anchor: '(tabs)',
