@@ -13,7 +13,7 @@ import { Colors } from '@/constants/theme';
 import { ChatInput } from '@/components/chat/input';
 import { TopBar } from '@/components/ui/top-bar';
 import SideDrawer, { SideDrawerRef } from '@/components/ui/side-drawer';
-import JarvisCore from '@/components/main/jarvis-core';
+import JarvisCore, { JarvisCoreRef } from '@/components/main/jarvis-core';
 import InitialModal from '@/components/main/initial-modal';
 import ConversationView from '@/components/chat-conversation';
 
@@ -28,6 +28,7 @@ export default function HomeScreen() {
   const colorScheme = useColorScheme(); // 'light' | 'dark'
 
   const drawerRef = useRef<SideDrawerRef>(null); // Referencia al SideDrawer
+  const jarvisRef = useRef<JarvisCoreRef>(null); // Referencia a JARVIS para controlar audio
 
   // Colores del tema
   const tintColor = useThemeColor({}, 'tint');
@@ -37,6 +38,14 @@ export default function HomeScreen() {
 
   const [showChat, setShowChat] = useState(false); // Estado para mostrar/ocultar chat
   const [showInitialModal, setShowInitialModal] = useState(false); // Estado para el modal inicial
+
+  // Extraer el último audio del bot
+  const latestBotAudioUri = messages
+    .filter(msg => msg.type === 'bot' && msg.audioUri)
+    .slice(-1)[0]?.audioUri || undefined;
+
+  // Comprobar si hay audio de JARVIS reproduciéndose
+  const hasJarvisAudio = !!latestBotAudioUri;
 
   // Comprobar si se debe mostrar el modal inicial
   useEffect(() => {
@@ -57,6 +66,17 @@ export default function HomeScreen() {
   // Maneja el cierre del modal inicial
   const handleCloseModal = () => {
     setShowInitialModal(false);
+  };
+
+  // Función para detener audio de JARVIS
+  const handleStopJarvisAudio = async () => {
+    if (jarvisRef.current) {
+      try {
+        await jarvisRef.current.stopAudio();
+      } catch (error) {
+        console.error('Error stopping JARVIS audio:', error);
+      }
+    }
   };
 
   return (
@@ -91,7 +111,12 @@ export default function HomeScreen() {
           <ConversationView />
         ) : (
           <View style={{ width: jarvisSize, height: jarvisSize }}>
-            <JarvisCore isProcessing={isProcessing} size={jarvisSize} />
+            <JarvisCore 
+              ref={jarvisRef}
+              isProcessing={isProcessing} 
+              size={jarvisSize}
+              latestBotAudioUri={latestBotAudioUri}
+            />
           </View>
         )}
       </View>
@@ -99,8 +124,10 @@ export default function HomeScreen() {
         onSubmit={sendTextMessage}
         onRecordingStart={() => {}}
         onRecordingComplete={sendAudioMessage}
+        onStopJarvis={handleStopJarvisAudio}
         isProcessing={isProcessing}
         placeholder={t('chat.placeholder')}
+        hasJarvisAudio={hasJarvisAudio}
       />
       <InitialModal visible={showInitialModal} onClose={handleCloseModal} />
       <SideDrawer ref={drawerRef} backgroundColor={backgroundAltColor} />

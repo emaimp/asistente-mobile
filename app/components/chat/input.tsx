@@ -9,14 +9,24 @@ interface ChatInputProps {
   onSubmit: (text: string) => Promise<void>;
   onRecordingStart?: () => void;
   onRecordingComplete?: (uri: string) => void;
+  onStopJarvis?: () => void;
   isProcessing: boolean;
   placeholder: string;
+  hasJarvisAudio?: boolean;
 }
 
 /*
  * Componente para la entrada de texto y envío de mensajes en el chat.
 */
-export function ChatInput({ onSubmit, onRecordingStart, onRecordingComplete, isProcessing, placeholder }: ChatInputProps) {
+export function ChatInput({ 
+  onSubmit, 
+  onRecordingStart, 
+  onRecordingComplete, 
+  onStopJarvis,
+  isProcessing, 
+  placeholder,
+  hasJarvisAudio = false 
+}: ChatInputProps) {
   const [inputText, setInputText] = useState('');
 
   // Hook para grabación de audio
@@ -60,6 +70,22 @@ export function ChatInput({ onSubmit, onRecordingStart, onRecordingComplete, isP
             color={isRecording ? '#ff4444' : textColor}
           />
         </TouchableOpacity>
+        
+        {/* Botón de stop de JARVIS - solo visible cuando hay audio */}
+        {hasJarvisAudio && onStopJarvis && (
+          <TouchableOpacity
+            style={styles.jarvisStopButton}
+            onPress={onStopJarvis}
+            disabled={isProcessing}
+          >
+            <IconSymbol
+              name="stop.fill"
+              size={20}
+              color="#ff4444"
+            />
+          </TouchableOpacity>
+        )}
+        
         <TextInput
           style={[styles.textInput, { color: textColor }]}
           value={inputText}

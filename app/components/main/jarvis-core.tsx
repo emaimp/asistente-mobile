@@ -1,6 +1,7 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { useThemeColor } from '@/hooks/use-theme-color';
+import { useAudioPlayer } from '@/hooks/use-audio-player';
 import Svg, { Circle, Line, Defs, RadialGradient, Stop, G } from 'react-native-svg';
 import Animated, {
   useSharedValue,
@@ -107,7 +108,21 @@ const HudTicks = ({ center, radius, jarvisPrimary, scale }: { center: number, ra
   return <G>{ticks}</G>;
 };
 
-export default function JarvisCore({ isProcessing = false, size = 320 }) {
+interface JarvisCoreProps {
+  isProcessing?: boolean;
+  size?: number;
+  latestBotAudioUri?: string;
+}
+
+export interface JarvisCoreRef {
+  stopAudio: () => Promise<void>;
+}
+
+const JarvisCore = forwardRef<JarvisCoreRef, JarvisCoreProps>(({ 
+  isProcessing = false, 
+  size = 320,
+  latestBotAudioUri 
+}, ref) => {
   // Colores dinámicos basados en género
   const jarvisPrimary = useThemeColor({}, 'jarvisPrimary');
   const jarvisGlow = useThemeColor({}, 'jarvisGlow');
@@ -122,6 +137,29 @@ export default function JarvisCore({ isProcessing = false, size = 320 }) {
   const breathValue = useSharedValue(0);
   const audioAmplitude = useSharedValue(0);
   const timeValue = useSharedValue(0);
+
+  // Hook para manejar audio del bot
+  const { playbackState, play, stop, isLoaded } = useAudioPlayer(latestBotAudioUri || '');
+  
+  // Ref para evitar múltiples auto-reproducciones (misma lógica que audio.tsx)
+  const hasAutoPlayedRef = useRef(false);
+  const previousAudioUriRef = useRef<string | null>(null);
+  const isMountedRef = useRef(false);
+
+  // Exponer función stop para uso externo
+  useImperativeHandle(ref, () => ({
+    stopAudio: async () => {
+      try {
+        await stop();
+        // Resetear flag para permitir nueva reproducción
+        hasAutoPlayedRef.current = false;
+        // Resetear amplitud visual
+        audioAmplitude.value = withTiming(0.5, { duration: 300 });
+      } catch (error) {
+        console.error('Error stopping JARVIS audio:', error);
+      }
+    }
+  }));
 
   useEffect(() => {
     timeValue.value = withRepeat(
@@ -141,12 +179,70 @@ export default function JarvisCore({ isProcessing = false, size = 320 }) {
       -1, true
     );
 
-    // Simulación de ruido de audio
-    audioAmplitude.value = withRepeat(
-      withTiming(1, { duration: 400, easing: Easing.bezier(0.25, 0.1, 0.25, 1) }),
-      -1, true
-    );
-  }, [audioAmplitude, breathValue, rotateAngle]);
+    // Simulación de ruido de audio (solo cuando no hay audio del bot)
+    if (!latestBotAudioUri) {
+      audioAmplitude.value = withRepeat(
+        withTiming(1, { duration: 400, easing: Easing.bezier(0.25, 0.1, 0.25, 1) }),
+        -1, true
+      );
+    }
+  }, [audioAmplitude, breathValue, rotateAngle, latestBotAudioUri]);
+
+  // useEffect para inicialización correcta al montar
+  useEffect(() => {
+    isMountedRef.current = true;
+    
+    // Si hay audio disponible al montar, intentar auto-reproducir
+    if (latestBotAudioUri && isLoaded && playbackState === 'stopped' && !hasAutoPlayedRef.current) {
+      const timer = setTimeout(() => {
+        if (isMountedRef.current) {
+          hasAutoPlayedRef.current = true;
+          play();
+          // Activar espectro de voz reactivo
+          audioAmplitude.value = withRepeat(
+            withTiming(2, { duration: 300, easing: Easing.bezier(0.25, 0.1, 0.25, 1) }),
+            -1, true
+          );
+        }
+      }, 200); // Delay para asegurar que todo esté inicializado
+      
+      return () => {
+        clearTimeout(timer);
+        isMountedRef.current = false;
+      };
+    }
+  }, []);
+
+  // Solo reproducir audio NUEVO
+  useEffect(() => {
+    // Solo proceder si hay audio disponible
+    if (!latestBotAudioUri) return;
+
+    // Detectar si es un audio NUEVO (diferente al anterior)
+    const isNewAudio = latestBotAudioUri !== previousAudioUriRef.current;
+    
+    if (isNewAudio) {
+      previousAudioUriRef.current = latestBotAudioUri;
+      hasAutoPlayedRef.current = false; // Resetear para el audio nuevo
+    }
+
+    // Solo auto-reproducir SI es audio nuevo Y no se ha reproducido antes
+    if (isNewAudio && isLoaded && playbackState === 'stopped' && !hasAutoPlayedRef.current) {
+      hasAutoPlayedRef.current = true; // Marcar como ya reproducido
+      
+      // Auto-reproducir con un pequeño delay para evitar conflictos
+      const timer = setTimeout(() => {
+        play();
+        // Activar espectro de voz reactivo
+        audioAmplitude.value = withRepeat(
+          withTiming(2, { duration: 300, easing: Easing.bezier(0.25, 0.1, 0.25, 1) }),
+          -1, true
+        );
+      }, 500);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [latestBotAudioUri, isLoaded, playbackState, play]);
 
   const glowStyle = useAnimatedStyle(() => ({
     opacity: 0.1,
@@ -192,8 +288,16 @@ export default function JarvisCore({ isProcessing = false, size = 320 }) {
           />
         </AnimatedG>
 
-        {/* Espectro de Voz (Radial) */}
-        <VoiceSpectrum center={center} innerRadius={55 * scale} amplitude={audioAmplitude} timeValue={timeValue} isProcessing={isProcessing} jarvisPrimary={jarvisPrimary} scale={scale} />
+        {/* Espectro de Voz (Radial) - Se activa con audio del bot */}
+        <VoiceSpectrum 
+          center={center} 
+          innerRadius={55 * scale} 
+          amplitude={audioAmplitude} 
+          timeValue={timeValue} 
+          isProcessing={!!latestBotAudioUri && playbackState === 'playing'} 
+          jarvisPrimary={jarvisPrimary} 
+          scale={scale} 
+        />
 
         {/* Anillos Giratorios Principales */}
         <AnimatedG animatedProps={rotateProps}>
@@ -211,7 +315,10 @@ export default function JarvisCore({ isProcessing = false, size = 320 }) {
       </Svg>
     </View>
   );
-}
+});
+
+// Agregar display name al componente forwardRef
+JarvisCore.displayName = 'JarvisCore';
 
 const styles = StyleSheet.create({
   container: {
@@ -234,3 +341,5 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
 });
+
+export default JarvisCore;

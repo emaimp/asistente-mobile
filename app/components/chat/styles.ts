@@ -85,7 +85,7 @@ export const styles = StyleSheet.create({
   audioButtonBlocked: {
     opacity: 0.5,
   },
-  stopButton: {
+  audioStopButton: {
     padding: 8,
     borderRadius: 8,
     flexDirection: 'row',
@@ -116,7 +116,7 @@ export const styles = StyleSheet.create({
     flex: 1,
     fontSize: 16,
     paddingVertical: 6,
-    paddingRight: 50,
+    paddingRight: 90,
     paddingLeft: 50,
   },
   sendButton: {
@@ -130,6 +130,7 @@ export const styles = StyleSheet.create({
     backgroundColor: 'transparent',
     justifyContent: 'center',
     alignItems: 'center',
+    zIndex: 10,
   },
   sendButtonDisabled: {
     backgroundColor: 'transparent',
@@ -142,5 +143,18 @@ export const styles = StyleSheet.create({
     width: 40,
     justifyContent: 'center',
     alignItems: 'center',
+    zIndex: 10,
+  },
+  jarvisStopButton: {
+    position: 'absolute',
+    right: 50,
+    top: 3,
+    height: 40,
+    width: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 8,
+    backgroundColor: '#ff444420',
+    zIndex: 8,
   },
 });
