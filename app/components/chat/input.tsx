@@ -36,6 +36,7 @@ export function ChatInput({
   const textColor = useThemeColor({}, 'text');
   const tintColor = useThemeColor({}, 'tint');
   const backgroundColor = useThemeColor({}, 'background');
+  const errorColor = useThemeColor({}, 'errorPrimary');
 
   // Maneja el envío del texto
   const handleSubmit = async () => {
@@ -67,21 +68,24 @@ export function ChatInput({
           <IconSymbol
             name="mic.fill"
             size={20}
-            color={isRecording ? '#ff4444' : textColor}
+            color={isRecording ? errorColor : textColor}
           />
         </TouchableOpacity>
         
-        {/* Botón de stop de JARVIS - solo visible cuando hay audio */}
-        {hasJarvisAudio && onStopJarvis && (
+        {/* Botón de stop de JARVIS - siempre visible */}
+        {onStopJarvis && (
           <TouchableOpacity
-            style={styles.jarvisStopButton}
+            style={[
+              styles.jarvisStopButton,
+              !hasJarvisAudio && { opacity: 0.4 }
+            ]}
             onPress={onStopJarvis}
-            disabled={isProcessing}
+            disabled={!hasJarvisAudio || isProcessing}
           >
             <IconSymbol
               name="stop.fill"
               size={20}
-              color="#ff4444"
+              color={hasJarvisAudio ? errorColor : textColor}
             />
           </TouchableOpacity>
         )}

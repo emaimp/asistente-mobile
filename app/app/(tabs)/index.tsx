@@ -38,14 +38,15 @@ export default function HomeScreen() {
 
   const [showChat, setShowChat] = useState(false); // Estado para mostrar/ocultar chat
   const [showInitialModal, setShowInitialModal] = useState(false); // Estado para el modal inicial
+  const [isAudioPlaying, setIsAudioPlaying] = useState(false); // Estado de reproducción de audio
 
   // Extraer el último audio del bot
   const latestBotAudioUri = messages
     .filter(msg => msg.type === 'bot' && msg.audioUri)
     .slice(-1)[0]?.audioUri || undefined;
 
-  // Comprobar si hay audio de JARVIS reproduciéndose
-  const hasJarvisAudio = !!latestBotAudioUri;
+  // Comprobar si hay audio de JARVIS reproduciéndose (basado en estado real)
+  const hasJarvisAudio = isAudioPlaying;
 
   // Comprobar si se debe mostrar el modal inicial
   useEffect(() => {
@@ -113,9 +114,9 @@ export default function HomeScreen() {
           <View style={{ width: jarvisSize, height: jarvisSize }}>
             <JarvisCore 
               ref={jarvisRef}
-              isProcessing={isProcessing} 
               size={jarvisSize}
               latestBotAudioUri={latestBotAudioUri}
+              onPlaybackStateChange={setIsAudioPlaying}
             />
           </View>
         )}

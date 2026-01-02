@@ -1,4 +1,4 @@
-import React, { forwardRef, useImperativeHandle } from 'react';
+import React, { forwardRef, useImperativeHandle, useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
 import Svg from 'react-native-svg';
 import { useThemeColor } from '@/hooks/use-theme-color';
@@ -19,15 +19,18 @@ import { useJarvisAudio } from './jarvis-core/jarvis-audio';
 interface JarvisCoreProps {
   size?: number;
   latestBotAudioUri?: string;
+  onPlaybackStateChange?: (isPlaying: boolean) => void;
 }
 
 export interface JarvisCoreRef {
   stopAudio: () => Promise<void>;
+  isPlaying: () => boolean;
 }
 
 const JarvisCore = forwardRef<JarvisCoreRef, JarvisCoreProps>(({ 
   size = 320,
-  latestBotAudioUri 
+  latestBotAudioUri,
+  onPlaybackStateChange
 }, ref) => {
   // Colores dinámicos basados en género
   const jarvisPrimary = useThemeColor({}, 'jarvisPrimary');
@@ -50,10 +53,16 @@ const JarvisCore = forwardRef<JarvisCoreRef, JarvisCoreProps>(({
     stopAudio
   } = useJarvisAudio({ latestBotAudioUri });
 
-  // Exponer función stop para uso externo
+  // Exponer funciones para uso externo
   useImperativeHandle(ref, () => ({
-    stopAudio: stopAudio
+    stopAudio: stopAudio,
+    isPlaying: () => playbackState === 'playing'
   }));
+
+  // Notificar cambios en el estado de reproducción
+  useEffect(() => {
+    onPlaybackStateChange?.(playbackState === 'playing');
+  }, [playbackState, onPlaybackStateChange]);
 
   // Estilos animados
   const glowStyle = useAnimatedStyle(() => ({
