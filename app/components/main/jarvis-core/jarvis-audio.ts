@@ -23,10 +23,13 @@ export interface UseJarvisAudioReturn {
   previousAudioUriRef: any;
   isMountedRef: any;
   stopAudio: () => Promise<void>;
+  fastRotateAngle: any;
+  isThinking: boolean;
 }
 
 export interface UseJarvisAudioProps {
   latestBotAudioUri?: string;
+  isProcessing?: boolean;
 }
 
 // =============== FUNCIONES HELPER PARA PERSISTENCIA
@@ -61,7 +64,7 @@ const markAudioAsPlayed = async (audioId: string): Promise<void> => {
 };
 
 // =============== HOOK PRINCIPAL
-export const useJarvisAudio = ({ latestBotAudioUri }: UseJarvisAudioProps): UseJarvisAudioReturn => {
+export const useJarvisAudio = ({ latestBotAudioUri, isProcessing = false }: UseJarvisAudioProps): UseJarvisAudioReturn => {
   // Hook para manejar audio del bot
   const { playbackState, play, stop, isLoaded } = useAudioPlayer(latestBotAudioUri || '');
   
@@ -80,6 +83,7 @@ export const useJarvisAudio = ({ latestBotAudioUri }: UseJarvisAudioProps): UseJ
   const rotateAngle = useSharedValue(0);
   const breathValue = useSharedValue(0);
   const timeValue = useSharedValue(0);
+  const fastRotateAngle = useSharedValue(0);
 
   // =============== ANIMACIONES BÁSICAS (solo una vez)
   useEffect(() => {
@@ -89,9 +93,15 @@ export const useJarvisAudio = ({ latestBotAudioUri }: UseJarvisAudioProps): UseJ
       -1, false
     );
 
-    // Rotate angle animation
+    // Rotate angle animation (normal - 10 segundos por ciclo)
     rotateAngle.value = withRepeat(
       withTiming(360, { duration: 10000, easing: Easing.linear }),
+      -1, false
+    );
+
+    // Fast rotate animation (3 segundos por ciclo - para estado "pensando")
+    fastRotateAngle.value = withRepeat(
+      withTiming(360, { duration: 3000, easing: Easing.linear }),
       -1, false
     );
 
@@ -105,6 +115,7 @@ export const useJarvisAudio = ({ latestBotAudioUri }: UseJarvisAudioProps): UseJ
       // Cleanup al desmontar
       cancelAnimation(timeValue);
       cancelAnimation(rotateAngle);
+      cancelAnimation(fastRotateAngle);
       cancelAnimation(breathValue);
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -160,20 +171,20 @@ export const useJarvisAudio = ({ latestBotAudioUri }: UseJarvisAudioProps): UseJ
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [animationMode, hasAudioAnimation]);
 
-  // =============== LÓGICA DE AUTO-REPRODUCCIÓN
+  // =============== LÓGICA DE AUTO-REPRODUCCIÓN (simplificada)
   useEffect(() => {
-    // Marcamos que el componente está montado para evitar ejecutar lógica en componentes desmontados
+    // Controlar el montaje del componente para evitar ejecutar lógica en componentes desmontados
     isMountedRef.current = true;
     
-    // Si no hay URI de audio del bot, aseguramos modo normal y salimos
+    // Si no hay URI de audio del bot disponible, asegurar modo normal y salir
     if (!latestBotAudioUri) {
-      setAnimationMode('normal'); // Asegurar modo normal cuando no hay audio
+      setAnimationMode('normal');
       return () => {
         isMountedRef.current = false;
       };
     }
 
-    // Detectar si es un audio NUEVO comparando con el anterior
+    // Detectar si el audio actual es diferente al anterior (audio nuevo)
     const isNewAudio = latestBotAudioUri !== previousAudioUriRef.current;
     
     if (isNewAudio) {
@@ -190,7 +201,7 @@ export const useJarvisAudio = ({ latestBotAudioUri }: UseJarvisAudioProps): UseJ
       const alreadyPlayed = await hasAudioBeenPlayed(currentAudioIdRef.current);
       
       // Condiciones para auto-reproducir:
-      // 1. Audio cargado
+      // 1. Audio cargado completamente
       // 2. No se ha auto-reproducido en esta sesión
       // 3. Player está en estado 'stopped'
       // 4. No ha sido reproducido anteriormente (persistencia)
@@ -214,7 +225,7 @@ export const useJarvisAudio = ({ latestBotAudioUri }: UseJarvisAudioProps): UseJ
               hasAutoPlayedRef.current = false; // Resetear flag en caso de error
             }
           }
-        }, 200); // Delay reducido para mejor responsividad
+        }, 200); // Delay para mejor responsividad
         
         return () => {
           clearTimeout(timer);
@@ -223,7 +234,7 @@ export const useJarvisAudio = ({ latestBotAudioUri }: UseJarvisAudioProps): UseJ
       }
     };
 
-    checkAndPlayAudio(); // Ejecutar verificación
+    checkAndPlayAudio(); // Ejecutar verificación de reproducción
     
     return () => {
       isMountedRef.current = false;
@@ -233,10 +244,10 @@ export const useJarvisAudio = ({ latestBotAudioUri }: UseJarvisAudioProps): UseJ
   // =============== DETECTAR FIN DE AUDIO
   useEffect(() => {
     // Detectar cuando el audio pasa de 'playing' a 'stopped' (fin natural)
-    // Solo se activa si el audio fue auto-reproducido
+    // Solo se activa si el audio fue auto-reproducido por este hook
     if (hasAutoPlayedRef.current && playbackState === 'stopped') {
-      setAnimationMode('resetting'); // Activar modo reset
-      hasAutoPlayedRef.current = false;
+      setAnimationMode('resetting'); // Activar modo reset para volver al estado normal
+      hasAutoPlayedRef.current = false; // Resetear flag para permitir futura reproducción
     }
   }, [playbackState]);
 
@@ -268,6 +279,8 @@ export const useJarvisAudio = ({ latestBotAudioUri }: UseJarvisAudioProps): UseJ
     hasAutoPlayedRef,
     previousAudioUriRef,
     isMountedRef,
-    stopAudio
+    stopAudio,
+    fastRotateAngle,
+    isThinking: isProcessing
   };
 };

@@ -2,6 +2,7 @@ import React, { forwardRef, useImperativeHandle, useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
 import Svg from 'react-native-svg';
 import { useThemeColor } from '@/hooks/use-theme-color';
+import { useConversationContext } from '@/contexts/conversation-context';
 import Animated, {
   useAnimatedProps,
   useAnimatedStyle,
@@ -40,6 +41,9 @@ const JarvisCore = forwardRef<JarvisCoreRef, JarvisCoreProps>(({
   const jarvisGradientMiddle = useThemeColor({}, 'jarvisGradientMiddle');
   const jarvisGradientEnd = useThemeColor({}, 'jarvisGradientEnd');
 
+  // Obtener estado de procesamiento del contexto
+  const { isProcessing } = useConversationContext();
+
   const center = size / 2;
   const scale = size / 320; // Factor de escala basado en tamaño original
 
@@ -50,8 +54,13 @@ const JarvisCore = forwardRef<JarvisCoreRef, JarvisCoreProps>(({
     rotateAngle,
     breathValue,
     timeValue,
-    stopAudio
-  } = useJarvisAudio({ latestBotAudioUri });
+    stopAudio,
+    fastRotateAngle,
+    isThinking
+  } = useJarvisAudio({ 
+    latestBotAudioUri,
+    isProcessing
+  });
 
   // Exponer funciones para uso externo
   useImperativeHandle(ref, () => ({
@@ -71,6 +80,11 @@ const JarvisCore = forwardRef<JarvisCoreRef, JarvisCoreProps>(({
 
   const rotateProps = useAnimatedProps(() => ({
     transform: [{ translateX: center }, { translateY: center }, { rotate: `${rotateAngle.value}deg` }, { translateX: -center }, { translateY: -center }]
+  }));
+
+  // Props para la rotación rápida del anillo externo
+  const fastRotateProps = useAnimatedProps(() => ({
+    transform: [{ translateX: center }, { translateY: center }, { rotate: `${fastRotateAngle.value}deg` }, { translateX: -center }, { translateY: -center }]
   }));
 
   const counterRotateProps = useAnimatedProps(() => ({
@@ -110,7 +124,8 @@ const JarvisCore = forwardRef<JarvisCoreRef, JarvisCoreProps>(({
           scale={scale} 
           jarvisPrimary={jarvisPrimary} 
           rotateProps={rotateProps} 
-          counterRotateProps={counterRotateProps} 
+          counterRotateProps={counterRotateProps}
+          fastRotateProps={isThinking ? fastRotateProps : undefined}
         />
 
         {/* Espectro de Voz (Radial) - Se activa con audio del bot */}

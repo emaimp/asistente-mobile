@@ -34,6 +34,7 @@ export interface CoreRingsProps {
   jarvisPrimary: string;
   rotateProps: any;
   counterRotateProps: any;
+  fastRotateProps?: any;
 }
 
 export interface CoreCenterProps {
@@ -175,10 +176,14 @@ export const CoreRings = ({
   scale, 
   jarvisPrimary, 
   rotateProps, 
-  counterRotateProps 
+  counterRotateProps,
+  fastRotateProps
 }: CoreRingsProps) => {
   const shadowColor = useMemo(() => getShadowColor(jarvisPrimary), [jarvisPrimary]);
   const shadowOffset = useMemo(() => 2 * scale, [scale]);
+  
+  // Usar fastRotateProps para el anillo externo si está disponible, sino usar rotateProps normal
+  const outerRingProps = fastRotateProps || rotateProps;
   
   return (
     <>
@@ -190,7 +195,7 @@ export const CoreRings = ({
         />
       </AnimatedG>
 
-      <AnimatedG animatedProps={rotateProps}>
+      <AnimatedG animatedProps={outerRingProps}>
         {/* Sombra del anillo principal externo */}
         <Circle
           cx={center + shadowOffset} cy={center + shadowOffset} r={150 * scale}
