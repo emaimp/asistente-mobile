@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useAudioPlayer } from '@/hooks/use-audio-player';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   useSharedValue,
   withRepeat,
@@ -27,7 +28,38 @@ export interface UseJarvisAudioProps {
   latestBotAudioUri?: string;
 }
 
-// ==================== HOOK PRINCIPAL ====================
+// =============== FUNCIONES HELPER PARA PERSISTENCIA
+
+// Genera un ID único para el audio basado en su URI
+const generateAudioId = (audioUri: string): string => {
+  const hash = audioUri.split('').reduce((acc, char) => {
+    acc = ((acc << 5) - acc) + char.charCodeAt(0);
+    return acc & acc;
+  }, 0);
+  return `jarvis_audio_${Math.abs(hash)}`;
+};
+
+// Verifica si un audio ya fue reproducido
+const hasAudioBeenPlayed = async (audioId: string): Promise<boolean> => {
+  try {
+    const played = await AsyncStorage.getItem(`audio_${audioId}`);
+    return played === 'true';
+  } catch (error) {
+    console.warn('Error al verificar estado de reproducción:', error);
+    return false;
+  }
+};
+
+// Marca un audio como reproducido
+const markAudioAsPlayed = async (audioId: string): Promise<void> => {
+  try {
+    await AsyncStorage.setItem(`audio_${audioId}`, 'true');
+  } catch (error) {
+    console.warn('Error al marcar audio como reproducido:', error);
+  }
+};
+
+// =============== HOOK PRINCIPAL
 export const useJarvisAudio = ({ latestBotAudioUri }: UseJarvisAudioProps): UseJarvisAudioReturn => {
   // Hook para manejar audio del bot
   const { playbackState, play, stop, isLoaded } = useAudioPlayer(latestBotAudioUri || '');
@@ -36,6 +68,7 @@ export const useJarvisAudio = ({ latestBotAudioUri }: UseJarvisAudioProps): UseJ
   const hasAutoPlayedRef = useRef(false);
   const previousAudioUriRef = useRef<string | null>(null);
   const isMountedRef = useRef(false);
+  const currentAudioIdRef = useRef<string | null>(null);
 
   // Valores animados
   const audioAmplitude = useSharedValue(0);
@@ -43,7 +76,7 @@ export const useJarvisAudio = ({ latestBotAudioUri }: UseJarvisAudioProps): UseJ
   const breathValue = useSharedValue(0);
   const timeValue = useSharedValue(0);
 
-  // ==================== ANIMACIONES ====================
+  // =============== ANIMACIONES
   
   // TimeValue animation
   useEffect(() => {
@@ -74,35 +107,16 @@ export const useJarvisAudio = ({ latestBotAudioUri }: UseJarvisAudioProps): UseJ
     }
   }, [audioAmplitude, breathValue, rotateAngle, latestBotAudioUri]);
 
-  // ==================== INICIALIZACIÓN AL MONTAR ====================
+  // =============== LÓGICA UNIFICADA DE AUTO-REPRODUCCIÓN CON PERSISTENCIA
   useEffect(() => {
     isMountedRef.current = true;
     
-    // Si hay audio disponible al montar, intentar auto-reproducir
-    if (latestBotAudioUri && isLoaded && playbackState === 'stopped' && !hasAutoPlayedRef.current) {
-      const timer = setTimeout(() => {
-        if (isMountedRef.current) {
-          hasAutoPlayedRef.current = true;
-          play();
-          // Activar espectro de voz reactivo
-          audioAmplitude.value = withRepeat(
-            withTiming(2, { duration: 300, easing: Easing.bezier(0.25, 0.1, 0.25, 1) }),
-            -1, true
-          );
-        }
-      }, 200); // Delay para asegurar que todo esté inicializado
-      
+    // Solo proceder si hay audio disponible
+    if (!latestBotAudioUri) {
       return () => {
-        clearTimeout(timer);
         isMountedRef.current = false;
       };
     }
-  }, []);
-
-  // ==================== LÓGICA DE AUTO-REPRODUCCIÓN ====================
-  useEffect(() => {
-    // Solo proceder si hay audio disponible
-    if (!latestBotAudioUri) return;
 
     // Detectar si es un audio NUEVO (diferente al anterior)
     const isNewAudio = latestBotAudioUri !== previousAudioUriRef.current;
@@ -110,27 +124,60 @@ export const useJarvisAudio = ({ latestBotAudioUri }: UseJarvisAudioProps): UseJ
     if (isNewAudio) {
       previousAudioUriRef.current = latestBotAudioUri;
       hasAutoPlayedRef.current = false; // Resetear para el audio nuevo
+      
+      // Generar ID único para este audio
+      currentAudioIdRef.current = generateAudioId(latestBotAudioUri);
     }
 
-    // Solo auto-reproducir SI es audio nuevo Y no se ha reproducido antes
-    if (isNewAudio && isLoaded && playbackState === 'stopped' && !hasAutoPlayedRef.current) {
-      hasAutoPlayedRef.current = true; // Marcar como ya reproducido
+    // Verificar si ya fue reproducido anteriormente
+    const checkAndPlayAudio = async () => {
+      if (!currentAudioIdRef.current) return;
       
-      // Auto-reproducir con un pequeño delay para evitar conflictos
-      const timer = setTimeout(() => {
-        play();
-        // Activar espectro de voz reactivo
-        audioAmplitude.value = withRepeat(
-          withTiming(2, { duration: 300, easing: Easing.bezier(0.25, 0.1, 0.25, 1) }),
-          -1, true
-        );
-      }, 500);
+      const alreadyPlayed = await hasAudioBeenPlayed(currentAudioIdRef.current);
       
-      return () => clearTimeout(timer);
-    }
-  }, [latestBotAudioUri, isLoaded, playbackState, play]);
+      // Solo auto-reproducir SI el audio está cargado, no se ha reproducido antes, el player está stopped Y no ha sido reproducido anteriormente
+      if (isLoaded && !hasAutoPlayedRef.current && playbackState === 'stopped' && !alreadyPlayed) {
+        hasAutoPlayedRef.current = true; // Marcar como ya reproducido en esta sesión
+        
+        // Auto-reproducir con delay optimizado para evitar conflictos
+        const timer = setTimeout(async () => {
+          if (isMountedRef.current) {
+            try {
+              await play();
+              
+              // Activar espectro de voz reactivo
+              audioAmplitude.value = withRepeat(
+                withTiming(2, { duration: 300, easing: Easing.bezier(0.25, 0.1, 0.25, 1) }),
+                -1, true
+              );
+              
+              // Marcar como reproducido en almacenamiento persistente
+              if (currentAudioIdRef.current) {
+                await markAudioAsPlayed(currentAudioIdRef.current);
+              }
+            } catch (error) {
+              console.error('Error al reproducir audio:', error);
+              // En caso de error, resetear flags para intentar de nuevo
+              hasAutoPlayedRef.current = false;
+            }
+          }
+        }, 300); // Delay optimizado para mejor compatibilidad
+        
+        return () => {
+          clearTimeout(timer);
+          isMountedRef.current = false;
+        };
+      }
+    };
 
-  // ==================== FUNCIÓN STOP ====================
+    checkAndPlayAudio();
+    
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, [latestBotAudioUri, isLoaded, playbackState, play, audioAmplitude]);
+
+  // =============== FUNCIÓN STOP
   const stopAudio = async () => {
     try {
       await stop();
