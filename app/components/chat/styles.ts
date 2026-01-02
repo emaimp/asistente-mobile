@@ -6,7 +6,7 @@ export const styles = StyleSheet.create({
   container: {
     flex: 1,
     width: '100%',
-    paddingTop: 95, // Compensar TopBar absoluta (height: 95)
+    paddingTop: 95, // Compensar TopBar absoluta
   },
   contentContainer: {
     flexGrow: 1,
@@ -105,7 +105,7 @@ export const styles = StyleSheet.create({
     position: 'relative',
     borderWidth: 1,
     borderRadius: 8,
-    paddingHorizontal: 16,
+    paddingHorizontal: 8,
     paddingVertical: 6,
     minHeight: 44,
     maxHeight: 100,
@@ -117,7 +117,6 @@ export const styles = StyleSheet.create({
     fontSize: 16,
     paddingVertical: 6,
     paddingRight: 90,
-    paddingLeft: 50,
   },
   sendButton: {
     position: 'absolute',
@@ -154,7 +153,6 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 8,
-    backgroundColor: '#ff444420',
     zIndex: 8,
   },
 });

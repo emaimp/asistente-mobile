@@ -57,21 +57,12 @@ export function ChatInput({
     }
   };
 
+  // Determina si mostrar botón de envío o de grabación
+  const hasText = inputText.trim().length > 0;
+
   return (
     <View style={styles.inputContainer}>
       <View style={[styles.inputWrapper, { borderColor: tintColor, backgroundColor }]}>
-        <TouchableOpacity
-          style={styles.recordButton}
-          onPress={handleRecording}
-          disabled={isProcessing}
-        >
-          <IconSymbol
-            name="mic.fill"
-            size={20}
-            color={isRecording ? errorColor : textColor}
-          />
-        </TouchableOpacity>
-        
         {/* Botón de stop de JARVIS - siempre visible */}
         {onStopJarvis && (
           <TouchableOpacity
@@ -101,15 +92,17 @@ export function ChatInput({
           onSubmitEditing={handleSubmit}
           blurOnSubmit={false}
         />
+        
+        {/* Botón alternante: enviar (con texto) o grabar (sin texto) */}
         <TouchableOpacity
-          style={[styles.sendButton, (!inputText.trim() || isProcessing) && styles.sendButtonDisabled, { borderColor: tintColor }]}
-          onPress={handleSubmit}
-          disabled={!inputText.trim() || isProcessing}
+          style={[styles.sendButton, { borderColor: tintColor }]}
+          onPress={hasText ? handleSubmit : handleRecording}
+          disabled={isProcessing}
         >
           <IconSymbol
-            name="paperplane.fill"
+            name={hasText ? "paperplane.fill" : "mic.fill"}
             size={20}
-            color={(!inputText.trim() || isProcessing) ? textColor : tintColor}
+            color={hasText ? tintColor : (isRecording ? errorColor : textColor)}
           />
         </TouchableOpacity>
       </View>
