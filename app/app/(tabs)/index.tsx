@@ -92,19 +92,14 @@ export default function HomeScreen() {
           </TouchableOpacity>
         }
         rightElement={
-          <View style={styles.topBarRight}>
-            <TouchableOpacity onPress={() => setShowChat(!showChat)} style={styles.toggleButton}>
-              <IconSymbol name={showChat ? "eye.slash.fill" : "eye.fill"} size={20} color={textColor} />
-            </TouchableOpacity>
-            <View style={styles.messageContainer}>
-              <IconSymbol name="message.fill" size={24} color={textColor} />
-              {messages.length > 0 && (
-                <View style={[styles.messageBadge, { backgroundColor: tintColor }]}>
-                  <Text style={[styles.badgeText, { color: backgroundColor }]}>{messages.length}</Text>
-                </View>
-              )}
-            </View>
-          </View>
+          <TouchableOpacity onPress={() => setShowChat(!showChat)} style={styles.messageContainer}>
+            <IconSymbol name="message.fill" size={24} color={showChat ? tintColor : textColor} />
+            {!showChat && messages.filter(msg => msg.type === 'bot').length > 0 && (
+              <View style={[styles.messageBadge, { backgroundColor: tintColor }]}>
+                <Text style={[styles.badgeText, { color: backgroundColor }]}>{messages.filter(msg => msg.type === 'bot').length}</Text>
+              </View>
+            )}
+          </TouchableOpacity>
         }
       />
       <View style={styles.mainContainer}>

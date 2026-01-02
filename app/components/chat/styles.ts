@@ -105,7 +105,7 @@ export const styles = StyleSheet.create({
     position: 'relative',
     borderWidth: 1,
     borderRadius: 8,
-    paddingHorizontal: 8,
+    paddingHorizontal: 14,
     paddingVertical: 6,
     minHeight: 44,
     maxHeight: 100,
