@@ -1,11 +1,12 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useAudioPlayer } from '@/hooks/use-audio-player';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   useSharedValue,
   withRepeat,
   withTiming,
-  Easing
+  Easing,
+  cancelAnimation
 } from 'react-native-reanimated';
 
 // Tipos para el hook
@@ -70,86 +71,139 @@ export const useJarvisAudio = ({ latestBotAudioUri }: UseJarvisAudioProps): UseJ
   const isMountedRef = useRef(false);
   const currentAudioIdRef = useRef<string | null>(null);
 
+  // Estados para controlar las animaciones
+  const [animationMode, setAnimationMode] = useState<'normal' | 'reactive' | 'resetting'>('normal');
+  const [hasAudioAnimation, setHasAudioAnimation] = useState(false);
+
   // Valores animados
   const audioAmplitude = useSharedValue(0);
   const rotateAngle = useSharedValue(0);
   const breathValue = useSharedValue(0);
   const timeValue = useSharedValue(0);
 
-  // =============== ANIMACIONES
-  
-  // TimeValue animation
+  // =============== ANIMACIONES BÁSICAS (solo una vez)
   useEffect(() => {
+    // TimeValue animation
     timeValue.value = withRepeat(
       withTiming(1000, { duration: 3500, easing: Easing.linear }),
       -1, false
     );
-  }, [timeValue]);
 
-  // Rotate angle y breath animations
-  useEffect(() => {
+    // Rotate angle animation
     rotateAngle.value = withRepeat(
       withTiming(360, { duration: 10000, easing: Easing.linear }),
       -1, false
     );
 
+    // Breath animation
     breathValue.value = withRepeat(
       withTiming(1, { duration: 1800, easing: Easing.inOut(Easing.ease) }),
       -1, true
     );
 
-    // Simulación de ruido de audio (solo cuando no hay audio del bot)
-    if (!latestBotAudioUri) {
+    return () => {
+      // Cleanup al desmontar
+      cancelAnimation(timeValue);
+      cancelAnimation(rotateAngle);
+      cancelAnimation(breathValue);
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Dependencias vacías - solo se ejecuta una vez
+
+  // =============== CONTROL DE MODO DE ANIMACIÓN
+  useEffect(() => {
+    if (animationMode === 'normal') {
+      // Animación normal: ruido de fondo suave
+      if (hasAudioAnimation) {
+        // Cancelar cualquier animación previa
+        cancelAnimation(audioAmplitude);
+        setHasAudioAnimation(false);
+      }
+      
+      // Activar animación suave de ruido
       audioAmplitude.value = withRepeat(
         withTiming(1, { duration: 400, easing: Easing.bezier(0.25, 0.1, 0.25, 1) }),
         -1, true
       );
+      setHasAudioAnimation(true);
+      
+    } else if (animationMode === 'reactive') {
+      // Animación reactiva: durante el audio
+      if (hasAudioAnimation) {
+        cancelAnimation(audioAmplitude);
+        setHasAudioAnimation(false);
+      }
+      
+      audioAmplitude.value = withRepeat(
+        withTiming(2, { duration: 300, easing: Easing.bezier(0.25, 0.1, 0.25, 1) }),
+        -1, true
+      );
+      setHasAudioAnimation(true);
+      
+    } else if (animationMode === 'resetting') {
+      // Modo reset: transición suave al estado normal
+      if (hasAudioAnimation) {
+        cancelAnimation(audioAmplitude);
+        setHasAudioAnimation(false);
+      }
+      
+      audioAmplitude.value = withTiming(0.5, { 
+        duration: 300, 
+        easing: Easing.bezier(0.25, 0.1, 0.25, 1) 
+      });
+      
+      // Cambiar a modo normal después de la transición
+      setTimeout(() => {
+        setAnimationMode('normal');
+      }, 350);
     }
-  }, [audioAmplitude, breathValue, rotateAngle, latestBotAudioUri]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [animationMode, hasAudioAnimation]);
 
-  // =============== LÓGICA UNIFICADA DE AUTO-REPRODUCCIÓN CON PERSISTENCIA
+  // =============== LÓGICA DE AUTO-REPRODUCCIÓN
   useEffect(() => {
+    // Marcamos que el componente está montado para evitar ejecutar lógica en componentes desmontados
     isMountedRef.current = true;
     
-    // Solo proceder si hay audio disponible
+    // Si no hay URI de audio del bot, aseguramos modo normal y salimos
     if (!latestBotAudioUri) {
+      setAnimationMode('normal'); // Asegurar modo normal cuando no hay audio
       return () => {
         isMountedRef.current = false;
       };
     }
 
-    // Detectar si es un audio NUEVO (diferente al anterior)
+    // Detectar si es un audio NUEVO comparando con el anterior
     const isNewAudio = latestBotAudioUri !== previousAudioUriRef.current;
     
     if (isNewAudio) {
+      // Actualizar referencias para el nuevo audio
       previousAudioUriRef.current = latestBotAudioUri;
-      hasAutoPlayedRef.current = false; // Resetear para el audio nuevo
-      
-      // Generar ID único para este audio
+      hasAutoPlayedRef.current = false; // Resetear flag de auto-reproducción
       currentAudioIdRef.current = generateAudioId(latestBotAudioUri);
     }
 
-    // Verificar si ya fue reproducido anteriormente
     const checkAndPlayAudio = async () => {
       if (!currentAudioIdRef.current) return;
       
+      // Verificar si este audio ya fue reproducido anteriormente (persistencia)
       const alreadyPlayed = await hasAudioBeenPlayed(currentAudioIdRef.current);
       
-      // Solo auto-reproducir SI el audio está cargado, no se ha reproducido antes, el player está stopped Y no ha sido reproducido anteriormente
+      // Condiciones para auto-reproducir:
+      // 1. Audio cargado
+      // 2. No se ha auto-reproducido en esta sesión
+      // 3. Player está en estado 'stopped'
+      // 4. No ha sido reproducido anteriormente (persistencia)
       if (isLoaded && !hasAutoPlayedRef.current && playbackState === 'stopped' && !alreadyPlayed) {
-        hasAutoPlayedRef.current = true; // Marcar como ya reproducido en esta sesión
+        hasAutoPlayedRef.current = true; // Marcar como auto-reproducido
         
-        // Auto-reproducir con delay optimizado para evitar conflictos
+        // Timer con delay para evitar conflictos con otros procesos
         const timer = setTimeout(async () => {
           if (isMountedRef.current) {
             try {
+              // Ejecutar reproducción del audio
               await play();
-              
-              // Activar espectro de voz reactivo
-              audioAmplitude.value = withRepeat(
-                withTiming(2, { duration: 300, easing: Easing.bezier(0.25, 0.1, 0.25, 1) }),
-                -1, true
-              );
+              setAnimationMode('reactive'); // Cambiar a modo reactivo para animaciones
               
               // Marcar como reproducido en almacenamiento persistente
               if (currentAudioIdRef.current) {
@@ -157,11 +211,10 @@ export const useJarvisAudio = ({ latestBotAudioUri }: UseJarvisAudioProps): UseJ
               }
             } catch (error) {
               console.error('Error al reproducir audio:', error);
-              // En caso de error, resetear flags para intentar de nuevo
-              hasAutoPlayedRef.current = false;
+              hasAutoPlayedRef.current = false; // Resetear flag en caso de error
             }
           }
-        }, 300); // Delay optimizado para mejor compatibilidad
+        }, 200); // Delay reducido para mejor responsividad
         
         return () => {
           clearTimeout(timer);
@@ -170,21 +223,34 @@ export const useJarvisAudio = ({ latestBotAudioUri }: UseJarvisAudioProps): UseJ
       }
     };
 
-    checkAndPlayAudio();
+    checkAndPlayAudio(); // Ejecutar verificación
     
     return () => {
       isMountedRef.current = false;
     };
-  }, [latestBotAudioUri, isLoaded, playbackState, play, audioAmplitude]);
+  }, [latestBotAudioUri, isLoaded, playbackState, play]);
+
+  // =============== DETECTAR FIN DE AUDIO
+  useEffect(() => {
+    // Detectar cuando el audio pasa de 'playing' a 'stopped' (fin natural)
+    // Solo se activa si el audio fue auto-reproducido
+    if (hasAutoPlayedRef.current && playbackState === 'stopped') {
+      setAnimationMode('resetting'); // Activar modo reset
+      hasAutoPlayedRef.current = false;
+    }
+  }, [playbackState]);
 
   // =============== FUNCIÓN STOP
   const stopAudio = async () => {
     try {
+      // Detener la reproducción del audio usando el hook useAudioPlayer
       await stop();
-      // Resetear flag para permitir nueva reproducción
+      
+      // Resetear flag para permitir futuras reproducciones automáticas
       hasAutoPlayedRef.current = false;
-      // Resetear amplitud visual
-      audioAmplitude.value = withTiming(0.5, { duration: 300 });
+      
+      // Activar modo reset para volver suavemente al estado normal de animaciones
+      setAnimationMode('resetting');
     } catch (error) {
       console.error('Error stopping JARVIS audio:', error);
     }
