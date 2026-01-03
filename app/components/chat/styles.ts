@@ -98,6 +98,7 @@ export const styles = StyleSheet.create({
 
   // input.tsx (entrada de texto)
   inputContainer: {
+    paddingTop: 10,
     paddingHorizontal: 20,
     paddingBottom: 20,
   },

@@ -71,6 +71,7 @@ export function ChatInput({
             <TouchableOpacity
               style={[
                 styles.jarvisStopButton,
+                { backgroundColor: hasJarvisAudio ? errorColor + '50' : textColor + '20' },
                 !hasJarvisAudio && { opacity: 0.4 }
               ]}
               onPress={onStopJarvis}

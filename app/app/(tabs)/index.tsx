@@ -87,6 +87,7 @@ export default function HomeScreen() {
       {showChat && (
         <TopBar
           backgroundColor={backgroundColor}
+          borderBottomColor={textColor + '09'}
           leftElement={
             <TouchableOpacity onPress={() => drawerRef.current?.open()}>
               <IconSymbol name="menu" size={24} color={textColor} />

@@ -12,6 +12,7 @@ interface TopBarProps {
   height?: number;
   backgroundColor?: string;
   borderBottomColor?: string;
+  borderBottomWidth?: number;
 }
 
 export function TopBar({
@@ -20,6 +21,7 @@ export function TopBar({
   rightElement,
   height = 95,
   borderBottomColor,
+  borderBottomWidth = 1,
   backgroundColor = 'transparent'
 }: TopBarProps) {
   return (
@@ -29,7 +31,7 @@ export function TopBar({
         height,
         backgroundColor,
         borderBottomColor,
-        borderBottomWidth: borderBottomColor ? 1 : 0,
+        borderBottomWidth: borderBottomColor ? borderBottomWidth : 0,
       }
     ]}>
       <View style={styles.leftContainer}>

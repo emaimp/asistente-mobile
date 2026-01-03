@@ -132,7 +132,6 @@ export const BackgroundPatterns = {
         tone1: '#1a1a1a',
         tone2: '#000000',
         tone3: '#404040',
-        tone4: '#525252',
       },
     },
     Woman: {
@@ -143,9 +142,8 @@ export const BackgroundPatterns = {
       },
       dark: {
         tone1: '#1a1a1a',
-        tone2: '#2d2d2d',
+        tone2: '#000000',
         tone3: '#404040',
-        tone4: '#525252',
       },
     },
   },
