@@ -84,24 +84,16 @@ export default function HomeScreen() {
     <ThemedView style={{flex: 1, backgroundColor: 'transparent'}}>
       <BackgroundPattern gender={gender} colorScheme={colorScheme as 'light' | 'dark'} />
       <View style={[StyleSheet.absoluteFillObject, {backgroundColor: Colors[colorScheme === 'dark' ? 'dark' : 'light'].tabBackground, zIndex: -2}]} />
-      <TopBar
-        backgroundColor={backgroundColor}
-        leftElement={
-          <TouchableOpacity onPress={() => drawerRef.current?.open()}>
-            <IconSymbol name="menu" size={24} color={textColor} />
-          </TouchableOpacity>
-        }
-        rightElement={
-          <TouchableOpacity onPress={() => setShowChat(!showChat)} style={styles.messageContainer}>
-            <IconSymbol name="message.fill" size={24} color={showChat ? tintColor : textColor} />
-            {!showChat && messages.filter(msg => msg.type === 'bot').length > 0 && (
-              <View style={[styles.messageBadge, { backgroundColor: tintColor }]}>
-                <Text style={[styles.badgeText, { color: backgroundColor }]}>{messages.filter(msg => msg.type === 'bot').length}</Text>
-              </View>
-            )}
-          </TouchableOpacity>
-        }
-      />
+      {showChat && (
+        <TopBar
+          backgroundColor={backgroundColor}
+          leftElement={
+            <TouchableOpacity onPress={() => drawerRef.current?.open()}>
+              <IconSymbol name="menu" size={24} color={textColor} />
+            </TouchableOpacity>
+          }
+        />
+      )}
       <View style={styles.mainContainer}>
         {showChat ? (
           <ConversationView />
@@ -124,6 +116,18 @@ export default function HomeScreen() {
         isProcessing={isProcessing}
         placeholder={t('chat.placeholder')}
         hasJarvisAudio={hasJarvisAudio}
+        rightElement={
+          <TouchableOpacity onPress={() => setShowChat(!showChat)} style={[styles.externalButton, { borderColor: tintColor }]}>
+            <IconSymbol name="message.fill" size={24} color={showChat ? tintColor : textColor} />
+            {!showChat && messages.filter(msg => msg.type === 'bot').length > 0 && (
+              <View style={[styles.messageBadge, { backgroundColor: tintColor }]}>
+                <Text style={[styles.badgeText, { color: backgroundColor }]}>
+                  {messages.filter(msg => msg.type === 'bot').length}
+                </Text>
+              </View>
+            )}
+          </TouchableOpacity>
+        }
       />
       <InitialModal visible={showInitialModal} onClose={handleCloseModal} />
       <SideDrawer ref={drawerRef} backgroundColor={backgroundAltColor} />
@@ -165,5 +169,14 @@ const styles = StyleSheet.create({
   },
   eyeIcon: {
     fontSize: 20,
+  },
+  externalButton: {
+    position: 'relative',
+    height: 44,
+    width: 44,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 8,
+    borderWidth: 1,
   },
 });

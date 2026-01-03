@@ -101,7 +101,13 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingBottom: 20,
   },
+  inputRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
   inputWrapper: {
+    flex: 1,
     position: 'relative',
     borderWidth: 1,
     borderRadius: 8,
@@ -154,5 +160,12 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 8,
     zIndex: 8,
+  },
+  externalButton: {
+    height: 44,
+    width: 44,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 8,
   },
 });

@@ -13,6 +13,7 @@ interface ChatInputProps {
   isProcessing: boolean;
   placeholder: string;
   hasJarvisAudio?: boolean;
+  rightElement?: React.ReactNode;
 }
 
 /*
@@ -25,7 +26,8 @@ export function ChatInput({
   onStopJarvis,
   isProcessing, 
   placeholder,
-  hasJarvisAudio = false 
+  hasJarvisAudio = false,
+  rightElement
 }: ChatInputProps) {
   const [inputText, setInputText] = useState('');
 
@@ -62,49 +64,54 @@ export function ChatInput({
 
   return (
     <View style={styles.inputContainer}>
-      <View style={[styles.inputWrapper, { borderColor: tintColor, backgroundColor }]}>
-        {/* Botón de stop de JARVIS - siempre visible */}
-        {onStopJarvis && (
+      <View style={styles.inputRow}>
+        <View style={[styles.inputWrapper, { borderColor: tintColor, backgroundColor }]}>
+          {/* Botón de stop de JARVIS - siempre visible */}
+          {onStopJarvis && (
+            <TouchableOpacity
+              style={[
+                styles.jarvisStopButton,
+                !hasJarvisAudio && { opacity: 0.4 }
+              ]}
+              onPress={onStopJarvis}
+              disabled={!hasJarvisAudio || isProcessing}
+            >
+              <IconSymbol
+                name="stop.fill"
+                size={20}
+                color={hasJarvisAudio ? errorColor : textColor}
+              />
+            </TouchableOpacity>
+          )}
+          
+          <TextInput
+            style={[styles.textInput, { color: textColor }]}
+            value={inputText}
+            onChangeText={setInputText}
+            placeholder={placeholder}
+            placeholderTextColor={textColor + '80'}
+            multiline
+            maxLength={500}
+            onSubmitEditing={handleSubmit}
+            blurOnSubmit={false}
+          />
+          
+          {/* Botón alternante: enviar (con texto) o grabar (sin texto) */}
           <TouchableOpacity
-            style={[
-              styles.jarvisStopButton,
-              !hasJarvisAudio && { opacity: 0.4 }
-            ]}
-            onPress={onStopJarvis}
-            disabled={!hasJarvisAudio || isProcessing}
+            style={[styles.sendButton, { borderColor: tintColor }]}
+            onPress={hasText ? handleSubmit : handleRecording}
+            disabled={isProcessing}
           >
             <IconSymbol
-              name="stop.fill"
+              name={hasText ? "paperplane.fill" : "mic.fill"}
               size={20}
-              color={hasJarvisAudio ? errorColor : textColor}
+              color={hasText ? tintColor : (isRecording ? errorColor : textColor)}
             />
           </TouchableOpacity>
-        )}
+        </View>
         
-        <TextInput
-          style={[styles.textInput, { color: textColor }]}
-          value={inputText}
-          onChangeText={setInputText}
-          placeholder={placeholder}
-          placeholderTextColor={textColor + '80'}
-          multiline
-          maxLength={500}
-          onSubmitEditing={handleSubmit}
-          blurOnSubmit={false}
-        />
-        
-        {/* Botón alternante: enviar (con texto) o grabar (sin texto) */}
-        <TouchableOpacity
-          style={[styles.sendButton, { borderColor: tintColor }]}
-          onPress={hasText ? handleSubmit : handleRecording}
-          disabled={isProcessing}
-        >
-          <IconSymbol
-            name={hasText ? "paperplane.fill" : "mic.fill"}
-            size={20}
-            color={hasText ? tintColor : (isRecording ? errorColor : textColor)}
-          />
-        </TouchableOpacity>
+        {/* Botón externo en el lado derecho del TextInput */}
+        {rightElement}
       </View>
     </View>
   );
