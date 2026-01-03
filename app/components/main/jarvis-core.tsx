@@ -6,7 +6,10 @@ import { useConversationContext } from '@/contexts/conversation-context';
 import Animated, {
   useAnimatedProps,
   useAnimatedStyle,
-  interpolate
+  interpolate,
+  useSharedValue,
+  withTiming,
+  Easing
 } from 'react-native-reanimated';
 import { 
   VoiceSpectrum, 
@@ -68,10 +71,30 @@ const JarvisCore = forwardRef<JarvisCoreRef, JarvisCoreProps>(({
     isPlaying: () => playbackState === 'playing'
   }));
 
+  // Animación de fade-in para carga suave del componente
+  const fadeInOpacity = useSharedValue(0);
+  
+  useEffect(() => {
+    // Iniciar fade-in después de un pequeño delay para que las animaciones se estabilicen
+    const timer = setTimeout(() => {
+      fadeInOpacity.value = withTiming(1, { 
+        duration: 600, 
+        easing: Easing.out(Easing.ease) 
+      });
+    }, 50);
+    
+    return () => clearTimeout(timer);
+  }, [fadeInOpacity]);
+
   // Notificar cambios en el estado de reproducción
   useEffect(() => {
     onPlaybackStateChange?.(playbackState === 'playing');
   }, [playbackState, onPlaybackStateChange]);
+
+  // Estilo animado para fade-in del contenedor principal
+  const containerFadeStyle = useAnimatedStyle(() => ({
+    opacity: fadeInOpacity.value,
+  }));
 
   // Estilos animados
   const glowStyle = useAnimatedStyle(() => ({
@@ -97,7 +120,7 @@ const JarvisCore = forwardRef<JarvisCoreRef, JarvisCoreProps>(({
   }));
 
   return (
-    <View style={styles.container}>
+    <Animated.View style={[styles.container, containerFadeStyle]}>
       <Animated.View style={[{ position: 'absolute', width: 180 * scale, height: 180 * scale, borderRadius: 170 * scale }, glowStyle]}>
         <View style={[{ flex: 1, backgroundColor: jarvisGlow, borderRadius: 170 * scale }]} />
       </Animated.View>
@@ -147,7 +170,7 @@ const JarvisCore = forwardRef<JarvisCoreRef, JarvisCoreProps>(({
           coreBreathProps={coreBreathProps} 
         />
       </Svg>
-    </View>
+    </Animated.View>
   );
 });
 
