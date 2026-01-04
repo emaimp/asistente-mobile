@@ -4,9 +4,9 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Modal } from 'reac
 import { Snackbar } from 'react-native-paper';
 import { ThemedView } from '@/components/ui/themed-view';
 import { ThemedText } from '@/components/ui/themed-text';
-import { useThemeColor } from '@/hooks/use-theme-color';
+import { useThemeColor } from '@/hooks/theme/use-theme-color';
 import { useLanguage } from '@/contexts/language-context';
-import { useBackendUrlConfig } from '@/hooks/api-settings/use-backend-url-config';
+import { useBackendUrlConfig } from '@/hooks/api/settings/use-backend-url-config';
 
 interface InitialModalProps {
   visible: boolean;

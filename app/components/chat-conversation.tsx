@@ -3,7 +3,7 @@ import { View, FlatList, ScrollView, ActivityIndicator } from 'react-native';
 import { useConversationContext } from '@/contexts/conversation-context';
 import { ThemedText } from '@/components/ui/themed-text';
 import { ThemedView } from '@/components/ui/themed-view';
-import { useThemeColor } from '@/hooks/use-theme-color';
+import { useThemeColor } from '@/hooks/theme/use-theme-color';
 import { useLanguage } from '@/contexts/language-context';
 import { AudioMessagePlayer } from './chat/audio';
 import { styles } from './chat/styles';

@@ -1,7 +1,7 @@
 import React, { forwardRef, useImperativeHandle, useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
 import Svg from 'react-native-svg';
-import { useThemeColor } from '@/hooks/use-theme-color';
+import { useThemeColor } from '@/hooks/theme/use-theme-color';
 import { useConversationContext } from '@/contexts/conversation-context';
 import Animated, {
   useAnimatedProps,

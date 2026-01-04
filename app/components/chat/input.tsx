@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { View, TextInput, TouchableOpacity } from 'react-native';
 import { IconSymbol } from '../ui/icon-symbol';
-import { useThemeColor } from '@/hooks/use-theme-color';
-import { useAudioRecording } from '@/hooks/use-audio-recording';
+import { useThemeColor } from '@/hooks/theme/use-theme-color';
+import { useAudioRecording } from '@/hooks/audio/use-audio-recording';
 import { styles } from './styles';
 
 interface ChatInputProps {

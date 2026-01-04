@@ -4,7 +4,7 @@
  */
 
 import { Colors } from '@/constants/theme';
-import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useColorScheme } from '@/hooks/theme/use-color-scheme';
 import { useGender } from '@/contexts/gender-context';
 
 type ThemeColorName = keyof typeof Colors.light & keyof typeof Colors.dark |

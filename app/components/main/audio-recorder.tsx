@@ -2,10 +2,9 @@ import React, { useEffect, useRef } from 'react';
 import { View, Text, Pressable, StyleSheet, Dimensions } from 'react-native';
 import Animated, { useSharedValue, useAnimatedStyle, withRepeat, withTiming, cancelAnimation } from 'react-native-reanimated';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useAudioRecording } from '@/hooks/use-audio-recording';
-import { useAudioPlaybackContext } from '@/contexts/audio-playback-context';
+import { useAudioRecording } from '@/hooks/audio/use-audio-recording';
 import { IconSymbol } from '../ui/icon-symbol';
-import { useThemeColor } from '@/hooks/use-theme-color';
+import { useThemeColor } from '@/hooks/theme/use-theme-color';
 import { useLanguage } from '@/contexts/language-context';
 
 interface AudioRecorderProps {
@@ -21,7 +20,6 @@ export default function AudioRecorder({ onRecordingComplete, isProcessing = fals
   const styles = getResponsiveStyles(isSmallScreen); // Estilos responsivos
 
   const { isRecording, startRecording, stopRecording } = useAudioRecording(onRecordingComplete);
-  const { isAnyAudioPlaying, stopAllPlayback } = useAudioPlaybackContext();
   const glowScale = useSharedValue(1);
   const glowOpacity = useSharedValue(0.5);
   const buttonScale = useSharedValue(1);
@@ -60,7 +58,6 @@ export default function AudioRecorder({ onRecordingComplete, isProcessing = fals
   const getIconName = () => {
     if (isRecording) return 'record.fill'; // Grabando
     if (isProcessing) return 'mic.fill'; // Procesando
-    if (isAnyAudioPlaying) return 'volume.up.fill'; // Reproduciendo
     return 'mic.fill'; // Default
   };
 
@@ -68,7 +65,6 @@ export default function AudioRecorder({ onRecordingComplete, isProcessing = fals
   const getButtonStyle = () => {
     if (isRecording) return styles.recordingButton; // Grabando
     if (isProcessing) return styles.processingButton; // Procesando
-    if (isAnyAudioPlaying) return styles.playingButton; // Reproduciendo
     return {}; // Default
   };
 
@@ -79,21 +75,18 @@ export default function AudioRecorder({ onRecordingComplete, isProcessing = fals
   const getGradientColors = (): readonly [string, string] => {
     if (isRecording) return [tintColor, tintColor + '66'];
     if (isProcessing) return [tintColor, tintColor + '66'];
-    if (isAnyAudioPlaying) return [tintColor, tintColor + '66'];
     return [tintColor, tintColor + '66'];
   };
 
   const getGlowStyle = () => {
     if (isRecording) return { backgroundColor: tintColor + 'CC', shadowColor: tintColor };
     if (isProcessing) return { backgroundColor: tintColor + 'CC', shadowColor: tintColor };
-    if (isAnyAudioPlaying) return { backgroundColor: tintColor + 'CC', shadowColor: tintColor };
     return { backgroundColor: tintColor + 'CC', shadowColor: tintColor };
   };
 
   const getStatusMessage = () => {
     if (isRecording) return { text: t('audioRecorder.recording'), style: [styles.statusText, { color: tintColor }] };
     if (isProcessing) return { text: t('audioRecorder.processing'), style: [styles.statusText, { color: tintColor }] };
-    if (isAnyAudioPlaying) return { text: t('audioRecorder.playing'), style: [styles.statusText, { color: tintColor }] };
     return null;
   };
 
@@ -101,9 +94,7 @@ export default function AudioRecorder({ onRecordingComplete, isProcessing = fals
   const iconColor = useThemeColor({}, 'tabBackground');
 
   const handlePress = async () => {
-    if (isAnyAudioPlaying) {
-      await stopAllPlayback(); // Detener todas las reproducciones activas
-    } else if (isRecording) {
+    if (isRecording) {
       stopRecording();
     } else {
       onRecordingStart?.();

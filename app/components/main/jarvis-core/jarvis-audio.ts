@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { useAudioPlayer } from '@/hooks/use-audio-player';
+import { useAudioPlayer } from '@/hooks/audio/use-audio-player';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   useSharedValue,

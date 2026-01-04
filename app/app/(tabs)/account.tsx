@@ -2,7 +2,7 @@ import { StyleSheet, View, KeyboardAvoidingView, Platform } from 'react-native';
 import { ThemedView } from '@/components/ui/themed-view';
 import { BackgroundPattern } from '@/components/ui/background-pattern';
 import { useGender } from '@/contexts/gender-context';
-import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useColorScheme } from '@/hooks/theme/use-color-scheme';
 import { Colors } from '@/constants/theme';
 
 export default function ChatScreen() {

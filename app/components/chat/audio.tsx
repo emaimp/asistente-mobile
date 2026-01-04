@@ -1,8 +1,8 @@
 import React from 'react';
 import { View, TouchableOpacity } from 'react-native';
 import { IconSymbol } from '../ui/icon-symbol';
-import { useAudioPlayer } from '@/hooks/use-audio-player';
-import { useThemeColor } from '@/hooks/use-theme-color';
+import { useAudioPlayer } from '@/hooks/audio/use-audio-player';
+import { useThemeColor } from '@/hooks/theme/use-theme-color';
 import { styles } from './styles';
 
 /*

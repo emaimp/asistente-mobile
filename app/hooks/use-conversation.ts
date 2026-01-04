@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { useApi } from '@/hooks/use-api-interaction';
+import { useApi } from '@/hooks/api/use-api-interaction';
 import { useLanguage } from '@/contexts/language-context';
 
 /**
