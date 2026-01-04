@@ -15,14 +15,15 @@ type IconSymbolName = keyof typeof MATERIAL_ICONS_MAPPING | keyof typeof ENTYPO_
 const MATERIAL_ICONS_MAPPING = {
   'house.fill': 'home',
   'paperplane.fill': 'send',
-  'chevron.left.forwardslash.chevron.right': 'code',
   'chevron.right': 'chevron-right',
+  'chevron.left.forwardslash.chevron.right': 'code',
   'person.circle.fill': 'account-circle',
+  'speaker.slash.fill': 'volume-off',
   'volume.up.fill': 'volume-up',
   'play.fill': 'play-arrow',
   'pause.fill': 'pause',
   'stop.fill': 'stop',
-  'speaker.slash.fill': 'volume-off',
+  'lock.fill': 'lock',
   'settings': 'settings',
   'menu': 'menu',
 };

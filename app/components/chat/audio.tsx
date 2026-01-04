@@ -15,10 +15,11 @@ export function AudioMessagePlayer({ audioUri }: { audioUri: string }) {
   const backgroundColor = useThemeColor({}, 'background');
 
   // Hook simple de reproducción
-  const { playbackState, play, pause, stop, isLoaded } = useAudioPlayer(audioUri);
+  const { playbackState, play, pause, stop, isLoaded, isBlocked } = useAudioPlayer(audioUri);
 
   // Manejadores de eventos
   const handlePlayPause = async () => {
+    if (isBlocked) return; // Bloqueado por otro audio
     if (playbackState === 'stopped' || playbackState === 'paused') {
       await play();
     } else if (playbackState === 'playing') {
@@ -27,11 +28,13 @@ export function AudioMessagePlayer({ audioUri }: { audioUri: string }) {
   };
 
   const handleStop = async () => {
+    if (isBlocked) return; // Bloqueado por otro audio
     await stop();
   };
 
   // Icono para el botón play/pause
   const getPlayPauseIcon = () => {
+    if (isBlocked) return 'lock.fill';
     switch (playbackState) {
       case 'stopped':
       case 'paused':
@@ -48,9 +51,13 @@ export function AudioMessagePlayer({ audioUri }: { audioUri: string }) {
       <View style={styles.audioControls}>
         {/* Botón Play/Pause */}
         <TouchableOpacity
-          style={[styles.audioButton, { backgroundColor: backgroundColor + 'FF' }]}
+          style={[
+            styles.audioButton, 
+            { backgroundColor: backgroundColor + 'FF' },
+            isBlocked && { opacity: 0.5 }
+          ]}
           onPress={handlePlayPause}
-          disabled={!isLoaded}
+          disabled={!isLoaded || isBlocked} // Deshabilitado cuando está bloqueado
         >
           <IconSymbol
             name={getPlayPauseIcon()}
@@ -61,9 +68,13 @@ export function AudioMessagePlayer({ audioUri }: { audioUri: string }) {
 
         {/* Botón Stop */}
         <TouchableOpacity
-          style={[styles.audioButton, { backgroundColor: backgroundColor + 'FF' }]}
+          style={[
+            styles.audioButton, 
+            { backgroundColor: backgroundColor + 'FF' },
+            isBlocked && { opacity: 0.5 }
+          ]}
           onPress={handleStop}
-          disabled={!isLoaded}
+          disabled={!isLoaded || isBlocked} // Deshabilitado cuando está bloqueado
         >
           <IconSymbol
             name="stop.fill"

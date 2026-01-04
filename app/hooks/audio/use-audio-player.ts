@@ -1,5 +1,6 @@
 import { useAudioPlayer as useExpoAudioPlayer, useAudioPlayerStatus } from 'expo-audio';
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { audioManager } from './use-audio-manager';
 
 /*
  * Hook para controlar reproducción de audio.
@@ -18,6 +19,9 @@ export function useAudioPlayer(uri: string) {
   // Estado local para controlar el estado de reproducción
   const [playbackState, setPlaybackState] = useState<'stopped' | 'playing' | 'paused'>('stopped');
   
+  // Estado para saber si este audio está bloqueado por otro
+  const [isBlocked, setIsBlocked] = useState(false);
+  
   // Ref para rastrear el estado anterior sin crear dependencias circulares
   const prevPlayingRef = useRef(false);
   // Ref para detectar fin natural del audio (no pausa)
@@ -26,6 +30,19 @@ export function useAudioPlayer(uri: string) {
   const userPausedRef = useRef(false);
   // Ref para evitar conflictos entre update optimista y useEffect
   const lastManualActionRef = useRef<'play' | 'pause' | 'stop' | null>(null);
+  // Ref para rastrear el ID de audio único
+  const audioIdRef = useRef<string>(uri);
+
+  // Escuchar cambios en el AudioManager
+  useEffect(() => {
+    const audioId = audioIdRef.current;
+    const unsubscribe = audioManager.addListener((currentAudioId) => {
+      // Solo bloquear si hay un audio reproduciéndose Y no es el nuestro
+      setIsBlocked(currentAudioId !== null && currentAudioId !== audioId);
+    });
+    
+    return unsubscribe;
+  }, []);
 
   // Actualizar estado local basado en el estado del player
   useEffect(() => {
@@ -45,6 +62,12 @@ export function useAudioPlayer(uri: string) {
         setPlaybackState('stopped');
         audioFinishedNaturallyRef.current = true;
         userPausedRef.current = false; // Reset para próxima reproducción
+        
+        // Anunciar fin de audio al AudioManager
+        if (audioManager.getCurrentAudioId() === audioIdRef.current) {
+          audioManager.setCurrentAudio(null);
+        }
+        
         prevPlayingRef.current = currentlyPlaying;
         return;
       }
@@ -74,12 +97,15 @@ export function useAudioPlayer(uri: string) {
 
   // Función para reproducir audio con update optimista
   const play = useCallback(async () => {
-    if (!isLoaded) return;
+    if (!isLoaded || isBlocked) return;
 
     try {
       // Update optimista: establecer estado inmediatamente
       setPlaybackState('playing');
       lastManualActionRef.current = 'play';
+      
+      // Anunciar que este audio va a empezar
+      audioManager.setCurrentAudio(audioIdRef.current);
       
       // Solo resetear al inicio si el audio terminó naturalmente
       if (audioFinishedNaturallyRef.current) {
@@ -101,7 +127,7 @@ export function useAudioPlayer(uri: string) {
       setPlaybackState('stopped');
       lastManualActionRef.current = null;
     }
-  }, [player, isLoaded]);
+  }, [player, isLoaded, isBlocked]);
 
   // Función para pausar audio con update optimista
   const pause = useCallback(async () => {
@@ -141,6 +167,11 @@ export function useAudioPlayer(uri: string) {
       await player.pause();
       player.seekTo(0);
       
+      // Anunciar fin de audio al AudioManager
+      if (audioManager.getCurrentAudioId() === audioIdRef.current) {
+        audioManager.setCurrentAudio(null);
+      }
+      
       // Limpiar flag después de un breve delay
       setTimeout(() => {
         lastManualActionRef.current = null;
@@ -160,6 +191,7 @@ export function useAudioPlayer(uri: string) {
     playbackState,
     isPlaying,
     isLoaded,
+    isBlocked,
 
     // Controles
     play,
