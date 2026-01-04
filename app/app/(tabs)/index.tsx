@@ -16,6 +16,8 @@ import SideDrawer, { SideDrawerRef } from '@/components/ui/side-drawer';
 import JarvisCore, { JarvisCoreRef } from '@/components/main/jarvis-core';
 import InitialModal from '@/components/main/initial-modal';
 import ConversationView from '@/components/chat-conversation';
+import HistoryDrawer from '@/components/main/history-drawer';
+import LoginModal from '@/components/session/login-modal';
 
 export default function HomeScreen() {
   const { messages, sendTextMessage, sendAudioMessage, isProcessing } = useConversationContext();
@@ -38,6 +40,7 @@ export default function HomeScreen() {
 
   const [showChat, setShowChat] = useState(false); // Estado para mostrar/ocultar chat
   const [showInitialModal, setShowInitialModal] = useState(false); // Estado para el modal inicial
+  const [showLoginModal, setShowLoginModal] = useState(false); // Estado para el modal de login
   const [isAudioPlaying, setIsAudioPlaying] = useState(false); // Estado de reproducción de audio
 
   // Extraer el último audio del bot
@@ -78,6 +81,12 @@ export default function HomeScreen() {
         console.error('Error stopping JARVIS audio:', error);
       }
     }
+  };
+
+  // Función para abrir el modal de login
+  const handleOpenLogin = () => {
+    setShowLoginModal(true);
+    drawerRef.current?.close(); // Cerrar el drawer al abrir el modal
   };
 
   return (
@@ -131,7 +140,15 @@ export default function HomeScreen() {
         }
       />
       <InitialModal visible={showInitialModal} onClose={handleCloseModal} />
-      <SideDrawer ref={drawerRef} backgroundColor={backgroundAltColor} />
+      <LoginModal visible={showLoginModal} onClose={() => setShowLoginModal(false)} />
+      <SideDrawer ref={drawerRef} backgroundColor={backgroundAltColor}>
+        <HistoryDrawer 
+          onLoginPress={handleOpenLogin}
+          tintColor={tintColor}
+          textColor={textColor}
+          backgroundAltColor={backgroundAltColor}
+        />
+      </SideDrawer>
     </ThemedView>
   );
 }
@@ -141,17 +158,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  toggleButton: {
-    padding: 8,
-  },
-  topBarRight: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  messageContainer: {
-    position: 'relative',
   },
   messageBadge: {
     position: 'absolute',
@@ -167,9 +173,6 @@ const styles = StyleSheet.create({
   badgeText: {
     fontSize: 10,
     fontWeight: 'bold',
-  },
-  eyeIcon: {
-    fontSize: 20,
   },
   externalButton: {
     position: 'relative',
