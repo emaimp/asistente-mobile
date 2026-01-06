@@ -1,30 +1,29 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
+import { ThemedText } from '@/components/ui/themed-text';
+import { useLanguage } from '@/contexts/language-context';
 
 interface HistoryDrawerProps {
   onLoginPress: () => void;
-  tintColor: string;
-  textColor: string;
-  backgroundAltColor: string;
 }
 
 const HistoryDrawer: React.FC<HistoryDrawerProps> = ({
   onLoginPress,
-  tintColor,
-  textColor,
-  backgroundAltColor,
 }) => {
+  const { t } = useLanguage();
+
   return (
-    <View style={[styles.drawerContent, { backgroundColor: backgroundAltColor }]}>
-      <Text style={[styles.drawerText, { color: textColor }]}>
-        Inicia sesión para ver el historial.{' '}
-        <Text 
-          style={[styles.drawerLink, { color: tintColor }]}
+    <View style={styles.drawerContent}>
+      <ThemedText style={styles.drawerText}>
+        {t('history.loginToView')}{' '}
+        <ThemedText 
+          style={styles.drawerLink}
+          type="link"
           onPress={onLoginPress}
         >
-          Acceder
-        </Text>
-      </Text>
+          {t('history.access')}
+        </ThemedText>
+      </ThemedText>
     </View>
   );
 };

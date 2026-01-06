@@ -48,7 +48,6 @@
     "loading": "Cargando...",
     "error": "Error",
     "success": "Éxito",
-    "cancel": "Cancelar",
     "ok": "OK"
   },
   "modal": {
@@ -72,11 +71,17 @@
     "email": "Correo electrónico",
     "password": "Contraseña",
     "button": "Iniciar Sesión",
-    "cancel": "Cancelar",
     "forgotPassword": "¿Olvidaste tu contraseña?",
     "emailPlaceholder": "Ingresa tu correo electrónico",
     "passwordPlaceholder": "Ingresa tu contraseña",
     "loginSuccess": "Inicio de sesión exitoso",
-    "loginError": "Error al iniciar sesión"
+    "loginError": "Error al iniciar sesión",
+    "noAccount": "¿No tienes cuenta?",
+    "register": "Registrarse",
+    "signingIn": "Iniciando..."
+  },
+  "history": {
+    "loginToView": "Inicia sesión para ver el historial.",
+    "access": "Acceder"
   }
 }

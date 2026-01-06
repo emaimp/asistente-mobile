@@ -91,7 +91,7 @@ const LoginModal = ({ visible, onClose }: LoginModalProps) => {
           >
             {/* Título */}
             <ThemedText style={styles.title}>
-              Iniciar Sesión
+              {t('login.title')}
             </ThemedText>
 
             {/* Campo de Email */}
@@ -100,7 +100,7 @@ const LoginModal = ({ visible, onClose }: LoginModalProps) => {
                 style={styles.textInput}
                 value={email}
                 onChangeText={setEmail}
-                placeholder="Correo electrónico"
+                placeholder={t('login.emailPlaceholder')}
                 autoCapitalize="none"
                 autoCorrect={false}
                 keyboardType="email-address"
@@ -114,7 +114,7 @@ const LoginModal = ({ visible, onClose }: LoginModalProps) => {
                   style={[styles.textInput, styles.passwordInput]}
                   value={password}
                   onChangeText={setPassword}
-                  placeholder="Contraseña"
+                  placeholder={t('login.passwordPlaceholder')}
                   secureTextEntry={!showPassword}
                   autoCapitalize="none"
                   autoCorrect={false}
@@ -135,7 +135,7 @@ const LoginModal = ({ visible, onClose }: LoginModalProps) => {
               <View style={styles.forgotPasswordContainer}>
                 <TouchableOpacity onPress={handleForgotPassword}>
                   <ThemedText type="link">
-                    ¿Olvidaste tu contraseña?
+                    {t('login.forgotPassword')}
                   </ThemedText>
                 </TouchableOpacity>
               </View>
@@ -148,18 +148,18 @@ const LoginModal = ({ visible, onClose }: LoginModalProps) => {
               disabled={isLoggingIn}
             >
               <ThemedText style={styles.buttonText}>
-                {isLoggingIn ? 'Iniciando...' : 'Iniciar Sesión'}
+                {isLoggingIn ? t('login.signingIn') : t('login.button')}
               </ThemedText>
             </ThemedButton>
 
             {/* Enlace "Registrarse" */}
             <View style={styles.registerContainer}>
               <ThemedText style={styles.registerText}>
-                ¿No tienes cuenta?{' '}
+                {t('login.noAccount')}{' '}
               </ThemedText>
               <TouchableOpacity onPress={handleRegister}>
                 <ThemedText type="link" style={styles.registerText}>
-                  Registrarse
+                  {t('login.register')}
                 </ThemedText>
               </TouchableOpacity>
             </View>

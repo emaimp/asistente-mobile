@@ -48,7 +48,6 @@
     "loading": "読み込み中...",
     "error": "エラー",
     "success": "成功",
-    "cancel": "キャンセル",
     "ok": "OK"
   },
   "modal": {
@@ -72,11 +71,17 @@
     "email": "メールアドレス",
     "password": "パスワード",
     "button": "ログイン",
-    "cancel": "キャンセル",
     "forgotPassword": "パスワードをお忘れですか？",
     "emailPlaceholder": "メールアドレスを入力してください",
     "passwordPlaceholder": "パスワードを入力してください",
     "loginSuccess": "ログイン成功",
-    "loginError": "ログイン失敗"
+    "loginError": "ログイン失敗",
+    "noAccount": "アカウントをお持ちでない方は",
+    "register": "登録",
+    "signingIn": "ログイン中..."
+  },
+  "history": {
+    "loginToView": "ログインして履歴を表示します。",
+    "access": "アクセス"
   }
 }

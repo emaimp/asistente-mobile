@@ -48,7 +48,6 @@
     "loading": "加载中...",
     "error": "错误",
     "success": "成功",
-    "cancel": "取消",
     "ok": "确定"
   },
   "modal": {
@@ -72,11 +71,17 @@
     "email": "电子邮件",
     "password": "密码",
     "button": "登录",
-    "cancel": "取消",
     "forgotPassword": "忘记密码？",
     "emailPlaceholder": "输入您的电子邮件",
     "passwordPlaceholder": "输入您的密码",
     "loginSuccess": "登录成功",
-    "loginError": "登录失败"
+    "loginError": "登录失败",
+    "noAccount": "没有账户？",
+    "register": "注册",
+    "signingIn": "登录中..."
+  },
+  "history": {
+    "loginToView": "登录以查看历史记录。",
+    "access": "访问"
   }
 }
