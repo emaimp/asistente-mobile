@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Modal } from 'react-native';
+import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { Snackbar } from 'react-native-paper';
 import { ThemedView } from '@/components/ui/themed-view';
 import { ThemedText } from '@/components/ui/themed-text';
+import { ThemedTextInput } from '@/components/ui/themed-textinput';
+import { ThemedButton } from '@/components/ui/themed-button';
 import { useThemeColor } from '@/hooks/theme/use-theme-color';
 import { useLanguage } from '@/contexts/language-context';
 import { useBackendUrlConfig } from '@/hooks/api/settings/use-backend-url-config';
@@ -16,14 +18,10 @@ interface InitialModalProps {
 const STORAGE_KEY = 'initial-modal-dismissed';
 
 export default function InitialModal({ visible, onClose }: InitialModalProps) {
-  // Colores dinámicos basados en género
-  const tintColor = useThemeColor({}, 'tint');
-  const textColor = useThemeColor({}, 'text');
-  const backgroundColor = useThemeColor({}, 'background');
-  const backgroundAltColor = useThemeColor({}, 'backgroundAlt');
-  const tabIconSelected = useThemeColor({}, 'tabIconSelected');
-  const successPrimary = useThemeColor({}, 'successPrimary');
-  const errorPrimary = useThemeColor({}, 'errorPrimary');
+  const tintColor = useThemeColor({}, 'tint'); // Checkbox border
+  const backgroundAltColor = useThemeColor({}, 'backgroundAlt'); // ThemedView
+  const successPrimary = useThemeColor({}, 'successPrimary'); // Snackbar
+  const errorPrimary = useThemeColor({}, 'errorPrimary'); // Snackbar
 
   const [dontShowAgain, setDontShowAgain] = useState(false);
   const [inputUrl, setInputUrl] = useState('');
@@ -70,7 +68,7 @@ export default function InitialModal({ visible, onClose }: InitialModalProps) {
     }
   };
 
-  const handleCancel = () => {
+  const handleOverlayPress = () => {
     onClose();
   };
 
@@ -79,123 +77,135 @@ export default function InitialModal({ visible, onClose }: InitialModalProps) {
   };
 
   return (
-    <Modal
-      visible={visible}
-      transparent={true}
-      animationType="fade"
-      onRequestClose={handleCancel}
-    >
-      <View style={styles.overlay}>
-        <ThemedView style={[styles.modalContainer, { borderColor: textColor, backgroundColor: backgroundAltColor }]}>
-          <Text style={[styles.title, { color: textColor }]}>
-            {t('modal.title')}
-          </Text>
-
-          <View style={styles.inputContainer}>
-            <ThemedText
-              style={styles.label}
-            >
-              {t('modal.url')}
+    <>
+      {visible && (
+        <View style={styles.overlay}>
+          {/* Overlay visual */}
+          <View style={styles.overlayBackground} />
+          
+          {/* Overlay clickeable para cerrar */}
+          <TouchableOpacity 
+            style={styles.overlayTouchable}
+            onPress={handleOverlayPress}
+            activeOpacity={1}
+          />
+          
+          {/* Modal */}
+          <ThemedView 
+            style={[styles.modalContainer, { backgroundColor: backgroundAltColor }]}
+          >
+            <ThemedText style={styles.title}>
+              {t('modal.title')}
             </ThemedText>
-            <TextInput
-              style={[styles.textInput, { color: textColor, borderColor: tintColor, backgroundColor: backgroundColor + '1A' }]}
-              value={inputUrl}
-              onChangeText={setInputUrl}
-              placeholder={t('modal.placeholder')}
-              placeholderTextColor={textColor + '66'}
-              autoCapitalize="none"
-              autoCorrect={false}
-              keyboardType="url"
-            />
-          </View>
 
-          <TouchableOpacity style={styles.checkboxContainer} onPress={toggleDontShowAgain}>
-            <View style={[styles.checkbox, { borderColor: tintColor }, dontShowAgain && { backgroundColor: tintColor }]}>
-              {dontShowAgain && <Text style={[styles.checkmark, { color: textColor }]}>✓</Text>}
+            <View style={styles.inputContainer}>
+              <ThemedText style={styles.label}>
+                {t('modal.url')}
+              </ThemedText>
+              <ThemedTextInput
+                style={styles.textInput}
+                value={inputUrl}
+                onChangeText={setInputUrl}
+                placeholder={t('modal.placeholder')}
+                autoCapitalize="none"
+                autoCorrect={false}
+                keyboardType="url"
+              />
             </View>
-            <Text style={[styles.checkboxText, { color: textColor }]}>
-              {t('modal.dontShowAgain')}
-            </Text>
-          </TouchableOpacity>
 
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity
-              style={[
-                styles.button,
-                {
-                  backgroundColor: tintColor,
-                  shadowColor: tabIconSelected,
-                  opacity: isConnected ? 0.5 : 1
-                }
-              ]}
+            <TouchableOpacity style={styles.checkboxContainer} onPress={toggleDontShowAgain}>
+              <View style={[styles.checkbox, { borderColor: tintColor }, dontShowAgain && { backgroundColor: tintColor }]}>
+                {dontShowAgain && <ThemedText style={styles.checkmark}>✓</ThemedText>}
+              </View>
+              <ThemedText style={styles.checkboxText}>
+                {t('modal.dontShowAgain')}
+              </ThemedText>
+            </TouchableOpacity>
+
+            {/* Botón "Conectar" */}
+            <ThemedButton
+              style={styles.mainButton}
               onPress={handleConnect}
               disabled={isConnected}
             >
-              <Text style={[styles.buttonText, { color: 'white' }]}>
-                {t('modal.connect')}
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[
-                styles.button,
-                {
-                  backgroundColor: errorPrimary,
-                  shadowColor: tabIconSelected
-                }
-              ]}
-              onPress={handleCancel}
-            >
-              <Text style={[styles.buttonText, { color: 'white' }]}>
-                {t('modal.close')}
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </ThemedView>
-      </View>
+              <ThemedText style={styles.buttonText}>
+                {isConnected ? 'Conectado' : t('modal.connect')}
+              </ThemedText>
+            </ThemedButton>
+          </ThemedView>
+        </View>
+      )}
       <Snackbar
         visible={snackbarVisible}
         onDismiss={() => setSnackbarVisible(false)}
         duration={3000}
         style={{ backgroundColor: snackbarType === 'success' ? successPrimary : errorPrimary }}
       >
-        <Text style={{ textAlign: 'center', color: 'white' }}>
+        <ThemedText style={{ textAlign: 'center' }}>
           {snackbarMessage}
-        </Text>
+        </ThemedText>
       </Snackbar>
-    </Modal>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
   overlay: {
-    flex: 1,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'center',
     alignItems: 'center',
+    zIndex: 1000,
+  },
+  overlayBackground: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  overlayTouchable: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
   },
   modalContainer: {
     width: '80%',
-    maxWidth: 300,
-    padding: 20,
-    borderRadius: 6,
-    borderWidth: 1,
+    maxWidth: 380,
+    padding: 24,
+    borderRadius: 10,
     alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 12,
+    elevation: 8,
   },
   title: {
-    fontSize: 18,
+    fontSize: 22,
     fontWeight: 'bold',
     textAlign: 'center',
-    marginBottom: 20,
+    marginTop: 8,
+    marginBottom: 30,
   },
   label: {
     fontSize: 16,
     fontWeight: '600',
     marginBottom: 8,
+    alignSelf: 'flex-start',
   },
   checkboxContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 30,
+    marginBottom: 20,
+    width: '100%',
   },
   checkbox: {
     width: 24,
@@ -213,36 +223,28 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: 'bold',
   },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+  mainButton: {
     width: '100%',
-  },
-  button: {
-    flex: 1,
     paddingVertical: 16,
-    paddingHorizontal: 20,
-    borderRadius: 8,
-    borderWidth: 0,
-    alignItems: 'center',
-    marginHorizontal: 5,
-    shadowOffset: { width: -6, height: -6 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 3,
+    borderRadius: 6,
+    marginTop: 8,
+    marginBottom: 14,
   },
   buttonText: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: 600,
+    color: 'white',
+    textAlign: 'center',
   },
   inputContainer: {
-    marginBottom: 16,
+    marginBottom: 20,
     width: '100%',
   },
   textInput: {
     borderWidth: 1,
-    borderRadius: 8,
-    padding: 12,
+    borderRadius: 6,
+    padding: 16,
     fontSize: 16,
+    width: '100%',
   },
 });

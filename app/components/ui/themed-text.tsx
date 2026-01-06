@@ -1,5 +1,4 @@
 import { StyleSheet, Text, type TextProps } from 'react-native';
-
 import { useThemeColor } from '@/hooks/theme/use-theme-color';
 
 export type ThemedTextProps = TextProps & {
@@ -15,7 +14,13 @@ export function ThemedText({
   type = 'default',
   ...rest
 }: ThemedTextProps) {
-  const color = useThemeColor({ light: lightColor, dark: darkColor }, 'text');
+  // Color base del texto
+  const textColor = useThemeColor({ light: lightColor, dark: darkColor }, 'text');
+  // TintColor para enlaces
+  const tintColor = useThemeColor({}, 'tint');
+
+  // Usar los colores según el tipo
+  const color = type === 'link' ? tintColor : textColor;
 
   return (
     <Text
@@ -55,6 +60,5 @@ const styles = StyleSheet.create({
   link: {
     lineHeight: 30,
     fontSize: 16,
-    color: '#50c8fa',
   },
 });

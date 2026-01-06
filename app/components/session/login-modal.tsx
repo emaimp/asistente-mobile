@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { Snackbar } from 'react-native-paper';
 import { ThemedView } from '@/components/ui/themed-view';
 import { ThemedText } from '@/components/ui/themed-text';
+import { ThemedTextInput } from '@/components/ui/themed-textinput';
+import { ThemedButton } from '@/components/ui/themed-button';
+import { IconSymbol } from '@/components/ui/icon-symbol';
 import { useThemeColor } from '@/hooks/theme/use-theme-color';
 import { useLanguage } from '@/contexts/language-context';
 
@@ -12,17 +15,14 @@ interface LoginModalProps {
 }
 
 const LoginModal = ({ visible, onClose }: LoginModalProps) => {
-  // Colores dinámicos basados en género
-  const tintColor = useThemeColor({}, 'tint');
-  const textColor = useThemeColor({}, 'text');
-  const backgroundColor = useThemeColor({}, 'background');
-  const backgroundAltColor = useThemeColor({}, 'backgroundAlt');
-  const tabIconSelected = useThemeColor({}, 'tabIconSelected');
-  const successPrimary = useThemeColor({}, 'successPrimary');
-  const errorPrimary = useThemeColor({}, 'errorPrimary');
+  const textColor = useThemeColor({}, 'text'); // IconSymbol
+  const backgroundAltColor = useThemeColor({}, 'backgroundAlt'); // ThemedView
+  const successPrimary = useThemeColor({}, 'successPrimary'); // Snackbar
+  const errorPrimary = useThemeColor({}, 'errorPrimary'); // Snackbar
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [snackbarVisible, setSnackbarVisible] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
@@ -33,8 +33,7 @@ const LoginModal = ({ visible, onClose }: LoginModalProps) => {
     if (isLoggingIn) return;
     setIsLoggingIn(true);
     try {
-      // Implementar lógica de login real
-      // Por ahora, simular login exitoso si email y password no están vacíos
+      // Simula login exitoso si email y password no están vacíos
       if (email.trim() && password.trim()) {
         // Simular delay
         await new Promise(resolve => setTimeout(resolve, 1000));
@@ -58,7 +57,17 @@ const LoginModal = ({ visible, onClose }: LoginModalProps) => {
     }
   };
 
-  const handleCancel = () => {
+  const handleForgotPassword = () => {
+    // Placeholder - sin funcionalidad implementada
+    console.log('Forgot password clicked');
+  };
+
+  const handleRegister = () => {
+    // Placeholder - sin funcionalidad implementada
+    console.log('Register clicked');
+  };
+
+  const handleOverlayPress = () => {
     onClose();
   };
 
@@ -66,77 +75,92 @@ const LoginModal = ({ visible, onClose }: LoginModalProps) => {
     <>
       {visible && (
         <View style={styles.overlay}>
-          <ThemedView style={[styles.modalContainer, { borderColor: textColor, backgroundColor: backgroundAltColor }]}>
-            <Text style={[styles.title, { color: textColor }]}>
-              {t('login.title')}
-            </Text>
+          {/* Overlay visual */}
+          <View style={styles.overlayBackground} />
+          
+          {/* Overlay clickeable para cerrar */}
+          <TouchableOpacity 
+            style={styles.overlayTouchable}
+            onPress={handleOverlayPress}
+            activeOpacity={1}
+          />
+          
+          {/* Modal */}
+          <ThemedView 
+            style={[styles.modalContainer, { backgroundColor: backgroundAltColor }]}
+          >
+            {/* Título */}
+            <ThemedText style={styles.title}>
+              Iniciar Sesión
+            </ThemedText>
 
+            {/* Campo de Email */}
             <View style={styles.inputContainer}>
-              <ThemedText
-                style={styles.label}
-              >
-                {t('login.email')}
-              </ThemedText>
-              <TextInput
-                style={[styles.textInput, { color: textColor, borderColor: tintColor, backgroundColor: backgroundColor + '1A' }]}
+              <ThemedTextInput
+                style={styles.textInput}
                 value={email}
                 onChangeText={setEmail}
-                placeholder={t('login.emailPlaceholder')}
-                placeholderTextColor={textColor + '66'}
+                placeholder="Correo electrónico"
                 autoCapitalize="none"
                 autoCorrect={false}
                 keyboardType="email-address"
               />
             </View>
 
+            {/* Campo de Password */}
             <View style={styles.inputContainer}>
-              <ThemedText
-                style={styles.label}
-              >
-                {t('login.password')}
-              </ThemedText>
-              <TextInput
-                style={[styles.textInput, { color: textColor, borderColor: tintColor, backgroundColor: backgroundColor + '1A' }]}
-                value={password}
-                onChangeText={setPassword}
-                placeholder={t('login.passwordPlaceholder')}
-                placeholderTextColor={textColor + '66'}
-                secureTextEntry
-                autoCapitalize="none"
-                autoCorrect={false}
-              />
+              <View style={styles.passwordContainer}>
+                <ThemedTextInput
+                  style={[styles.textInput, styles.passwordInput]}
+                  value={password}
+                  onChangeText={setPassword}
+                  placeholder="Contraseña"
+                  secureTextEntry={!showPassword}
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                />
+                <TouchableOpacity
+                  style={styles.eyeIcon}
+                  onPress={() => setShowPassword(!showPassword)}
+                >
+                  <IconSymbol
+                    name={showPassword ? 'eye.slash.fill' : 'eye.fill'}
+                    size={20}
+                    color={textColor + '80'}
+                  />
+                </TouchableOpacity>
+              </View>
+              
+              {/* Enlace "¿Olvidaste tu contraseña?" */}
+              <View style={styles.forgotPasswordContainer}>
+                <TouchableOpacity onPress={handleForgotPassword}>
+                  <ThemedText type="link">
+                    ¿Olvidaste tu contraseña?
+                  </ThemedText>
+                </TouchableOpacity>
+              </View>
             </View>
 
-            <View style={styles.buttonContainer}>
-              <TouchableOpacity
-                style={[
-                  styles.button,
-                  {
-                    backgroundColor: tintColor,
-                    shadowColor: tabIconSelected,
-                    opacity: isLoggingIn ? 0.5 : 1
-                  }
-                ]}
-                onPress={handleLogin}
-                disabled={isLoggingIn}
-              >
-                <Text style={[styles.buttonText, { color: 'white' }]}>
-                  {t('login.button')}
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[
-                  styles.button,
-                  {
-                    backgroundColor: errorPrimary,
-                    shadowColor: tabIconSelected
-                  }
-                ]}
-                onPress={handleCancel}
-              >
-                <Text style={[styles.buttonText, { color: 'white' }]}>
-                  {t('login.cancel')}
-                </Text>
+            {/* Botón Principal */}
+            <ThemedButton
+              style={styles.mainButton}
+              onPress={handleLogin}
+              disabled={isLoggingIn}
+            >
+              <ThemedText style={styles.buttonText}>
+                {isLoggingIn ? 'Iniciando...' : 'Iniciar Sesión'}
+              </ThemedText>
+            </ThemedButton>
+
+            {/* Enlace "Registrarse" */}
+            <View style={styles.registerContainer}>
+              <ThemedText style={styles.registerText}>
+                ¿No tienes cuenta?{' '}
+              </ThemedText>
+              <TouchableOpacity onPress={handleRegister}>
+                <ThemedText type="link" style={styles.registerText}>
+                  Registrarse
+                </ThemedText>
               </TouchableOpacity>
             </View>
           </ThemedView>
@@ -148,9 +172,9 @@ const LoginModal = ({ visible, onClose }: LoginModalProps) => {
         duration={3000}
         style={{ backgroundColor: snackbarType === 'success' ? successPrimary : errorPrimary }}
       >
-        <Text style={{ textAlign: 'center', color: 'white' }}>
+        <ThemedText style={{ textAlign: 'center' }}>
           {snackbarMessage}
-        </Text>
+        </ThemedText>
       </Snackbar>
     </>
   );
@@ -168,58 +192,90 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     zIndex: 1000,
   },
+  overlayBackground: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  overlayTouchable: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
   modalContainer: {
-    width: '80%',
-    maxWidth: 350,
-    padding: 20,
-    borderRadius: 6,
-    borderWidth: 1,
+    width: '85%',
+    maxWidth: 380,
+    padding: 24,
+    borderRadius: 10,
     alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 12,
+    elevation: 8,
   },
   title: {
-    fontSize: 18,
+    fontSize: 25,
     fontWeight: 'bold',
     textAlign: 'center',
-    marginBottom: 20,
-  },
-  label: {
-    fontSize: 16,
-    fontWeight: '600',
-    marginBottom: 8,
-    alignSelf: 'flex-start',
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '100%',
-    marginTop: 20,
-  },
-  button: {
-    flex: 1,
-    paddingVertical: 16,
-    paddingHorizontal: 10,
-    borderRadius: 8,
-    borderWidth: 0,
-    alignItems: 'center',
-    marginHorizontal: 5,
-    shadowOffset: { width: -6, height: -6 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 3,
-  },
-  buttonText: {
-    fontSize: 16,
-    fontWeight: 'bold',
+    marginTop: 8,
+    marginBottom: 30,
   },
   inputContainer: {
-    marginBottom: 16,
+    marginBottom: 20,
     width: '100%',
   },
   textInput: {
     borderWidth: 1,
-    borderRadius: 8,
-    padding: 12,
+    borderRadius: 6,
+    padding: 16,
     fontSize: 16,
+    width: '100%',
+  },
+  passwordContainer: {
+    position: 'relative',
+    width: '100%',
+  },
+  passwordInput: {
+    paddingRight: 50,
+  },
+  eyeIcon: {
+    position: 'absolute',
+    right: 16,
+    top: '50%',
+    marginTop: -10,
+    padding: 4,
+  },
+  forgotPasswordContainer: {
+    alignSelf: 'flex-end',
+    marginTop: 8,
+  },
+  mainButton: {
+    width: '100%',
+    paddingVertical: 16,
+    borderRadius: 6,
+    marginTop: 8,
+    marginBottom: 20,
+  },
+  buttonText: {
+    fontSize: 16,
+    fontWeight: 600,
+    color: 'white',
+    textAlign: 'center',
+  },
+  registerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  registerText: {
+    fontSize: 14,
+    lineHeight: 20,
   },
 });
 
