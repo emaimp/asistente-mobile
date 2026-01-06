@@ -11,7 +11,7 @@ export function useConversation() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [sessionId, setSessionId] = useState<string | null>(null);
 
-  const { sendText, sendAudio } = useApi();
+  const { ask } = useApi();
   const { t } = useLanguage();
 
   /**
@@ -58,8 +58,8 @@ export function useConversation() {
         isLoading: true,
       });
 
-      // Enviar al backend
-      const result = await sendText(text.trim(), sessionId);
+      // Enviar al backend una pregunta (método unificado)
+      const result = await ask({ text: text.trim(), sessionId });
 
       // Guardar session_id si es la primera respuesta
       if (!sessionId && result.data.session_id) {
@@ -94,7 +94,7 @@ export function useConversation() {
     } finally {
       setIsProcessing(false);
     }
-  }, [addMessage, sendText, sessionId, isProcessing, t]);
+  }, [addMessage, ask, sessionId, isProcessing, t]);
 
   /**
    * Envía audio al backend y maneja la respuesta con transcripción
@@ -105,8 +105,8 @@ export function useConversation() {
     try {
       setIsProcessing(true);
 
-      // Enviar audio al backend
-      const result = await sendAudio(audioUri, sessionId);
+      // Enviar al backend una pregunta (método unificado)
+      const result = await ask({ audioUri, sessionId });
 
       // Guardar session_id si es la primera respuesta
       if (!sessionId && result.data.session_id) {
@@ -140,7 +140,7 @@ export function useConversation() {
     } finally {
       setIsProcessing(false);
     }
-  }, [addMessage, sendAudio, sessionId, isProcessing, t]);
+  }, [addMessage, ask, sessionId, isProcessing, t]);
 
   /**
    * Limpia la conversación

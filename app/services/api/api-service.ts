@@ -39,14 +39,14 @@ export class ApiService extends BaseApi {
     return this.configApi.setLanguage(languageCode);
   }
 
-  // Enviar audio al backend
-  async sendAudio(audioUri: string, sessionId?: string | null, model?: string): Promise<ApiResponse> {
-    return this.communicationApi.sendAudio(audioUri, sessionId, model);
-  }
-
-  // Enviar texto al backend
-  async sendText(text: string, sessionId?: string | null, model?: string): Promise<ApiResponse> {
-    return this.communicationApi.sendText(text, sessionId, model);
+  // Método unificado para enviar audio o texto al backend
+  async ask(options: {
+    audioUri?: string;
+    text?: string;
+    sessionId?: string | null;
+    model?: string;
+  }): Promise<ApiResponse> {
+    return this.communicationApi.ask(options);
   }
 }
 
