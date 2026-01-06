@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, TouchableOpacity } from 'react-native';
-import { IconSymbol } from '../ui/icon-symbol';
+import { IconSymbol } from '../ui/icon/icon-symbol';
 import { useAudioPlayer } from '@/hooks/audio/use-audio-player';
 import { useThemeColor } from '@/hooks/theme/use-theme-color';
 import { styles } from './styles';

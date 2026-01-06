@@ -3,7 +3,7 @@ import { View, Text, Pressable, StyleSheet, Dimensions } from 'react-native';
 import Animated, { useSharedValue, useAnimatedStyle, withRepeat, withTiming, cancelAnimation } from 'react-native-reanimated';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useAudioRecording } from '@/hooks/audio/use-audio-recording';
-import { IconSymbol } from '../ui/icon-symbol';
+import { IconSymbol } from '../ui/icon/icon-symbol';
 import { useThemeColor } from '@/hooks/theme/use-theme-color';
 import { useLanguage } from '@/contexts/language-context';
 

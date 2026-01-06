@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { ThemedText } from '@/components/ui/themed-text';
+import { ThemedText } from '@/components/ui/theme/themed-text';
 import { useLanguage } from '@/contexts/language-context';
 
 interface HistoryDrawerProps {

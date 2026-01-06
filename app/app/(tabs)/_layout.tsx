@@ -2,7 +2,7 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Tabs } from 'expo-router';
 import { HapticTab } from '@/components/ui/haptic-tab';
-import { IconSymbol } from '@/components/ui/icon-symbol';
+import { IconSymbol } from '@/components/ui/icon/icon-symbol';
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/theme/use-color-scheme';
 import { useGender } from '@/contexts/gender-context';

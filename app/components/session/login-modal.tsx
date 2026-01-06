@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { Snackbar } from 'react-native-paper';
-import { ThemedView } from '@/components/ui/themed-view';
-import { ThemedText } from '@/components/ui/themed-text';
-import { ThemedTextInput } from '@/components/ui/themed-textinput';
-import { ThemedButton } from '@/components/ui/themed-button';
-import { IconSymbol } from '@/components/ui/icon-symbol';
+import { ThemedView } from '@/components/ui/theme/themed-view';
+import { ThemedText } from '@/components/ui/theme/themed-text';
+import { ThemedTextInput } from '@/components/ui/theme/themed-textinput';
+import { ThemedButton } from '@/components/ui/theme/themed-button';
+import { IconSymbol } from '@/components/ui/icon/icon-symbol';
 import { useThemeColor } from '@/hooks/theme/use-theme-color';
 import { useLanguage } from '@/contexts/language-context';
 

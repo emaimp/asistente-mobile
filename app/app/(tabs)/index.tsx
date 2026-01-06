@@ -1,9 +1,9 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StyleSheet, View, Dimensions, TouchableOpacity, Text } from 'react-native';
 import { useState, useEffect, useRef } from 'react';
-import { ThemedView } from '@/components/ui/themed-view';
+import { ThemedView } from '@/components/ui/theme/themed-view';
 import { BackgroundPattern } from '@/components/ui/background-pattern';
-import { IconSymbol } from '@/components/ui/icon-symbol';
+import { IconSymbol } from '@/components/ui/icon/icon-symbol';
 import { useConversationContext } from '@/contexts/conversation-context';
 import { useLanguage } from '@/contexts/language-context';
 import { useGender } from '@/contexts/gender-context';

@@ -1,8 +1,8 @@
 import React from 'react';
 import { StyleSheet, type ViewStyle } from 'react-native';
 import { useThemeColor } from '@/hooks/theme/use-theme-color';
-import { ThemedView } from './themed-view';
-import { ThemedText } from './themed-text';
+import { ThemedView } from './theme/themed-view';
+import { ThemedText } from './theme/themed-text';
 
 export type AvatarSize = 'small' | 'medium' | 'large' | 'xlarge';
 

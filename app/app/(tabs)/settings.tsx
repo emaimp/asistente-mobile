@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { StyleSheet, ScrollView, TouchableOpacity, Text, View } from 'react-native';
 import { Snackbar } from 'react-native-paper';
-import { ThemedText } from '@/components/ui/themed-text';
-import { ThemedView } from '@/components/ui/themed-view';
+import { ThemedText } from '@/components/ui/theme/themed-text';
+import { ThemedView } from '@/components/ui/theme/themed-view';
 import { BackgroundPattern } from '@/components/ui/background-pattern';
 import { useThemeColor } from '@/hooks/theme/use-theme-color';
 import { useGender } from '@/contexts/gender-context';

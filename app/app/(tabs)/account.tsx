@@ -1,5 +1,5 @@
 import { StyleSheet, View, KeyboardAvoidingView, Platform } from 'react-native';
-import { ThemedView } from '@/components/ui/themed-view';
+import { ThemedView } from '@/components/ui/theme/themed-view';
 import { BackgroundPattern } from '@/components/ui/background-pattern';
 import { useGender } from '@/contexts/gender-context';
 import { useColorScheme } from '@/hooks/theme/use-color-scheme';

@@ -7,8 +7,8 @@ import Animated, {
   useScrollOffset,
 } from 'react-native-reanimated';
 import { LinearGradient } from 'expo-linear-gradient';
-import { ThemedView } from '@/components/ui/themed-view';
-import { ThemedText } from '@/components/ui/themed-text';
+import { ThemedView } from '@/components/ui/theme/themed-view';
+import { ThemedText } from '@/components/ui/theme/themed-text';
 
 const HEADER_HEIGHT = 250;
 
