@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { StyleSheet, ScrollView, TouchableOpacity, Text, View } from 'react-native';
-import { Snackbar } from 'react-native-paper';
+import { StyleSheet, ScrollView, TouchableOpacity, View } from 'react-native';
 import { ThemedText } from '@/components/ui/theme/themed-text';
 import { ThemedView } from '@/components/ui/theme/themed-view';
+import { ThemedSnackbar } from '@/components/ui/theme/themed-snackbar';
 import { BackgroundPattern } from '@/components/ui/background-pattern';
 import { useThemeColor } from '@/hooks/theme/use-theme-color';
 import { useGender } from '@/contexts/gender-context';
@@ -20,8 +20,6 @@ export default function SettingsScreen() {
   // Colores dinámicos basados en género
   const tintColor = useThemeColor({}, 'tint');
   const tabIconSelected = useThemeColor({}, 'tabIconSelected');
-  const successPrimary = useThemeColor({}, 'successPrimary');
-  const errorPrimary = useThemeColor({}, 'errorPrimary');
   const gender = useGender().currentGender;
   const colorScheme = useColorScheme();
 
@@ -46,16 +44,16 @@ export default function SettingsScreen() {
   // Estado para Snackbar
   const [snackbarVisible, setSnackbarVisible] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
-  const [snackbarColor, setSnackbarColor] = useState('green');
+  const [snackbarType, setSnackbarType] = useState<'success' | 'error'>('success');
   // Estado para aplicar todas las configuraciones
   const [isApplyingAll, setIsApplyingAll] = useState(false);
   // Hook para traducciones
   const { t } = useLanguage();
 
   // Función para mostrar Snackbar
-  const showSnackbar = (message: string, color: string = 'green') => {
+  const showSnackbar = (message: string, type: 'success' | 'error' = 'success') => {
     setSnackbarMessage(message);
-    setSnackbarColor(color);
+    setSnackbarType(type);
     setSnackbarVisible(true);
   };
 
@@ -152,10 +150,10 @@ export default function SettingsScreen() {
       await handleUpdateVoice();
 
       // Mensaje final de éxito
-      showSnackbar(t('settings.applyAllSuccess'), successPrimary);
+      showSnackbar(t('settings.applyAllSuccess'), 'success');
     } catch {
       // En caso de error general
-      showSnackbar(t('settings.applyAllError'), errorPrimary);
+      showSnackbar(t('settings.applyAllError'), 'error');
     } finally {
       setIsApplyingAll(false);
     }
@@ -205,14 +203,12 @@ export default function SettingsScreen() {
         </TouchableOpacity>
 
       </ScrollView>
-      <Snackbar
+      <ThemedSnackbar
         visible={snackbarVisible}
         onDismiss={() => setSnackbarVisible(false)}
-        duration={Snackbar.DURATION_SHORT}
-        style={{ backgroundColor: snackbarColor }}
-      >
-        <Text style={{ textAlign: 'center', color: 'white' }}>{snackbarMessage}</Text>
-      </Snackbar>
+        message={snackbarMessage}
+        type={snackbarType}
+      />
     </ThemedView>
   );
 }

@@ -56,7 +56,7 @@
     "placeholder": "Ex: http://192.168.100.1:8000",
     "dontShowAgain": "Don't show again",
     "connect": "Connect",
-    "close": "Close",
+    "connecting": "Connecting...",
     "success": "Connection successful",
     "error": "Could not connect to server"
   },

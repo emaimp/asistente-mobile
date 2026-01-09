@@ -56,7 +56,7 @@
     "placeholder": "例: http://192.168.100.1:8000",
     "dontShowAgain": "不再显示",
     "connect": "连接",
-    "close": "关闭",
+    "connecting": "连接中...",
     "success": "连接成功",
     "error": "无法连接到服务器"
   },

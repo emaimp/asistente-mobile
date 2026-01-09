@@ -8,9 +8,9 @@ import { useColorScheme } from '@/hooks/theme/use-color-scheme';
 import { useGender } from '@/contexts/gender-context';
 
 type ThemeColorName = keyof typeof Colors.light & keyof typeof Colors.dark |
+  'greenAlt' | 'yellowAlt' | 'redAlt' |
   'jarvisPrimary' | 'jarvisGlow' | 'jarvisCore' |
-  'jarvisGradientStart' | 'jarvisGradientMiddle' | 'jarvisGradientEnd' |
-  'successPrimary' | 'errorPrimary';
+  'jarvisGradientStart' | 'jarvisGradientMiddle' | 'jarvisGradientEnd' ;
 
 export function useThemeColor(
   props: { light?: string; dark?: string },

@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
-import { Snackbar } from 'react-native-paper';
 import { ThemedView } from '@/components/ui/theme/themed-view';
 import { ThemedText } from '@/components/ui/theme/themed-text';
 import { ThemedTextInput } from '@/components/ui/theme/themed-textinput';
 import { ThemedButton } from '@/components/ui/theme/themed-button';
+import { ThemedSnackbar } from '@/components/ui/theme/themed-snackbar';
 import { IconSymbol } from '@/components/ui/icon/icon-symbol';
 import { useThemeColor } from '@/hooks/theme/use-theme-color';
 import { useLanguage } from '@/contexts/language-context';
@@ -19,9 +19,7 @@ interface LoginModalProps {
 
 const LoginModal = ({ visible, onClose, onLoginSuccess, onRegisterSuccess }: LoginModalProps) => {
   const textColor = useThemeColor({}, 'text'); // IconSymbol
-  const backgroundAltColor = useThemeColor({}, 'backgroundAlt'); // ThemedView
-  const successPrimary = useThemeColor({}, 'successPrimary'); // Snackbar
-  const errorPrimary = useThemeColor({}, 'errorPrimary'); // Snackbar
+  const tabBackgroundColor = useThemeColor({}, 'tabBackground'); // ThemedView
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -90,7 +88,7 @@ const LoginModal = ({ visible, onClose, onLoginSuccess, onRegisterSuccess }: Log
           
           {/* Modal */}
           <ThemedView 
-            style={[styles.modalContainer, { backgroundColor: backgroundAltColor }]}
+            style={[styles.modalContainer, { backgroundColor: tabBackgroundColor }]}
           >
             {/* Título */}
             <ThemedText style={styles.title}>
@@ -169,16 +167,12 @@ const LoginModal = ({ visible, onClose, onLoginSuccess, onRegisterSuccess }: Log
           </ThemedView>
         </View>
       )}
-      <Snackbar
+      <ThemedSnackbar
         visible={snackbarVisible}
         onDismiss={() => setSnackbarVisible(false)}
-        duration={3000}
-        style={{ backgroundColor: snackbarType === 'success' ? successPrimary : errorPrimary }}
-      >
-        <ThemedText style={{ textAlign: 'center' }}>
-          {snackbarMessage}
-        </ThemedText>
-      </Snackbar>
+        message={snackbarMessage}
+        type={snackbarType}
+      />
       <RegisterModal
         visible={showRegisterModal}
         onClose={() => setShowRegisterModal(false)}

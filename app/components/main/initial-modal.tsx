@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
-import { Snackbar } from 'react-native-paper';
 import { ThemedView } from '@/components/ui/theme/themed-view';
 import { ThemedText } from '@/components/ui/theme/themed-text';
 import { ThemedTextInput } from '@/components/ui/theme/themed-textinput';
 import { ThemedButton } from '@/components/ui/theme/themed-button';
+import { ThemedSnackbar } from '@/components/ui/theme/themed-snackbar';
 import { useThemeColor } from '@/hooks/theme/use-theme-color';
 import { useLanguage } from '@/contexts/language-context';
 import { useBackendUrlConfig } from '@/hooks/api/settings/use-backend-url-config';
@@ -19,14 +19,11 @@ const STORAGE_KEY = 'initial-modal-dismissed';
 
 export default function InitialModal({ visible, onClose }: InitialModalProps) {
   const tintColor = useThemeColor({}, 'tint'); // Checkbox border
-  const backgroundAltColor = useThemeColor({}, 'backgroundAlt'); // ThemedView
-  const successPrimary = useThemeColor({}, 'successPrimary'); // Snackbar
-  const errorPrimary = useThemeColor({}, 'errorPrimary'); // Snackbar
+  const tabBackgroundColor = useThemeColor({}, 'tabBackground'); // ThemedView
 
   const [dontShowAgain, setDontShowAgain] = useState(false);
   const [inputUrl, setInputUrl] = useState('');
   const [isConnecting, setIsConnecting] = useState(false);
-  const [isConnected, setIsConnected] = useState(false);
   const [snackbarVisible, setSnackbarVisible] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarType, setSnackbarType] = useState<'success' | 'error'>('success');
@@ -49,7 +46,6 @@ export default function InitialModal({ visible, onClose }: InitialModalProps) {
         if (dontShowAgain) {
           await AsyncStorage.setItem(STORAGE_KEY, 'true');
         }
-        setIsConnected(true);
         setSnackbarType('success');
         setSnackbarMessage(t('modal.success'));
         setSnackbarVisible(true);
@@ -92,7 +88,7 @@ export default function InitialModal({ visible, onClose }: InitialModalProps) {
           
           {/* Modal */}
           <ThemedView 
-            style={[styles.modalContainer, { backgroundColor: backgroundAltColor }]}
+            style={[styles.modalContainer, { backgroundColor: tabBackgroundColor }]}
           >
             <ThemedText style={styles.title}>
               {t('modal.title')}
@@ -126,25 +122,21 @@ export default function InitialModal({ visible, onClose }: InitialModalProps) {
             <ThemedButton
               style={styles.mainButton}
               onPress={handleConnect}
-              disabled={isConnected}
+              disabled={isConnecting}
             >
               <ThemedText style={styles.buttonText}>
-                {isConnected ? 'Conectado' : t('modal.connect')}
+                {isConnecting ? t('modal.connecting') : t('modal.connect')}
               </ThemedText>
             </ThemedButton>
           </ThemedView>
         </View>
       )}
-      <Snackbar
+      <ThemedSnackbar
         visible={snackbarVisible}
         onDismiss={() => setSnackbarVisible(false)}
-        duration={3000}
-        style={{ backgroundColor: snackbarType === 'success' ? successPrimary : errorPrimary }}
-      >
-        <ThemedText style={{ textAlign: 'center' }}>
-          {snackbarMessage}
-        </ThemedText>
-      </Snackbar>
+        message={snackbarMessage}
+        type={snackbarType}
+      />
     </>
   );
 }
