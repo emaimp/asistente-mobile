@@ -80,6 +80,24 @@
     "register": "Register",
     "signingIn": "Signing in..."
   },
+  "register": {
+    "title": "Register",
+    "name": "Name",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "button": "Register",
+    "namePlaceholder": "Enter your name",
+    "emailPlaceholder": "Enter your email",
+    "passwordPlaceholder": "Enter your password",
+    "confirmPasswordPlaceholder": "Confirm your password",
+    "registerSuccess": "Registration successful",
+    "registerError": "Registration failed",
+    "passwordMismatch": "Passwords do not match",
+    "haveAccount": "Already have an account?",
+    "login": "Login",
+    "registering": "Registering..."
+  },
   "history": {
     "loginToView": "Log in to view history.",
     "access": "Access"

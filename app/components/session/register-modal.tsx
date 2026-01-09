@@ -8,64 +8,75 @@ import { ThemedButton } from '@/components/ui/theme/themed-button';
 import { IconSymbol } from '@/components/ui/icon/icon-symbol';
 import { useThemeColor } from '@/hooks/theme/use-theme-color';
 import { useLanguage } from '@/contexts/language-context';
-import RegisterModal from './register-modal';
+import { apiService } from '@/services/api';
 
-interface LoginModalProps {
+interface RegisterModalProps {
   visible: boolean;
   onClose: () => void;
+  onSwitchToLogin?: () => void;
+  onRegisterSuccess?: (token: string) => void;
 }
 
-const LoginModal = ({ visible, onClose }: LoginModalProps) => {
+const RegisterModal = ({ visible, onClose, onSwitchToLogin, onRegisterSuccess }: RegisterModalProps) => {
   const textColor = useThemeColor({}, 'text'); // IconSymbol
   const backgroundAltColor = useThemeColor({}, 'backgroundAlt'); // ThemedView
   const successPrimary = useThemeColor({}, 'successPrimary'); // Snackbar
   const errorPrimary = useThemeColor({}, 'errorPrimary'); // Snackbar
 
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const [isRegistering, setIsRegistering] = useState(false);
   const [snackbarVisible, setSnackbarVisible] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarType, setSnackbarType] = useState<'success' | 'error'>('success');
-  const [showRegisterModal, setShowRegisterModal] = useState(false);
   const { t } = useLanguage();
 
-  const handleLogin = async () => {
-    if (isLoggingIn) return;
-    setIsLoggingIn(true);
+  const handleRegister = async () => {
+    if (isRegistering) return;
+    setIsRegistering(true);
     try {
-      // Simula login exitoso si email y password no están vacíos
-      if (email.trim() && password.trim()) {
-        // Simular delay
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        setSnackbarType('success');
-        setSnackbarMessage(t('login.loginSuccess'));
-        setSnackbarVisible(true);
-        // onLoginSuccess(); // Callback para actualizar estado global
-        onClose();
-      } else {
+      if (!name.trim() || !email.trim() || !password.trim() || !confirmPassword.trim()) {
         setSnackbarType('error');
-        setSnackbarMessage(t('login.loginError'));
+        setSnackbarMessage(t('register.registerError'));
         setSnackbarVisible(true);
+        return;
       }
+
+      if (password !== confirmPassword) {
+        setSnackbarType('error');
+        setSnackbarMessage(t('register.passwordMismatch'));
+        setSnackbarVisible(true);
+        return;
+      }
+
+      const response = await apiService.register({
+        username: name.trim(),
+        email: email.trim(),
+        password: password,
+      });
+
+      setSnackbarType('success');
+      setSnackbarMessage(t('register.registerSuccess'));
+      setSnackbarVisible(true);
+
+      // Guardar token para mantener sesión
+      if (onRegisterSuccess) {
+        onRegisterSuccess(response.access_token);
+      }
+
+      onClose();
     } catch (error) {
-      console.error('Login error:', error);
+      console.error('Register error:', error);
+      const errorMessage = error instanceof Error ? error.message : t('register.registerError');
       setSnackbarType('error');
-      setSnackbarMessage(t('login.loginError'));
+      setSnackbarMessage(errorMessage);
       setSnackbarVisible(true);
     } finally {
-      setIsLoggingIn(false);
+      setIsRegistering(false);
     }
-  };
-
-  const handleForgotPassword = () => {
-    // Placeholder - sin funcionalidad implementada
-    console.log('Forgot password clicked');
-  };
-
-  const handleRegister = () => {
-    setShowRegisterModal(true);
   };
 
   const handleOverlayPress = () => {
@@ -74,26 +85,38 @@ const LoginModal = ({ visible, onClose }: LoginModalProps) => {
 
   return (
     <>
-      {visible && !showRegisterModal && (
+      {visible && (
         <View style={styles.overlay}>
           {/* Overlay visual */}
           <View style={styles.overlayBackground} />
-          
+
           {/* Overlay clickeable para cerrar */}
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.overlayTouchable}
             onPress={handleOverlayPress}
             activeOpacity={1}
           />
-          
+
           {/* Modal */}
-          <ThemedView 
+          <ThemedView
             style={[styles.modalContainer, { backgroundColor: backgroundAltColor }]}
           >
             {/* Título */}
             <ThemedText style={styles.title}>
-              {t('login.title')}
+              {t('register.title')}
             </ThemedText>
+
+            {/* Campo de Nombre */}
+            <View style={styles.inputContainer}>
+              <ThemedTextInput
+                style={styles.textInput}
+                value={name}
+                onChangeText={setName}
+                placeholder={t('register.namePlaceholder')}
+                autoCapitalize="words"
+                autoCorrect={false}
+              />
+            </View>
 
             {/* Campo de Email */}
             <View style={styles.inputContainer}>
@@ -101,7 +124,7 @@ const LoginModal = ({ visible, onClose }: LoginModalProps) => {
                 style={styles.textInput}
                 value={email}
                 onChangeText={setEmail}
-                placeholder={t('login.emailPlaceholder')}
+                placeholder={t('register.emailPlaceholder')}
                 autoCapitalize="none"
                 autoCorrect={false}
                 keyboardType="email-address"
@@ -115,7 +138,7 @@ const LoginModal = ({ visible, onClose }: LoginModalProps) => {
                   style={[styles.textInput, styles.passwordInput]}
                   value={password}
                   onChangeText={setPassword}
-                  placeholder={t('login.passwordPlaceholder')}
+                  placeholder={t('register.passwordPlaceholder')}
                   secureTextEntry={!showPassword}
                   autoCapitalize="none"
                   autoCorrect={false}
@@ -131,36 +154,40 @@ const LoginModal = ({ visible, onClose }: LoginModalProps) => {
                   />
                 </TouchableOpacity>
               </View>
-              
-              {/* Enlace "¿Olvidaste tu contraseña?" */}
-              <View style={styles.forgotPasswordContainer}>
-                <TouchableOpacity onPress={handleForgotPassword}>
-                  <ThemedText type="link">
-                    {t('login.forgotPassword')}
-                  </ThemedText>
-                </TouchableOpacity>
-              </View>
+            </View>
+
+            {/* Campo de Confirmar Password */}
+            <View style={styles.inputContainer}>
+              <ThemedTextInput
+                style={styles.textInput}
+                value={confirmPassword}
+                onChangeText={setConfirmPassword}
+                placeholder={t('register.confirmPasswordPlaceholder')}
+                secureTextEntry={!showPassword}
+                autoCapitalize="none"
+                autoCorrect={false}
+              />
             </View>
 
             {/* Botón Principal */}
             <ThemedButton
               style={styles.mainButton}
-              onPress={handleLogin}
-              disabled={isLoggingIn}
+              onPress={handleRegister}
+              disabled={isRegistering}
             >
               <ThemedText style={styles.buttonText}>
-                {isLoggingIn ? t('login.signingIn') : t('login.button')}
+                {isRegistering ? t('register.registering') : t('register.button')}
               </ThemedText>
             </ThemedButton>
 
-            {/* Enlace "Registrarse" */}
-            <View style={styles.registerContainer}>
-              <ThemedText style={styles.registerText}>
-                {t('login.noAccount')}{' '}
+            {/* Enlace "Iniciar Sesión" */}
+            <View style={styles.loginContainer}>
+              <ThemedText style={styles.loginText}>
+                {t('register.haveAccount')}{' '}
               </ThemedText>
-              <TouchableOpacity onPress={handleRegister}>
-                <ThemedText type="link" style={styles.registerText}>
-                  {t('login.register')}
+              <TouchableOpacity onPress={onSwitchToLogin}>
+                <ThemedText type="link" style={styles.loginText}>
+                  {t('register.login')}
                 </ThemedText>
               </TouchableOpacity>
             </View>
@@ -177,11 +204,6 @@ const LoginModal = ({ visible, onClose }: LoginModalProps) => {
           {snackbarMessage}
         </ThemedText>
       </Snackbar>
-      <RegisterModal
-        visible={showRegisterModal}
-        onClose={() => setShowRegisterModal(false)}
-        onSwitchToLogin={() => setShowRegisterModal(false)}
-      />
     </>
   );
 };
@@ -257,10 +279,6 @@ const styles = StyleSheet.create({
     marginTop: -10,
     padding: 4,
   },
-  forgotPasswordContainer: {
-    alignSelf: 'flex-end',
-    marginTop: 8,
-  },
   mainButton: {
     width: '100%',
     paddingVertical: 16,
@@ -274,15 +292,15 @@ const styles = StyleSheet.create({
     color: 'white',
     textAlign: 'center',
   },
-  registerContainer: {
+  loginContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  registerText: {
+  loginText: {
     fontSize: 14,
     lineHeight: 20,
   },
 });
 
-export default LoginModal;
+export default RegisterModal;

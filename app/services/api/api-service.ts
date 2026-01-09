@@ -1,18 +1,21 @@
 import { BaseApi } from './base';
 import { ConfigApi } from './config';
 import { CommunicationApi } from './communication';
-import { ApiResponse } from './types';
+import { ApiResponse, RegisterRequest, RegisterResponse } from './types';
+import { AuthApi } from './auth';
 
 // Servicio principal de API que extiende BaseApi y delega a módulos especializados
 export class ApiService extends BaseApi {
   private configApi: ConfigApi;
   private communicationApi: CommunicationApi;
+  private authApi: AuthApi;
 
   // Constructor que inicializa las subclases con la URL base
   constructor(baseUrl?: string) {
     super(baseUrl);
     this.configApi = new ConfigApi(this.baseUrl);
     this.communicationApi = new CommunicationApi(this.baseUrl);
+    this.authApi = new AuthApi(this.baseUrl);
   }
 
   // Sobrescribir setBaseUrl para actualizar sub-APIs
@@ -20,6 +23,7 @@ export class ApiService extends BaseApi {
     super.setBaseUrl(url);
     this.configApi = new ConfigApi(url);
     this.communicationApi = new CommunicationApi(url);
+    this.authApi = new AuthApi(url);
   }
 
   // Métodos delegados //
@@ -47,6 +51,11 @@ export class ApiService extends BaseApi {
     model?: string;
   }): Promise<ApiResponse> {
     return this.communicationApi.ask(options);
+  }
+
+  // Registrar un nuevo usuario
+  async register(data: RegisterRequest): Promise<RegisterResponse> {
+    return this.authApi.register(data);
   }
 }
 
