@@ -14,7 +14,7 @@ interface RegisterModalProps {
   visible: boolean;
   onClose: () => void;
   onSwitchToLogin?: () => void;
-  onRegisterSuccess?: (token: string) => void;
+  onRegisterSuccess?: (token: string, user: any) => void;
 }
 
 const RegisterModal = ({ visible, onClose, onSwitchToLogin, onRegisterSuccess }: RegisterModalProps) => {
@@ -64,7 +64,7 @@ const RegisterModal = ({ visible, onClose, onSwitchToLogin, onRegisterSuccess }:
 
       // Guardar token para mantener sesión
       if (onRegisterSuccess) {
-        onRegisterSuccess(response.access_token);
+        onRegisterSuccess(response.access_token, response.user);
       }
 
       onClose();

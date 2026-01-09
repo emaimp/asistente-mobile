@@ -13,9 +13,11 @@ import RegisterModal from './register-modal';
 interface LoginModalProps {
   visible: boolean;
   onClose: () => void;
+  onLoginSuccess?: (token: string, user: any) => void;
+  onRegisterSuccess?: (token: string, user: any) => void;
 }
 
-const LoginModal = ({ visible, onClose }: LoginModalProps) => {
+const LoginModal = ({ visible, onClose, onLoginSuccess, onRegisterSuccess }: LoginModalProps) => {
   const textColor = useThemeColor({}, 'text'); // IconSymbol
   const backgroundAltColor = useThemeColor({}, 'backgroundAlt'); // ThemedView
   const successPrimary = useThemeColor({}, 'successPrimary'); // Snackbar
@@ -181,6 +183,7 @@ const LoginModal = ({ visible, onClose }: LoginModalProps) => {
         visible={showRegisterModal}
         onClose={() => setShowRegisterModal(false)}
         onSwitchToLogin={() => setShowRegisterModal(false)}
+        onRegisterSuccess={onRegisterSuccess}
       />
     </>
   );

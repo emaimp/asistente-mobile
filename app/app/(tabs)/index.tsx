@@ -7,6 +7,7 @@ import { IconSymbol } from '@/components/ui/icon/icon-symbol';
 import { useConversationContext } from '@/contexts/conversation-context';
 import { useLanguage } from '@/contexts/language-context';
 import { useGender } from '@/contexts/gender-context';
+import { useAuth } from '@/contexts/auth-context';
 import { useColorScheme } from '@/hooks/theme/use-color-scheme';
 import { useThemeColor } from '@/hooks/theme/use-theme-color';
 import { Colors } from '@/constants/theme';
@@ -22,6 +23,7 @@ import LoginModal from '@/components/session/login-modal';
 export default function HomeScreen() {
   const { messages, sendTextMessage, sendAudioMessage, isProcessing } = useConversationContext();
   const { t } = useLanguage();
+  const { register, login } = useAuth();
 
   const { width, height } = Dimensions.get('window'); // Dimensiones de la ventana
   const jarvisSize = Math.min(width * 0.6, height * 0.6); // Tamaño responsivo
@@ -89,6 +91,17 @@ export default function HomeScreen() {
     drawerRef.current?.close(); // Cerrar el drawer al abrir el modal
   };
 
+  // Handlers para autenticación
+  const handleLoginSuccess = async (token: string, user: any) => {
+    await login(token, user);
+    setShowLoginModal(false);
+  };
+
+  const handleRegisterSuccess = async (token: string, user: any) => {
+    await register(token, user);
+    setShowLoginModal(false); // Cerrar modal de login que contiene el registro
+  };
+
   return (
     <ThemedView style={{flex: 1, backgroundColor: 'transparent'}}>
       <BackgroundPattern gender={gender} colorScheme={colorScheme as 'light' | 'dark'} />
@@ -140,13 +153,15 @@ export default function HomeScreen() {
         }
       />
       <InitialModal visible={showInitialModal} onClose={handleCloseModal} />
-      <LoginModal visible={showLoginModal} onClose={() => setShowLoginModal(false)} />
+      <LoginModal
+        visible={showLoginModal}
+        onClose={() => setShowLoginModal(false)}
+        onLoginSuccess={handleLoginSuccess}
+        onRegisterSuccess={handleRegisterSuccess}
+      />
       <SideDrawer ref={drawerRef} backgroundColor={backgroundAltColor}>
-        <HistoryDrawer 
+        <HistoryDrawer
           onLoginPress={handleOpenLogin}
-          tintColor={tintColor}
-          textColor={textColor}
-          backgroundAltColor={backgroundAltColor}
         />
       </SideDrawer>
     </ThemedView>
