@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StyleSheet, View, Dimensions, TouchableOpacity, Text } from 'react-native';
 import { useState, useEffect, useRef } from 'react';
+import { useNavigation } from 'expo-router';
 import { ThemedView } from '@/components/ui/theme/themed-view';
 import { BackgroundPattern } from '@/components/ui/background-pattern';
 import { IconSymbol } from '@/components/ui/icon/icon-symbol';
@@ -24,6 +25,7 @@ export default function HomeScreen() {
   const { messages, sendTextMessage, sendAudioMessage, isProcessing } = useConversationContext();
   const { t } = useLanguage();
   const { register, login } = useAuth();
+  const navigation = useNavigation();
 
   const { width, height } = Dimensions.get('window'); // Dimensiones de la ventana
   const jarvisSize = Math.min(width * 0.6, height * 0.6); // Tamaño responsivo
@@ -39,7 +41,6 @@ export default function HomeScreen() {
   const iconColor = useThemeColor({}, 'icon');
   const borderColor = useThemeColor({}, 'border');
   const backgroundColor = useThemeColor({}, 'background');
-  const tabBackgroundColor = useThemeColor({}, 'tabBackground');
 
   const [showChat, setShowChat] = useState(false); // Estado para mostrar/ocultar chat
   const [showInitialModal, setShowInitialModal] = useState(false); // Estado para el modal inicial
@@ -69,6 +70,17 @@ export default function HomeScreen() {
     };
     checkInitialModal();
   }, []);
+
+  // Listener para regresar a JARVIS al presionar el tab
+  useEffect(() => {
+    const unsubscribe = (navigation as any).addListener('tabPress', (e: any) => {
+      if (showChat) {
+        setShowChat(false);
+        e.preventDefault();
+      }
+    });
+    return unsubscribe;
+  }, [navigation, showChat]);
 
   // Maneja el cierre del modal inicial
   const handleCloseModal = () => {
@@ -160,7 +172,7 @@ export default function HomeScreen() {
         onLoginSuccess={handleLoginSuccess}
         onRegisterSuccess={handleRegisterSuccess}
       />
-      <SideDrawer ref={drawerRef} backgroundColor={tabBackgroundColor}>
+      <SideDrawer ref={drawerRef}>
         <HistoryDrawer
           onLoginPress={handleOpenLogin}
         />

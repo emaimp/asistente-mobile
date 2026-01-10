@@ -1,6 +1,7 @@
 import { StyleSheet, TouchableOpacity } from 'react-native';
 import React, { forwardRef, useImperativeHandle, useState, PropsWithChildren } from 'react';
 import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
+import { useThemeColor } from '@/hooks/theme/use-theme-color';
 
 export interface SideDrawerRef {
   open: () => void;
@@ -23,10 +24,12 @@ const SideDrawer = forwardRef<SideDrawerRef, PropsWithChildren<SideDrawerProps>>
   isOpen: controlledIsOpen,
   onClose,
   width = 250,
-  backgroundColor = 'transparent'
+  backgroundColor
 }, ref) => {
   const [internalIsOpen, setInternalIsOpen] = useState(false);
   const translateX = useSharedValue(-width);
+  const borderColor = useThemeColor({}, 'border');
+  const defaultBackgroundColor = useThemeColor({}, 'tabBackground');
 
   // Usar estado controlado si se proporciona, sino estado interno
   const isOpen = controlledIsOpen !== undefined ? controlledIsOpen : internalIsOpen;
@@ -63,7 +66,7 @@ const SideDrawer = forwardRef<SideDrawerRef, PropsWithChildren<SideDrawerProps>>
       <Animated.View style={[
         styles.drawer,
         drawerAnimatedStyle,
-        { width, backgroundColor }
+        { width, backgroundColor: backgroundColor || defaultBackgroundColor, borderRightWidth: StyleSheet.hairlineWidth, borderRightColor: borderColor + '10' }
       ]}>
         {children}
       </Animated.View>

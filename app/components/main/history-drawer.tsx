@@ -2,6 +2,7 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { ThemedText } from '@/components/ui/theme/themed-text';
 import { Avatar } from '@/components/ui/avatar';
+import { useThemeColor } from '@/hooks/theme/use-theme-color';
 import { useLanguage } from '@/contexts/language-context';
 import { useAuth } from '@/contexts/auth-context';
 
@@ -14,6 +15,8 @@ const HistoryDrawer: React.FC<HistoryDrawerProps> = ({
 }) => {
   const { t } = useLanguage();
   const { user, isLoggedIn, isLoading } = useAuth();
+  const greenAlt = useThemeColor({}, 'greenAlt');
+  const yellowAlt = useThemeColor({}, 'yellowAlt');
 
   if (isLoading) {
     return (
@@ -38,7 +41,7 @@ const HistoryDrawer: React.FC<HistoryDrawerProps> = ({
             style={styles.avatar}
           />
           <View style={styles.userStatus}>
-            <View style={[styles.statusIndicator, { backgroundColor: user.is_active ? '#4CAF50' : '#FFC107' }]} />
+            <View style={[styles.statusIndicator, { backgroundColor: user.is_active ? greenAlt : yellowAlt }]} />
             <ThemedText style={styles.statusText}>
               {user.is_active ? 'Activo' : 'Inactivo'}
             </ThemedText>
