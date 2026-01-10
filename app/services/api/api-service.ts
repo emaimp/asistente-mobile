@@ -1,7 +1,7 @@
 import { BaseApi } from './base';
 import { ConfigApi } from './config';
 import { CommunicationApi } from './communication';
-import { ApiResponse, RegisterRequest, RegisterResponse } from './types';
+import { ApiResponse, RegisterRequest, RegisterResponse, LoginRequest, LoginResponse, User } from './types';
 import { AuthApi } from './auth';
 
 // Servicio principal de API que extiende BaseApi y delega a módulos especializados
@@ -56,6 +56,16 @@ export class ApiService extends BaseApi {
   // Registrar un nuevo usuario
   async register(data: RegisterRequest): Promise<RegisterResponse> {
     return this.authApi.register(data);
+  }
+
+  // Iniciar sesión
+  async login(data: LoginRequest): Promise<LoginResponse> {
+    return this.authApi.login(data);
+  }
+
+  // Obtener perfil del usuario
+  async getMe(token: string): Promise<User> {
+    return this.authApi.getMe(token);
   }
 }
 

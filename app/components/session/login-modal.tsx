@@ -8,6 +8,7 @@ import { ThemedSnackbar } from '@/components/ui/theme/themed-snackbar';
 import { IconSymbol } from '@/components/ui/icon/icon-symbol';
 import { useThemeColor } from '@/hooks/theme/use-theme-color';
 import { useLanguage } from '@/contexts/language-context';
+import { apiService } from '@/services/api';
 import RegisterModal from './register-modal';
 
 interface LoginModalProps {
@@ -17,7 +18,7 @@ interface LoginModalProps {
   onRegisterSuccess?: (token: string, user: any) => void;
 }
 
-const LoginModal = ({ visible, onClose, onRegisterSuccess }: LoginModalProps) => {
+const LoginModal = ({ visible, onClose, onLoginSuccess, onRegisterSuccess }: LoginModalProps) => {
   const iconColor = useThemeColor({}, 'icon');
   const tabBackgroundColor = useThemeColor({}, 'tabBackground');
 
@@ -35,24 +36,36 @@ const LoginModal = ({ visible, onClose, onRegisterSuccess }: LoginModalProps) =>
     if (isLoggingIn) return;
     setIsLoggingIn(true);
     try {
-      // Simula login exitoso si email y password no están vacíos
-      if (email.trim() && password.trim()) {
-        // Simular delay
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        setSnackbarType('success');
-        setSnackbarMessage(t('login.loginSuccess'));
-        setSnackbarVisible(true);
-        // onLoginSuccess(); // Callback para actualizar estado global
-        onClose();
-      } else {
+      if (!email.trim() || !password.trim()) {
         setSnackbarType('error');
         setSnackbarMessage(t('login.loginError'));
         setSnackbarVisible(true);
+        return;
       }
+
+      const response = await apiService.login({
+        username: email.trim(),
+        password: password,
+      });
+
+      // Obtener el perfil del usuario
+      const user = await apiService.getMe(response.access_token);
+
+      setSnackbarType('success');
+      setSnackbarMessage(t('login.loginSuccess'));
+      setSnackbarVisible(true);
+
+      // Callback para actualizar estado global
+      if (onLoginSuccess) {
+        onLoginSuccess(response.access_token, user);
+      }
+
+      onClose();
     } catch (error) {
       console.error('Login error:', error);
+      const errorMessage = error instanceof Error ? error.message : t('login.loginError');
       setSnackbarType('error');
-      setSnackbarMessage(t('login.loginError'));
+      setSnackbarMessage(errorMessage);
       setSnackbarVisible(true);
     } finally {
       setIsLoggingIn(false);
