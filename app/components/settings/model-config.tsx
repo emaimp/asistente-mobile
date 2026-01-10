@@ -42,7 +42,7 @@ export default function AIModelConfigSection({
         >
           {t('settings.model.current')}
         </ThemedText>
-        <ThemedText style={[styles.currentUrl, { color: textColor, backgroundColor: textColor + '20' }]}>
+        <ThemedText style={[styles.currentUrl, { color: textColor, backgroundColor: tintColor + '40' }]}>
           {model}
         </ThemedText>
       </View>

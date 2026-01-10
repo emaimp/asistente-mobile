@@ -17,9 +17,9 @@ interface LoginModalProps {
   onRegisterSuccess?: (token: string, user: any) => void;
 }
 
-const LoginModal = ({ visible, onClose, onLoginSuccess, onRegisterSuccess }: LoginModalProps) => {
-  const textColor = useThemeColor({}, 'text'); // IconSymbol
-  const tabBackgroundColor = useThemeColor({}, 'tabBackground'); // ThemedView
+const LoginModal = ({ visible, onClose, onRegisterSuccess }: LoginModalProps) => {
+  const iconColor = useThemeColor({}, 'icon');
+  const tabBackgroundColor = useThemeColor({}, 'tabBackground');
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -127,7 +127,7 @@ const LoginModal = ({ visible, onClose, onLoginSuccess, onRegisterSuccess }: Log
                   <IconSymbol
                     name={showPassword ? 'eye.slash.fill' : 'eye.fill'}
                     size={20}
-                    color={textColor + '80'}
+                    color={iconColor + '80'}
                   />
                 </TouchableOpacity>
               </View>
@@ -223,11 +223,12 @@ const styles = StyleSheet.create({
     elevation: 8,
   },
   title: {
-    fontSize: 25,
+    fontSize: 24,
     fontWeight: 'bold',
     textAlign: 'center',
-    marginTop: 8,
-    marginBottom: 30,
+    marginTop: 6,
+    marginBottom: 24,
+    lineHeight: 28,
   },
   inputContainer: {
     marginBottom: 20,
@@ -262,7 +263,6 @@ const styles = StyleSheet.create({
     width: '100%',
     paddingVertical: 16,
     borderRadius: 6,
-    marginTop: 8,
     marginBottom: 20,
   },
   buttonText: {

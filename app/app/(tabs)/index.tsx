@@ -36,9 +36,10 @@ export default function HomeScreen() {
 
   // Colores del tema
   const tintColor = useThemeColor({}, 'tint');
-  const textColor = useThemeColor({}, 'text');
+  const iconColor = useThemeColor({}, 'icon');
+  const borderColor = useThemeColor({}, 'border');
   const backgroundColor = useThemeColor({}, 'background');
-  const backgroundAltColor = useThemeColor({}, 'backgroundAlt');
+  const tabBackgroundColor = useThemeColor({}, 'tabBackground');
 
   const [showChat, setShowChat] = useState(false); // Estado para mostrar/ocultar chat
   const [showInitialModal, setShowInitialModal] = useState(false); // Estado para el modal inicial
@@ -109,10 +110,10 @@ export default function HomeScreen() {
       {showChat && (
         <TopBar
           backgroundColor={backgroundColor}
-          borderBottomColor={textColor + '09'}
+          borderBottomColor={borderColor + '10'}
           leftElement={
             <TouchableOpacity onPress={() => drawerRef.current?.open()}>
-              <IconSymbol name="menu" size={24} color={textColor} />
+              <IconSymbol name="menu" size={24} color={iconColor} />
             </TouchableOpacity>
           }
         />
@@ -141,7 +142,7 @@ export default function HomeScreen() {
         hasJarvisAudio={hasJarvisAudio}
         rightElement={
           <TouchableOpacity onPress={() => setShowChat(!showChat)} style={[styles.externalButton, { borderColor: tintColor }]}>
-            <IconSymbol name="message.fill" size={24} color={showChat ? tintColor : textColor} />
+            <IconSymbol name="message.fill" size={24} color={showChat ? tintColor : iconColor} />
             {!showChat && messages.filter(msg => msg.type === 'bot').length > 0 && (
               <View style={[styles.messageBadge, { backgroundColor: tintColor }]}>
                 <Text style={[styles.badgeText, { color: backgroundColor }]}>
@@ -159,7 +160,7 @@ export default function HomeScreen() {
         onLoginSuccess={handleLoginSuccess}
         onRegisterSuccess={handleRegisterSuccess}
       />
-      <SideDrawer ref={drawerRef} backgroundColor={backgroundAltColor}>
+      <SideDrawer ref={drawerRef} backgroundColor={tabBackgroundColor}>
         <HistoryDrawer
           onLoginPress={handleOpenLogin}
         />

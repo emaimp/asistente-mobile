@@ -13,10 +13,12 @@ export const Colors = {
     text: '#000000',
     background: '#ffffff',
     tint: tintColorLight,
-    icon: '#687076',
+    icon: '#000000',
     tabIconDefault: '#687076',
     tabIconSelected: '#000000',
     tabBackground: '#f5f5f5',
+
+    border: '#000000',
 
     // Colores para notificaciones
     greenAlt: '#6ae063',
@@ -28,10 +30,12 @@ export const Colors = {
     text: '#ffffff',
     background: '#000000',
     tint: tintColorDark,
-    icon: '#9BA1A6',
+    icon: '#ffffff',
     tabIconDefault: '#9BA1A6',
     tabIconSelected: '#ffffff',
     tabBackground: '#1a1a1a',
+
+    border: '#ffffff',
 
     // Colores para notificaciones
     greenAlt: '#6ae063',
@@ -46,7 +50,7 @@ export const Colors = {
         text: '#000000',
         background: '#ffffff',
         tint: '#229be7',
-        icon: '#687076',
+        icon: '#000000',
         tabIconDefault: '#229be7',
         tabIconSelected: '#0b3660',
         tabBackground: '#f5f5f5',
@@ -63,7 +67,7 @@ export const Colors = {
         text: '#ffffff',
         background: '#000000',
         tint: '#229be7',
-        icon: '#687076',
+        icon: '#ffffff',
         tabIconDefault: '#229be7',
         tabIconSelected: '#0b3660',
         tabBackground: '#1a1a1a',
@@ -84,7 +88,7 @@ export const Colors = {
         text: '#000000',
         background: '#ffffff',
         tint: '#e91e63',
-        icon: '#687076',
+        icon: '#000000',
         tabIconDefault: '#e91e63',
         tabIconSelected: '#880e4f',
         tabBackground: '#f5f5f5',
@@ -102,7 +106,7 @@ export const Colors = {
         text: '#ffffff',
         background: '#000000',
         tint: '#e91e63',
-        icon: '#687076',
+        icon: '#ffffff',
         tabIconDefault: '#e91e63',
         tabIconSelected: '#880e4f',
         tabBackground: '#1a1a1a',

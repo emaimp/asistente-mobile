@@ -181,11 +181,12 @@ const styles = StyleSheet.create({
     elevation: 8,
   },
   title: {
-    fontSize: 22,
+    fontSize: 20,
     fontWeight: 'bold',
     textAlign: 'center',
-    marginTop: 8,
-    marginBottom: 30,
+    marginTop: 6,
+    marginBottom: 24,
+    lineHeight: 28,
   },
   label: {
     fontSize: 16,

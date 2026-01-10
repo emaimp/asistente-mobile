@@ -37,8 +37,9 @@ export function ChatInput({
   // Colores dinámicos basados en género
   const textColor = useThemeColor({}, 'text');
   const tintColor = useThemeColor({}, 'tint');
+  const iconColor = useThemeColor({}, 'icon');
   const backgroundColor = useThemeColor({}, 'background');
-  const errorColor = useThemeColor({}, 'errorPrimary');
+  const redAltColor = useThemeColor({}, 'redAlt');
 
   // Maneja el envío del texto
   const handleSubmit = async () => {
@@ -71,7 +72,7 @@ export function ChatInput({
             <TouchableOpacity
               style={[
                 styles.jarvisStopButton,
-                { backgroundColor: hasJarvisAudio ? errorColor + '50' : textColor + '20' },
+                { backgroundColor: hasJarvisAudio ? redAltColor + '50' : iconColor + '20' },
                 !hasJarvisAudio && { opacity: 0.4 }
               ]}
               onPress={onStopJarvis}
@@ -80,7 +81,7 @@ export function ChatInput({
               <IconSymbol
                 name="stop.fill"
                 size={20}
-                color={hasJarvisAudio ? errorColor : textColor}
+                color={hasJarvisAudio ? redAltColor : iconColor}
               />
             </TouchableOpacity>
           )}
@@ -106,7 +107,7 @@ export function ChatInput({
             <IconSymbol
               name={hasText ? "paperplane.fill" : "mic.fill"}
               size={20}
-              color={hasText ? tintColor : (isRecording ? errorColor : textColor)}
+              color={hasText ? tintColor : (isRecording ? redAltColor : iconColor)}
             />
           </TouchableOpacity>
         </View>

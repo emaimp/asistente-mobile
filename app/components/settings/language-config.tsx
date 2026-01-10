@@ -51,7 +51,7 @@ export default function LanguageConfigSection({
         >
           {t('settings.language.current')}
         </ThemedText>
-        <ThemedText style={[styles.currentLanguage, { color: textColor, backgroundColor: textColor + '20' }]}>
+        <ThemedText style={[styles.currentLanguage, { color: textColor, backgroundColor: tintColor + '40' }]}>
           {t(`languages.${currentLanguage}`, currentLanguage)}
         </ThemedText>
       </View>

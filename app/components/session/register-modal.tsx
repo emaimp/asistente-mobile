@@ -18,8 +18,8 @@ interface RegisterModalProps {
 }
 
 const RegisterModal = ({ visible, onClose, onSwitchToLogin, onRegisterSuccess }: RegisterModalProps) => {
-  const textColor = useThemeColor({}, 'text'); // IconSymbol
-  const tabBackgroundColor = useThemeColor({}, 'tabBackground'); // ThemedView
+  const iconColor = useThemeColor({}, 'icon');
+  const tabBackgroundColor = useThemeColor({}, 'tabBackground');
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -148,7 +148,7 @@ const RegisterModal = ({ visible, onClose, onSwitchToLogin, onRegisterSuccess }:
                   <IconSymbol
                     name={showPassword ? 'eye.slash.fill' : 'eye.fill'}
                     size={20}
-                    color={textColor + '80'}
+                    color={iconColor + '80'}
                   />
                 </TouchableOpacity>
               </View>
@@ -242,11 +242,12 @@ const styles = StyleSheet.create({
     elevation: 8,
   },
   title: {
-    fontSize: 25,
+    fontSize: 24,
     fontWeight: 'bold',
     textAlign: 'center',
-    marginTop: 8,
-    marginBottom: 30,
+    marginTop: 6,
+    marginBottom: 24,
+    lineHeight: 28,
   },
   inputContainer: {
     marginBottom: 20,

@@ -73,7 +73,7 @@ export default function VoiceConfigSection({
         >
           {t('settings.voice.current')}
         </ThemedText>
-        <ThemedText style={[styles.currentVoice, { color: textColor, backgroundColor: textColor + '20' }]}>
+        <ThemedText style={[styles.currentVoice, { color: textColor, backgroundColor: tintColor + '40' }]}>
           {currentVoice}
         </ThemedText>
       </View>
