@@ -1,7 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StyleSheet, View, Dimensions, TouchableOpacity, Text } from 'react-native';
 import { useState, useEffect, useRef } from 'react';
-import { useNavigation } from 'expo-router';
 import { ThemedView } from '@/components/ui/theme/themed-view';
 import { BackgroundPattern } from '@/components/ui/background-pattern';
 import { IconSymbol } from '@/components/ui/icon/icon-symbol';
@@ -20,32 +19,34 @@ import InitialModal from '@/components/main/initial-modal';
 import ConversationView from '@/components/chat-conversation';
 import HistoryDrawer from '@/components/main/history-drawer';
 import LoginModal from '@/components/session/login-modal';
+import AccountView from '@/views/account';
+import SettingsView from '@/views/settings';
 
 export default function HomeScreen() {
   const { messages, sendTextMessage, sendAudioMessage, isProcessing } = useConversationContext();
   const { t } = useLanguage();
   const { register, login } = useAuth();
-  const navigation = useNavigation();
 
-  const { width, height } = Dimensions.get('window'); // Dimensiones de la ventana
+  const { width, height } = Dimensions.get('window');
   const jarvisSize = Math.min(width * 0.6, height * 0.6); // Tamaño responsivo
 
-  const gender = useGender().currentGender; // 'Man' | 'Woman'
-  const colorScheme = useColorScheme(); // 'light' | 'dark'
+  const gender = useGender().currentGender;
+  const colorScheme = useColorScheme();
 
-  const drawerRef = useRef<SideDrawerRef>(null); // Referencia al SideDrawer
-  const jarvisRef = useRef<JarvisCoreRef>(null); // Referencia a JARVIS para controlar audio
+  const drawerRef = useRef<SideDrawerRef>(null);
+  const jarvisRef = useRef<JarvisCoreRef>(null);
 
-  // Colores del tema
+  // Colores
   const tintColor = useThemeColor({}, 'tint');
   const iconColor = useThemeColor({}, 'icon');
   const borderColor = useThemeColor({}, 'border');
   const backgroundColor = useThemeColor({}, 'background');
 
-  const [showChat, setShowChat] = useState(false); // Estado para mostrar/ocultar chat
-  const [showInitialModal, setShowInitialModal] = useState(false); // Estado para el modal inicial
-  const [showLoginModal, setShowLoginModal] = useState(false); // Estado para el modal de login
-  const [isAudioPlaying, setIsAudioPlaying] = useState(false); // Estado de reproducción de audio
+  // Estados
+  const [currentView, setCurrentView] = useState<'jarvis' | 'chat' | 'account' | 'settings'>('jarvis');
+  const [showInitialModal, setShowInitialModal] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [isAudioPlaying, setIsAudioPlaying] = useState(false);
 
   // Extraer el último audio del bot
   const latestBotAudioUri = messages
@@ -70,17 +71,6 @@ export default function HomeScreen() {
     };
     checkInitialModal();
   }, []);
-
-  // Listener para regresar a JARVIS al presionar el tab
-  useEffect(() => {
-    const unsubscribe = (navigation as any).addListener('tabPress', (e: any) => {
-      if (showChat) {
-        setShowChat(false);
-        e.preventDefault();
-      }
-    });
-    return unsubscribe;
-  }, [navigation, showChat]);
 
   // Maneja el cierre del modal inicial
   const handleCloseModal = () => {
@@ -116,55 +106,67 @@ export default function HomeScreen() {
   };
 
   return (
-    <ThemedView style={{flex: 1, backgroundColor: 'transparent'}}>
+    <ThemedView style={styles.container}>
       <BackgroundPattern gender={gender} colorScheme={colorScheme as 'light' | 'dark'} />
       <View style={[StyleSheet.absoluteFillObject, {backgroundColor: Colors[colorScheme === 'dark' ? 'dark' : 'light'].tabBackground, zIndex: -2}]} />
-      {showChat && (
-        <TopBar
-          backgroundColor={backgroundColor}
-          borderBottomColor={borderColor + '10'}
-          leftElement={
+      <TopBar
+        backgroundColor={backgroundColor}
+        borderBottomColor={borderColor + '10'}
+        leftElement={
+          currentView === 'account' || currentView === 'settings' ? (
+            <TouchableOpacity onPress={() => setCurrentView('jarvis')}>
+              <IconSymbol name="back.fill" size={24} color={iconColor} />
+            </TouchableOpacity>
+          ) : (
             <TouchableOpacity onPress={() => drawerRef.current?.open()}>
               <IconSymbol name="menu" size={24} color={iconColor} />
             </TouchableOpacity>
-          }
-        />
-      )}
-      <View style={styles.mainContainer}>
-        {showChat ? (
+          )
+        }
+      />
+      <View style={[styles.mainContainer, currentView === 'jarvis' && styles.centered]}>
+        {currentView === 'chat' ? (
           <ConversationView />
-        ) : (
+        ) : currentView === 'jarvis' ? (
           <View style={{ width: jarvisSize, height: jarvisSize }}>
-            <JarvisCore 
+            <JarvisCore
               ref={jarvisRef}
               size={jarvisSize}
               latestBotAudioUri={latestBotAudioUri}
               onPlaybackStateChange={setIsAudioPlaying}
             />
           </View>
-        )}
+        ) : currentView === 'account' ? (
+          <AccountView />
+        ) : currentView === 'settings' ? (
+          <SettingsView />
+        ) : null}
       </View>
-      <ChatInput
-        onSubmit={sendTextMessage}
-        onRecordingStart={() => {}}
-        onRecordingComplete={sendAudioMessage}
-        onStopJarvis={handleStopJarvisAudio}
-        isProcessing={isProcessing}
-        placeholder={t('chat.placeholder')}
-        hasJarvisAudio={hasJarvisAudio}
-        rightElement={
-          <TouchableOpacity onPress={() => setShowChat(!showChat)} style={[styles.externalButton, { borderColor: tintColor }]}>
-            <IconSymbol name="message.fill" size={24} color={showChat ? tintColor : iconColor} />
-            {!showChat && messages.filter(msg => msg.type === 'bot').length > 0 && (
-              <View style={[styles.messageBadge, { backgroundColor: tintColor }]}>
-                <Text style={[styles.badgeText, { color: backgroundColor }]}>
-                  {messages.filter(msg => msg.type === 'bot').length}
-                </Text>
-              </View>
-            )}
-          </TouchableOpacity>
-        }
-      />
+      {(currentView === 'jarvis' || currentView === 'chat') && (
+        <View style={styles.chatInputContainer}>
+          <ChatInput
+            onSubmit={sendTextMessage}
+            onRecordingStart={() => {}}
+            onRecordingComplete={sendAudioMessage}
+            onStopJarvis={handleStopJarvisAudio}
+            isProcessing={isProcessing}
+            placeholder={t('chat.placeholder')}
+            hasJarvisAudio={hasJarvisAudio}
+            rightElement={
+              <TouchableOpacity onPress={() => setCurrentView(currentView === 'jarvis' ? 'chat' : 'jarvis')} style={[styles.externalButton, { borderColor: tintColor }]}>
+                <IconSymbol name="message.fill" size={24} color={currentView === 'chat' ? tintColor : iconColor} />
+                {currentView !== 'chat' && messages.filter(msg => msg.type === 'bot').length > 0 && (
+                  <View style={[styles.messageBadge, { backgroundColor: tintColor }]}>
+                    <Text style={[styles.badgeText, { color: backgroundColor }]}>
+                      {messages.filter(msg => msg.type === 'bot').length}
+                    </Text>
+                  </View>
+                )}
+              </TouchableOpacity>
+            }
+          />
+        </View>
+      )}
       <InitialModal visible={showInitialModal} onClose={handleCloseModal} />
       <LoginModal
         visible={showLoginModal}
@@ -175,6 +177,14 @@ export default function HomeScreen() {
       <SideDrawer ref={drawerRef}>
         <HistoryDrawer
           onLoginPress={handleOpenLogin}
+          onUserPress={() => {
+            drawerRef.current?.close();
+            setCurrentView('account');
+          }}
+          onSettingsPress={() => {
+            drawerRef.current?.close();
+            setCurrentView('settings');
+          }}
         />
       </SideDrawer>
     </ThemedView>
@@ -182,10 +192,19 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: 'transparent',
+  },
   mainContainer: {
     flex: 1,
+  },
+  centered: {
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  chatInputContainer: {
+    marginBottom: 20,
   },
   messageBadge: {
     position: 'absolute',

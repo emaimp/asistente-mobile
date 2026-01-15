@@ -2,12 +2,13 @@
 
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import Entypo from '@expo/vector-icons/Entypo';
+import Ionicons from '@expo/vector-icons/Ionicons';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import { SymbolWeight } from 'expo-symbols';
 import { OpaqueColorValue, type StyleProp, type TextStyle } from 'react-native';
 
-type IconSymbolName = keyof typeof MATERIAL_ICONS_MAPPING | keyof typeof ENTYPO_MAPPING | keyof typeof FONTAWESOME5_MAPPING | keyof typeof FONTAWESOME6_MAPPING;
+type IconSymbolName = keyof typeof MATERIAL_ICONS_MAPPING | keyof typeof ENTYPO_MAPPING | keyof typeof ICONS_MAPPING | keyof typeof FONTAWESOME5_MAPPING | keyof typeof FONTAWESOME6_MAPPING;
 
 /**
  * Mappings for different icon libraries.
@@ -24,7 +25,7 @@ const MATERIAL_ICONS_MAPPING = {
   'pause.fill': 'pause',
   'stop.fill': 'stop',
   'lock.fill': 'lock',
-  'settings': 'settings',
+  'settings.fill': 'settings',
   'menu': 'menu',
 };
 
@@ -32,6 +33,10 @@ const ENTYPO_MAPPING = {
   'message.fill': 'chat',
   'eye.fill': 'eye',
   'eye.slash.fill': 'eye-with-line',
+};
+
+const ICONS_MAPPING = {
+  'back.fill': 'arrow-back-circle-outline',
 };
 
 const FONTAWESOME5_MAPPING = {
@@ -60,13 +65,15 @@ export function IconSymbol({
   style?: StyleProp<TextStyle>;
   weight?: SymbolWeight;
 }) {
-  if (name in ENTYPO_MAPPING) {
+  if (name in MATERIAL_ICONS_MAPPING) {
+    return <MaterialIcons color={color} size={size} name={MATERIAL_ICONS_MAPPING[name as keyof typeof MATERIAL_ICONS_MAPPING] as any} style={style} />;
+  } else if (name in ENTYPO_MAPPING) {
     return <Entypo color={color} size={size} name={ENTYPO_MAPPING[name as keyof typeof ENTYPO_MAPPING] as any} style={style} />;
+  } else if (name in ICONS_MAPPING) {
+    return <Ionicons color={color} size={size} name={ICONS_MAPPING[name as keyof typeof ICONS_MAPPING] as any} style={style} />;
   } else if (name in FONTAWESOME5_MAPPING) {
     return <FontAwesome5 color={color} size={size} name={FONTAWESOME5_MAPPING[name as keyof typeof FONTAWESOME5_MAPPING] as any} style={style} />;
   } else if (name in FONTAWESOME6_MAPPING) {
     return <FontAwesome6 color={color} size={24} name={FONTAWESOME6_MAPPING[name as keyof typeof FONTAWESOME6_MAPPING] as any} style={style} />;
-  } else {
-    return <MaterialIcons color={color} size={size} name={MATERIAL_ICONS_MAPPING[name as keyof typeof MATERIAL_ICONS_MAPPING] as any} style={style} />;
   }
 }

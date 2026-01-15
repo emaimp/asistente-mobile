@@ -6,7 +6,7 @@ export const styles = StyleSheet.create({
   container: {
     flex: 1,
     width: '100%',
-    paddingTop: 95, // Compensar TopBar absoluta
+    paddingTop: 80,
   },
   contentContainer: {
     flexGrow: 1,

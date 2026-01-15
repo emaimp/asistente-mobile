@@ -4,7 +4,7 @@ import { useThemeColor } from '@/hooks/theme/use-theme-color';
 import { ThemedView } from './theme/themed-view';
 import { ThemedText } from './theme/themed-text';
 
-export type AvatarSize = 'small' | 'medium' | 'large' | 'xlarge';
+export type AvatarSize = 'small' | 'medium' | 'large' | 'xlarge' | 'xxlarge';
 
 export interface AvatarProps {
   size?: AvatarSize;
@@ -12,18 +12,20 @@ export interface AvatarProps {
   style?: ViewStyle;
   backgroundColor?: string;
   textColor?: string;
+  fontSize?: number;
 }
 
 /**
  * Componente Avatar simple con iniciales
  * Versión preparada para futura carga de imágenes
  */
-export function Avatar({ 
-  size = 'medium', 
-  initials, 
+export function Avatar({
+  size = 'medium',
+  initials,
   style,
   backgroundColor,
-  textColor
+  textColor,
+  fontSize
 }: AvatarProps) {
   const defaultBackgroundColor = useThemeColor({}, 'tint');
   const defaultTextColor = useThemeColor({}, 'background');
@@ -47,7 +49,7 @@ export function Avatar({
       <ThemedText
         style={[
           styles.initials,
-          { fontSize: dimensions.fontSize, color: avatarTextColor }
+          { fontSize: fontSize || dimensions.fontSize, color: avatarTextColor }
         ]}
         type="defaultSemiBold"
       >
@@ -79,6 +81,11 @@ function getSizeDimensions(size: AvatarSize) {
       width: 80,
       height: 80,
       fontSize: 24
+    },
+    xxlarge: {
+      width: 96,
+      height: 96,
+      fontSize: 28
     }
   };
 

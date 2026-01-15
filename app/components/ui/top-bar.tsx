@@ -19,7 +19,7 @@ export function TopBar({
   leftElement,
   centerElement,
   rightElement,
-  height = 95,
+  height = 76,
   borderBottomColor,
   borderBottomWidth = 1,
   backgroundColor = 'transparent'
