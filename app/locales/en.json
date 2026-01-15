@@ -3,7 +3,6 @@
     "pressButton": "Press the button to speak"
   },
   "chat": {
-    "title": "CHAT",
     "placeholder": "Write a message...",
     "sending": "...",
     "processing": "Processing...",
@@ -14,7 +13,6 @@
     "errorAudio": "An error occurred while processing the audio."
   },
   "settings": {
-    "title": "Settings",
     "language": {
       "title": "App Language",
       "description": "Configure the app language.",
@@ -44,12 +42,6 @@
     "applyAllSuccess": "Configurations applied successfully.",
     "applyAllError": "An error occurred while applying configurations."
   },
-  "common": {
-    "loading": "Loading...",
-    "error": "Error",
-    "success": "Success",
-    "ok": "OK"
-  },
   "modal": {
     "title": "Server Connection",
     "url": "URL:",
@@ -65,6 +57,20 @@
     "e": "🇪🇸 Spanish",
     "j": "🇯🇵 Japanese",
     "z": "🇨🇳 Chinese"
+  },
+  "history": {
+    "loginToView": "Log in to view history",
+    "noHistory": "No history"
+  },
+  "drawer": {
+    "login": "Log in",
+    "settings": "Settings"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "ok": "OK"
   },
   "login": {
     "title": "Login",
@@ -97,9 +103,5 @@
     "haveAccount": "Already have an account?",
     "login": "Login",
     "registering": "Registering..."
-  },
-  "history": {
-    "loginToView": "Log in to view history.",
-    "access": "Access"
   }
 }

@@ -31,7 +31,17 @@ const HistoryDrawer: React.FC<HistoryDrawerProps> = ({
 
   return (
     <View style={styles.drawerContent}>
-      {/* Contenido condicional basado en estado de autenticación */}
+      {/* Botón de Login - visible cuando no se iniciá sesión */}
+      {!isLoggedIn && !isLoading && (
+        <TouchableOpacity style={[styles.loginSection, { borderColor: borderColor + '10' }]} onPress={onLoginPress}>
+          <IconSymbol name="person.circle.fill" size={24} color={iconColor} style={styles.loginIcon} />
+          <ThemedText style={styles.loginText}>
+            {t('drawer.login')}
+          </ThemedText>
+        </TouchableOpacity>
+      )}
+
+      {/* Condicional basado en estado de autenticación */}
       {isLoading && (
         <ThemedText style={styles.drawerText}>
           {t('common.loading')}
@@ -43,7 +53,7 @@ const HistoryDrawer: React.FC<HistoryDrawerProps> = ({
           <TouchableOpacity style={[styles.userSection, { borderColor: borderColor + '10' }]} onPress={onUserPress}>
             <View style={styles.avatarContainer}>
               <Avatar
-                size="medium"
+                size="small"
                 initials={initials}
               />
               <View style={[styles.statusDot, { backgroundColor: user.is_active ? greenAlt : yellowAlt, borderColor: backgroundColor }]} />
@@ -62,24 +72,19 @@ const HistoryDrawer: React.FC<HistoryDrawerProps> = ({
       )}
 
       {!isLoggedIn && !isLoading && (
-        <ThemedText style={styles.drawerText}>
-          {t('history.loginToView')}{' '}
-          <ThemedText
-            style={styles.drawerLink}
-            type="link"
-            onPress={onLoginPress}
-          >
-            {t('history.access')}
+        <View style={styles.infoTextContainer}>
+          <ThemedText style={styles.infoMessage}>
+            {t('history.loginToView')}
           </ThemedText>
-        </ThemedText>
+        </View>
       )}
 
       {/* settings */}
       {onSettingsPress && (
         <TouchableOpacity style={[styles.settingsSection, { borderColor: borderColor + '10' }]} onPress={onSettingsPress}>
-          <IconSymbol name="settings.fill" size={24} color={iconColor} />
+          <IconSymbol name="settings.fill" size={24} color={iconColor} style={styles.settingsIcon} />
           <ThemedText style={styles.settingsText}>
-            Configuración
+            {t('drawer.settings')}
           </ThemedText>
         </TouchableOpacity>
       )}
@@ -97,21 +102,18 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     lineHeight: 24,
   },
-  drawerLink: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    textDecorationLine: 'underline',
-  },
   userSection: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
     padding: 12,
     borderWidth: 1,
     borderRadius: 6,
     marginHorizontal: 0,
   },
   avatarContainer: {
-    position: 'relative',
+    position: 'absolute',
+    left: 12,
   },
   statusDot: {
     position: 'absolute',
@@ -123,7 +125,6 @@ const styles = StyleSheet.create({
     borderRadius: 6,
   },
   username: {
-    marginLeft: 10,
     fontSize: 16,
     fontWeight: 'bold',
   },
@@ -140,6 +141,7 @@ const styles = StyleSheet.create({
   settingsSection: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
     padding: 12,
     borderWidth: 1,
     borderRadius: 6,
@@ -147,10 +149,40 @@ const styles = StyleSheet.create({
     marginTop: 'auto',
     marginBottom: 20,
   },
+  settingsIcon: {
+    position: 'absolute',
+    left: 12,
+  },
   settingsText: {
-    marginLeft: 10,
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  loginSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 12,
+    borderWidth: 1,
+    borderRadius: 6,
+    marginHorizontal: 0,
+  },
+  loginIcon: {
+    position: 'absolute',
+    left: 12,
+  },
+  loginText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  infoTextContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  infoMessage: {
+    fontSize: 16,
+    textAlign: 'center',
+    opacity: 0.7,
   },
 });
 

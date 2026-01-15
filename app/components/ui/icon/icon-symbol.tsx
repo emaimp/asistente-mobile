@@ -21,12 +21,12 @@ const MATERIAL_ICONS_MAPPING = {
   'person.circle.fill': 'account-circle',
   'speaker.slash.fill': 'volume-off',
   'volume.up.fill': 'volume-up',
+  'settings.fill': 'settings',
   'play.fill': 'play-arrow',
   'pause.fill': 'pause',
   'stop.fill': 'stop',
   'lock.fill': 'lock',
-  'settings.fill': 'settings',
-  'menu': 'menu',
+  'menu.fill': 'menu',
 };
 
 const ENTYPO_MAPPING = {
@@ -45,7 +45,7 @@ const FONTAWESOME5_MAPPING = {
 };
 
 const FONTAWESOME6_MAPPING = {
-  'bot': 'robot',
+  'bot.fill': 'robot',
 };
 
 /**

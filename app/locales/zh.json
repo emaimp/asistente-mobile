@@ -3,7 +3,6 @@
     "pressButton": "按下按钮说话"
   },
   "chat": {
-    "title": "聊天",
     "placeholder": "写一个消息...",
     "sending": "...",
     "processing": "处理中...",
@@ -14,7 +13,6 @@
     "errorAudio": "处理音频时发生错误。"
   },
   "settings": {
-    "title": "设置",
     "language": {
       "title": "应用语言",
       "description": "配置应用语言。",
@@ -44,12 +42,6 @@
     "applyAllSuccess": "配置已成功应用。",
     "applyAllError": "应用配置时发生错误。"
   },
-  "common": {
-    "loading": "加载中...",
-    "error": "错误",
-    "success": "成功",
-    "ok": "确定"
-  },
   "modal": {
     "title": "服务器连接",
     "url": "URL:",
@@ -66,6 +58,20 @@
     "j": "🇯🇵 日语",
     "z": "🇨🇳 中文"
   },
+  "history": {
+    "loginToView": "登录以查看历史记录",
+    "noHistory": "无历史记录"
+  },
+  "drawer": {
+    "login": "登录",
+    "settings": "设置"
+  },
+  "common": {
+    "loading": "加载中...",
+    "error": "错误",
+    "success": "成功",
+    "ok": "确定"
+  },
   "login": {
     "title": "登录",
     "email": "电子邮件",
@@ -79,9 +85,5 @@
     "noAccount": "没有账户？",
     "register": "注册",
     "signingIn": "登录中..."
-  },
-  "history": {
-    "loginToView": "登录以查看历史记录。",
-    "access": "访问"
   }
 }

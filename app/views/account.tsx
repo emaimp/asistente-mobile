@@ -10,8 +10,12 @@ import { useColorScheme } from '@/hooks/theme/use-color-scheme';
 import { useAuth } from '@/contexts/auth-context';
 import { Colors } from '@/constants/theme';
 
-export default function AccountView() {
-  const { user, logout } = useAuth();
+interface AccountViewProps {
+  onLogout?: () => void;
+}
+
+export default function AccountView({ onLogout }: AccountViewProps) {
+  const { user } = useAuth();
   const gender = useGender().currentGender;
   const colorScheme = useColorScheme();
   const backgroundColor = useThemeColor({}, 'background');
@@ -52,7 +56,7 @@ export default function AccountView() {
 
         <TouchableOpacity
           style={[styles.logoutButton, { backgroundColor: redAlt }]}
-          onPress={logout}
+          onPress={onLogout}
         >
           <ThemedText style={styles.logoutText}>Cerrar Sesión</ThemedText>
         </TouchableOpacity>

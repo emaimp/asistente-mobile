@@ -3,7 +3,6 @@
     "pressButton": "Presiona el botón para hablar"
   },
   "chat": {
-    "title": "CHAT",
     "placeholder": "Escribe un mensaje...",
     "sending": "...",
     "processing": "Procesando...",
@@ -14,7 +13,6 @@
     "errorAudio": "Ocurrió un error al procesar el audio."
   },
   "settings": {
-    "title": "Configuración",
     "language": {
       "title": "Idioma de la App",
       "description": "Configura el idioma de la aplicación.",
@@ -44,12 +42,6 @@
     "applyAllSuccess": "Se aplicaron correctamente las configuraciones.",
     "applyAllError": "Se produjo un error al aplicar las configuraciones."
   },
-  "common": {
-    "loading": "Cargando...",
-    "error": "Error",
-    "success": "Éxito",
-    "ok": "OK"
-  },
   "modal": {
     "title": "Conexión al Servidor",
     "url": "URL:",
@@ -65,6 +57,20 @@
     "e": "🇪🇸 Español",
     "j": "🇯🇵 Japonés",
     "z": "🇨🇳 Chino"
+  },
+  "history": {
+    "loginToView": "Inicia sesión para ver el historial",
+    "noHistory": "Sin historial"
+  },
+  "drawer": {
+    "login": "Iniciar sesión",
+    "settings": "Configuración"
+  },
+  "common": {
+    "loading": "Cargando...",
+    "error": "Error",
+    "success": "Éxito",
+    "ok": "OK"
   },
   "login": {
     "title": "Iniciar Sesión",
@@ -97,9 +103,5 @@
     "haveAccount": "¿Ya tienes cuenta?",
     "login": "Iniciar Sesión",
     "registering": "Registrando..."
-  },
-  "history": {
-    "loginToView": "Inicia sesión para ver el historial.",
-    "access": "Acceder"
   }
 }

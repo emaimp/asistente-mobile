@@ -25,7 +25,7 @@ import SettingsView from '@/views/settings';
 export default function HomeScreen() {
   const { messages, sendTextMessage, sendAudioMessage, isProcessing } = useConversationContext();
   const { t } = useLanguage();
-  const { register, login } = useAuth();
+  const { register, login, logout } = useAuth();
 
   const { width, height } = Dimensions.get('window');
   const jarvisSize = Math.min(width * 0.6, height * 0.6); // Tamaño responsivo
@@ -119,7 +119,7 @@ export default function HomeScreen() {
             </TouchableOpacity>
           ) : (
             <TouchableOpacity onPress={() => drawerRef.current?.open()}>
-              <IconSymbol name="menu" size={24} color={iconColor} />
+              <IconSymbol name="menu.fill" size={24} color={iconColor} />
             </TouchableOpacity>
           )
         }
@@ -137,7 +137,10 @@ export default function HomeScreen() {
             />
           </View>
         ) : currentView === 'account' ? (
-          <AccountView />
+          <AccountView onLogout={async () => {
+            await logout();
+            setCurrentView('jarvis');
+          }} />
         ) : currentView === 'settings' ? (
           <SettingsView />
         ) : null}
