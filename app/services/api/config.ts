@@ -93,8 +93,6 @@ export class ConfigApi {
         return false;
       }
 
-      const data = await response.json();
-      console.log('Idioma establecido:', data);
       return true; // Indica éxito
     } catch (error) {
       if ((error as Error).name === 'AbortError') {

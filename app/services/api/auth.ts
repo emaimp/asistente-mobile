@@ -61,7 +61,6 @@ export class AuthApi {
       }
 
       const responseData: LoginResponse = await response.json();
-      console.log('Usuario autenticado');
       return responseData;
     } catch (error) {
       if ((error as Error).name === 'AbortError') {
@@ -95,7 +94,6 @@ export class AuthApi {
       }
 
       const responseData: User = await response.json();
-      console.log('Perfil de usuario obtenido:', responseData.username);
       return responseData;
     } catch (error) {
       if ((error as Error).name === 'AbortError') {

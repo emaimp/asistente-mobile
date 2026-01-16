@@ -156,7 +156,11 @@ export default function HomeScreen() {
             placeholder={t('chat.placeholder')}
             hasJarvisAudio={hasJarvisAudio}
             rightElement={
-              <TouchableOpacity onPress={() => setCurrentView(currentView === 'jarvis' ? 'chat' : 'jarvis')} style={[styles.externalButton, { borderColor: tintColor }]}>
+              <TouchableOpacity
+                onPress={() => setCurrentView(currentView === 'jarvis' ? 'chat' : 'jarvis')}
+                disabled={messages.filter(msg => msg.type === 'bot').length === 0}
+                style={[styles.externalButton, { borderColor: tintColor, opacity: messages.filter(msg => msg.type === 'bot').length === 0 ? 0.5 : 1 }]}
+              >
                 <IconSymbol name="message.fill" size={24} color={currentView === 'chat' ? tintColor : iconColor} />
                 {currentView !== 'chat' && messages.filter(msg => msg.type === 'bot').length > 0 && (
                   <View style={[styles.messageBadge, { backgroundColor: tintColor }]}>

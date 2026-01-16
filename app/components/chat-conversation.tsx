@@ -9,10 +9,10 @@ import { AudioMessagePlayer } from './chat/audio';
 import { styles } from './chat/styles';
 import Markdown from 'react-native-markdown-display';
 
-/*
+/**
  * Componente simplificado para mostrar la conversación.
  * Renderiza mensajes de texto plano con controles de audio básicos.
-*/
+ */
 export default function ConversationView() {
   const { messages } = useConversationContext();
   const { t } = useLanguage();

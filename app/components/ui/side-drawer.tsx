@@ -15,7 +15,7 @@ interface SideDrawerProps {
   backgroundColor?: string;
 }
 
-/*
+/**
  * Panel lateral básico con animación.
  * Contenedor simple sin contenido predefinido.
  */

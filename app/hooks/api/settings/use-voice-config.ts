@@ -28,7 +28,6 @@ export function useVoiceConfig() {
     try {
       await AsyncStorage.setItem(VOICE_KEY, newVoice);
       setVoice(newVoice);
-      console.log(`Voz guardada: ${newVoice}`);
       return { success: true };
     } catch (error) {
       console.error('Error saving voice locally:', error);

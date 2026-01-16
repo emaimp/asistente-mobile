@@ -1,6 +1,6 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
 import { Tabs } from 'expo-router';
+import { View, StyleSheet } from 'react-native';
 import { HapticTab } from '@/components/ui/haptic-tab';
 import { IconSymbol } from '@/components/ui/icon/icon-symbol';
 import { useThemeColor } from '@/hooks/theme/use-theme-color';

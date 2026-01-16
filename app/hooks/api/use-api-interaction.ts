@@ -84,6 +84,7 @@ export function useApi() {
           throw new Error(`No se pudo acceder al audio: ${error instanceof Error ? error.message : 'Error desconocido'}`);
         }
       }
+      console.log('🎵 Audio de respuesta recibido');
       return { data, audioUri: audioUriData };
     } catch (error) {
       // No relanzar el error para evitar que cierre la app

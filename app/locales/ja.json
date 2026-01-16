@@ -85,5 +85,23 @@
     "noAccount": "アカウントをお持ちでない方は",
     "register": "登録",
     "signingIn": "ログイン中..."
+  },
+  "register": {
+    "title": "登録",
+    "name": "名前",
+    "email": "メールアドレス",
+    "password": "パスワード",
+    "confirmPassword": "パスワード確認",
+    "button": "登録",
+    "namePlaceholder": "名前を入力してください",
+    "emailPlaceholder": "メールアドレスを入力してください",
+    "passwordPlaceholder": "パスワードを入力してください",
+    "confirmPasswordPlaceholder": "パスワードを確認してください",
+    "registerSuccess": "登録成功",
+    "registerError": "登録失敗",
+    "passwordMismatch": "パスワードが一致しません",
+    "haveAccount": "既にアカウントをお持ちですか？",
+    "login": "ログイン",
+    "registering": "登録中..."
   }
 }

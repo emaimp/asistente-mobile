@@ -8,7 +8,6 @@ export function useLanguageConfig() {
   const saveLanguageLocally = async (newLanguage: string): Promise<{ success: boolean }> => {
     try {
       await setLanguage(newLanguage);
-      console.log(`Idioma guardado: ${newLanguage}`);
       return { success: true };
     } catch (error) {
       console.error('Error saving language locally:', error);
@@ -24,13 +23,13 @@ export function useLanguageConfig() {
       if (backendSuccess) {
         // También actualizar localmente después de actualizar en el servidor
         await setLanguage(newLanguage);
-        return { success: true, message: 'Idioma actualizado correctamente en el servidor' };
+        return { success: true, message: 'Idioma actualizado correctamente' };
       } else {
-        console.warn(`No se pudo actualizar el idioma en el backend: ${newLanguage}`);
-        return { success: false, message: 'No se pudo actualizar el idioma en el servidor' };
+        console.warn(`No se pudo actualizar el idioma: ${newLanguage}`);
+        return { success: false, message: 'No se pudo actualizar el idioma' };
       }
     } catch (error) {
-      console.error('Error updating language in backend:', error);
+      console.error('Error updating language:', error);
       return { success: false, message: 'Error de conexión al actualizar el idioma' };
     }
   };

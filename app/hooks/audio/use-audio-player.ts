@@ -2,10 +2,10 @@ import { useAudioPlayer as useExpoAudioPlayer, useAudioPlayerStatus } from 'expo
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { audioManager } from './use-audio-manager';
 
-/*
+/**
  * Hook para controlar reproducción de audio.
  * Proporciona controles básicos: play, pause, stop.
-*/
+ */
 export function useAudioPlayer(uri: string) {
   const player = useExpoAudioPlayer(uri);
   const status = useAudioPlayerStatus(player);

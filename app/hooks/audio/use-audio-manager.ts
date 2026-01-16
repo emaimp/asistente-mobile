@@ -1,7 +1,7 @@
-/*
+/**
  * AudioManager - Sistema de Event Bus para controlar reproducción de audio único
  * Garantiza que solo un audio se reproduzca a la vez a nivel de interfaz
-*/
+ */
 
 type AudioListener = (audioId: string | null) => void;
 

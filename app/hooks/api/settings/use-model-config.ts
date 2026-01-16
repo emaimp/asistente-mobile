@@ -28,7 +28,6 @@ export function useModelConfig() {
     try {
       await AsyncStorage.setItem(MODEL_KEY, newModel);
       setModel(newModel);
-      console.log(`Modelo guardado: ${newModel}`);
       return { success: true };
     } catch (error) {
       console.error('Error saving model locally:', error);

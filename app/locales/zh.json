@@ -85,5 +85,23 @@
     "noAccount": "没有账户？",
     "register": "注册",
     "signingIn": "登录中..."
+  },
+  "register": {
+    "title": "注册",
+    "name": "姓名",
+    "email": "电子邮件",
+    "password": "密码",
+    "confirmPassword": "确认密码",
+    "button": "注册",
+    "namePlaceholder": "输入您的姓名",
+    "emailPlaceholder": "输入您的电子邮件",
+    "passwordPlaceholder": "输入您的密码",
+    "confirmPasswordPlaceholder": "确认您的密码",
+    "registerSuccess": "注册成功",
+    "registerError": "注册失败",
+    "passwordMismatch": "密码不匹配",
+    "haveAccount": "已有账户？",
+    "login": "登录",
+    "registering": "注册中..."
   }
 }

@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet, StatusBar } from 'react-native';
 
-/*
+/**
  * Barra superior básica y flexible.
  * Contenedor simple sin elementos predefinidos.
  */
